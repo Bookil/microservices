@@ -25,11 +25,15 @@ func NewAdapter(paymentServiceUrl string) (*Adapter, error) {
 	client := payment.NewPaymentClient(conn)
 	return &Adapter{payment: client}, nil
 }
-func (a *Adapter) Charge(order *domain.Order) error {
+
+func (a *Adapter) Charge(order *domain.Order)error{
 	_, err := a.payment.Create(context.Background(), &payment.CreatePaymentRequest{
 		UserId:     order.CustomerID,
 		OrderId:    order.ID,
 		TotalPrice: order.TotalPrice(),
 	})
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }

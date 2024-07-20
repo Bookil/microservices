@@ -16,10 +16,12 @@ func (a Adapter) Create(ctx context.Context, request *order.CreateOrderRequest) 
 			Quantity:    int32(orderItem.Quantity),
 		})
 	}
+
 	newOrder := domain.NewOrder(request.UserId, orderItems)
+
 	result, err := a.api.PlaceOrder(newOrder)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedPlaceOrder
 	}
 	return &order.CreateOrderResponse{OrderId: result.ID}, nil
 }
