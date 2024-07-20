@@ -9,6 +9,9 @@ import (
 func GetEnv() string {
     return getEnvironmentValue("ENV")
 }
+func GetPaymentServiceUrl() string {
+    return getEnvironmentValue("PAYMENT_SERVICE_URL")
+}
  
 func GetDataSourceURL() string {
     return getEnvironmentValue("DATA_SOURCE_URL")
@@ -31,3 +34,4 @@ func getEnvironmentValue(key string) string {
  
     return os.Getenv(key)
 }
+
