@@ -3,11 +3,11 @@ package grpc
 import (
 	"context"
 
-	"github.com/Bookil/Bookil-Proto/golang/order"
+	orderv1 "github.com/Bookil/Bookil-Proto/gen/golang/order/v1"
 	"github.com/Bookil/microservices/order/internal/application/core/domain"
 )
 
-func (a Adapter) Create(ctx context.Context, request *order.CreateOrderRequest) (*order.CreateOrderResponse, error) {
+func (a Adapter) Create(ctx context.Context, request *orderv1.CreateRequest) (*orderv1.CreateResponse, error) {
 	var orderItems []domain.OrderItem
 	for _, orderItem := range request.Items {
 		orderItems = append(orderItems, domain.OrderItem{
@@ -23,5 +23,5 @@ func (a Adapter) Create(ctx context.Context, request *order.CreateOrderRequest) 
 	if err != nil {
 		return nil, ErrFailedPlaceOrder
 	}
-	return &order.CreateOrderResponse{OrderId: result.ID}, nil
+	return &orderv1.CreateResponse{OrderId: result.ID}, nil
 }

@@ -1,21 +1,22 @@
 package grpc
- 
+
 import (
-    "fmt"
-    "github.com/Bookil/Bookil-Proto/golang/order"
-    "github.com/Bookil/microservices/order/config"
-    "github.com/Bookil/microservices/order/internal/ports"
-    "google.golang.org/grpc/reflection"
-    "log"
-    "net"
- 
-    "google.golang.org/grpc"
+	"fmt"
+	"log"
+	"net"
+
+	orderv1 "github.com/Bookil/Bookil-Proto/gen/golang/order/v1"
+	"github.com/Bookil/microservices/order/config"
+	"github.com/Bookil/microservices/order/internal/ports"
+	"google.golang.org/grpc/reflection"
+
+	"google.golang.org/grpc"
 )
  
 type Adapter struct {
     api  ports.APIPort
     port int
-    order.UnimplementedOrderServer
+    orderv1.UnimplementedOrderServiceServer
 }
  
 func NewAdapter(api ports.APIPort, port int) *Adapter {
@@ -31,7 +32,7 @@ func (a Adapter) Run() {
     }
  
     grpcServer := grpc.NewServer()
-    order.RegisterOrderServer(grpcServer, a)
+    orderv1.RegisterOrderServiceServer(grpcServer, a)
     if config.GetEnv() == "development" {
         reflection.Register(grpcServer)
     }
