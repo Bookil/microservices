@@ -3,14 +3,14 @@ package payment
 import (
 	"context"
 
-	"github.com/Bookil/Bookil-Proto/golang/payment"
+	paymentv1 "github.com/Bookil/Bookil-Proto/gen/golang/payment/v1"
 	"github.com/Bookil/microservices/order/internal/application/core/domain"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Adapter struct {
-	payment payment.PaymentClient
+	payment paymentv1.PaymentServiceClient
 }
 
 func NewAdapter(paymentServiceUrl string) (*Adapter, error) {
@@ -22,12 +22,12 @@ func NewAdapter(paymentServiceUrl string) (*Adapter, error) {
 		return nil, err
 	}
 	defer conn.Close()
-	client := payment.NewPaymentClient(conn)
+	client := paymentv1.NewPaymentServiceClient(conn)
 	return &Adapter{payment: client}, nil
 }
 
-func (a *Adapter) Charge(order *domain.Order)error{
-	_, err := a.payment.Create(context.Background(), &payment.CreatePaymentRequest{
+func (a *Adapter) Charge(order *domain.Order) error {
+	_, err := a.payment.Create(context.Background(), &paymentv1.CreateRequest{
 		UserId:     order.CustomerID,
 		OrderId:    order.ID,
 		TotalPrice: order.TotalPrice(),
