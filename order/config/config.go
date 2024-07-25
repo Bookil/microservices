@@ -4,6 +4,7 @@ import (
     "log"
     "os"
     "strconv"
+
 )
  
 func GetEnv() string {
@@ -27,11 +28,12 @@ func GetApplicationPort() int {
  
     return port
 }
+
 func getEnvironmentValue(key string) string {
     if os.Getenv(key) == "" {
         log.Fatalf("%s environment variable is missing.", key)
     }
- 
+
     return os.Getenv(key)
 }
 

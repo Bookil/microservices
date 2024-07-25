@@ -23,7 +23,7 @@ func NewAdapter(paymentServiceUrl string) (*Adapter, error) {
 		return nil, err
 	}
 
-	defer conn.Close()
+	// defer conn.Close()
 	
 	client := paymentv1.NewPaymentServiceClient(conn)
 	
