@@ -16,7 +16,7 @@ type Adapter struct {
 }
 
 func generateURL(url *config.PaymentService) string {
-	return fmt.Sprintf("%s:%s", url.Host, url.Port)
+	return fmt.Sprintf("%s:%d", url.Host, url.Port)
 }
 
 func NewAdapter(url *config.PaymentService) (*Adapter, error) {
