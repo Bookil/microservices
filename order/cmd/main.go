@@ -8,26 +8,23 @@ import (
 	"github.com/Bookil/microservices/order/internal/adapters/grpc"
 	"github.com/Bookil/microservices/order/internal/adapters/payment"
 	"github.com/Bookil/microservices/order/internal/application/core/api"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	if err:=godotenv.Load("../config/.env");err != nil{
-		panic(err)
-	}
+	config := config.Read() 
 
-	dbAdapter, err := db.NewAdapter(config.GetDataSourceURL())
+	dbAdapter, err := db.NewAdapter(&config.Mysql)
 	if err != nil {
 		log.Fatalf("Failed to connect to database. Error: %v", err)
 	}
 
-	paymentAdapter, err := payment.NewAdapter(config.GetPaymentServiceUrl())
+	paymentAdapter, err := payment.NewAdapter(&config.PaymentService)
 	if err != nil {
 		log.Fatalf("Failed to initialize payment stub. Error: %v", err)
 	}
 
 	application := api.NewApplication(dbAdapter, paymentAdapter)
-	grpcAdapter := grpc.NewAdapter(application,config.GetApplicationPort())
+	grpcAdapter := grpc.NewAdapter(application, config.Server.Port)
 
 	grpcAdapter.Run()
 }
