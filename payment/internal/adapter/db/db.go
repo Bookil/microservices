@@ -2,7 +2,9 @@ package db
 
 import (
 	"fmt"
+	"sync"
 
+	"github.com/Bookil/Bookil-Microservices/payment/config"
 	"github.com/Bookil/Bookil-Microservices/payment/internal/application/core/domain"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -14,21 +16,36 @@ type Payment struct {
 	OrdrId int32
 }
 
+var (
+	dbInc *Adapter
+	mutex = new(sync.Mutex)
+)
+
 type Adapter struct {
 	db *gorm.DB
 }
 
-func NewAdapter(dataSourceUrl string) (*Adapter, error) {
-	db, openErr := gorm.Open(mysql.Open(dataSourceUrl), &gorm.Config{})
-	if openErr != nil {
-		return nil, fmt.Errorf("db connection error: %v", openErr)
-	}
+func generateURL(url *config.Mysql) string {
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", url.Username, url.Password, url.Host, url.Port, url.DBName)
+}
 
-	err := db.AutoMigrate(&Payment{})
-	if err != nil {
-		return nil, fmt.Errorf("db migration error: %v", err)
+func NewAdapter(url *config.Mysql) (*Adapter, error) {
+	mutex.Lock()
+	defer mutex.Unlock()
+	if dbInc == nil {
+		db, openErr := gorm.Open(mysql.Open(generateURL(url)), &gorm.Config{})
+		if openErr != nil {
+			return nil, fmt.Errorf("db connection error: %v", openErr)
+		}
+
+		err := db.AutoMigrate(&Payment{})
+		if err != nil {
+			return nil, fmt.Errorf("db migration error: %v", err)
+		}
+		dbInc = &Adapter{db: db}
 	}
-	return &Adapter{db: db}, nil
+	return dbInc, nil
+
 }
 
 func (a Adapter) Save(payment *domain.Payment) error {

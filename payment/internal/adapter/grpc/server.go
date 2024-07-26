@@ -34,7 +34,7 @@ func (a Adapter) Run() {
 
 	grpcServer := grpc.NewServer()
 	paymentv1.RegisterPaymentServiceServer(grpcServer, a)
-	if config.GetEnv() == "development" {
+	if config.CurrentEnv == config.Development {
 		reflection.Register(grpcServer)
 	}
 
