@@ -1,0 +1,50 @@
+linters:
+  disable-all: true
+  enable:
+    - errcheck # Checking for unchecked errors in Go code. These unchecked errors can be critical bugs in some cases.
+    - gosimple # Linter for Go source code that specializes in simplifying code.
+    - govet # Vet examines Go source code and reports suspicious constructs, such as Printf calls whose arguments do not align with the format string.
+    - ineffassign # Detects when assignments to existing variables are not used.
+    - unused # Checks Go code for unused constants, variables, functions and types.
+    - bodyclose # Checks whether HTTP response body is closed successfully.
+    - dogsled # Checks assignments with too many blank identifiers (e.g. x, , , _, := f()).
+    - errchkjson # Checks types passed to the json encoding functions.
+    - errname # Checks that sentinel errors are prefixed with the Err and error types are suffixed with the Error.
+    - exhaustive # Check exhaustiveness of enum switch statements.
+    - gocheckcompilerdirectives # Checks that go compiler directive comments (//go:) are valid.
+    - gocognit # Computes and checks the cognitive complexity of functions.
+    - goconst # Finds repeated strings that could be replaced by a constant.
+    - gocyclo # Computes and checks the cyclomatic complexity of functions.
+    - gofmt # Gofmt checks whether code was gofmt-ed. By default this tool runs with -s option to check for code simplification.
+    - gofumpt # Gofumpt checks whether code was gofumpt-ed.
+    - gosec # Inspects source code for security problems.
+    - importas # Enforces consistent import aliases.
+    - loggercheck # Checks key value pairs for common logger libraries (kitlog,klog,logr,zap).
+    - maintidx # Maintidx measures the maintainability index of each function.
+    - misspell # Finds commonly misspelled English words in comments.
+    - musttag # Enforce field tags in (un)marshaled structs.
+    - nestif # Reports deeply nested if statements.
+    - noctx # Noctx finds sending http request without context.Context.
+    - prealloc # Finds slice declarations that could potentially be pre-allocated.
+    - predeclared # Find code that shadows one of Go's predeclared identifiers.
+    - reassign # Checks that package variables are not reassigned.
+    - unconvert # Remove unnecessary type conversions.
+    - whitespace # Tool for detection of leading and trailing whitespace.
+
+linters-settings:
+  gosimple:
+    checks: ["all"]
+
+  govet:
+    enable-all: true
+    disable: fieldalignment
+    shadow:
+      strict: true
+
+  predeclared:
+    # Comma-separated list of predeclared identifiers to not report on.
+    # Default: ""
+    ignore: "len"
+    # Include method names and field names (i.e., qualified names) in checks.
+    # Default: false
+    q: true
