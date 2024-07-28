@@ -8,20 +8,42 @@ import (
 )
 
 func (a Adapter) Create(ctx context.Context, request *orderv1.CreateRequest) (*orderv1.CreateResponse, error) {
-	var orderItems []domain.OrderItem
+	orderItems := []*domain.OrderItem{}
 	for _, orderItem := range request.Items {
-		orderItems = append(orderItems, domain.OrderItem{
+		orderItems = append(orderItems, &domain.OrderItem{
+			ID:          orderItem.ItemId,
+			Name:        orderItem.Name,
 			ProductCode: orderItem.ProductCode,
 			UnitPrice:   orderItem.UnitPrice,
-			Quantity:    int32(orderItem.Quantity),
+			Quantity:    orderItem.Quantity,
 		})
 	}
 
-	newOrder := domain.NewOrder(request.UserId, orderItems)
+	newOrder := domain.NewOrder(request.CustomerId, orderItems)
 
 	result, err := a.api.PlaceOrder(newOrder)
 	if err != nil {
 		return nil, ErrFailedPlaceOrder
 	}
-	return &orderv1.CreateResponse{OrderId: result.ID}, nil
+
+	orderItemResponse := []*orderv1.Item{}
+	for _, orderItem := range result.OrderItems {
+		orderItemResponse = append(orderItemResponse, &orderv1.Item{
+			ItemId:      orderItem.ID,
+			Name:        orderItem.Name,
+			ProductCode: orderItem.ProductCode,
+			UnitPrice:   orderItem.UnitPrice,
+			Quantity:    orderItem.Quantity,
+		})
+	}
+
+	orderResponse := &orderv1.Order{
+		OrderId:    result.ID,
+		CustomerId: result.CustomerID,
+		CreatedAt:  result.CreatedAt,
+		TotalPrice: result.TotalPrice(),
+		Status:     result.Status,
+		Items:      orderItemResponse,
+	}
+	return &orderv1.CreateResponse{Order: orderResponse}, nil
 }

@@ -10,31 +10,19 @@ import (
 	"gorm.io/gorm"
 )
 
-type Order struct {
-	gorm.Model
-	CustomerID int64
-	Status     string
-	OrderItems []OrderItem
-}
-
-type OrderItem struct {
-	gorm.Model
-	ProductCode string
-	UnitPrice   float32
-	Quantity    int32
-	OrderID     uint
-}
+type (
+	Adapter struct {
+		db *gorm.DB
+	}
+)
 
 var (
 	dbInc *Adapter
-	mutex   = new(sync.Mutex)
+	mutex = new(sync.Mutex)
 )
-type Adapter struct {
-	db *gorm.DB
-}
 
 func generateURL(url *config.Mysql) string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",url.Username, url.Password, url.Host, url.Port, url.DBName)
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", url.Username, url.Password, url.Host, url.Port, url.DBName)
 }
 
 func NewAdapter(url *config.Mysql) (*Adapter, error) {
@@ -45,8 +33,8 @@ func NewAdapter(url *config.Mysql) (*Adapter, error) {
 		if openErr != nil {
 			return nil, fmt.Errorf("db connection error: %v", openErr)
 		}
-	
-		err := db.AutoMigrate(&Order{}, OrderItem{})
+
+		err := db.AutoMigrate(&domain.Order{}, &domain.OrderItem{})
 		if err != nil {
 			return nil, fmt.Errorf("db migration error: %v", err)
 		}
@@ -55,44 +43,21 @@ func NewAdapter(url *config.Mysql) (*Adapter, error) {
 	return dbInc, nil
 }
 
-func (a Adapter) Get(id string) (domain.Order, error) {
-	var orderEntity Order
-	res := a.db.First(&orderEntity, id)
-	var orderItems []domain.OrderItem
-	for _, orderItem := range orderEntity.OrderItems {
-		orderItems = append(orderItems, domain.OrderItem{
-			ProductCode: orderItem.ProductCode,
-			UnitPrice:   orderItem.UnitPrice,
-			Quantity:    orderItem.Quantity,
-		})
+func (a Adapter) Get(id string) (*domain.Order, error) {
+	order := &domain.Order{}
+	res := a.db.First(order, id)
+	if res.Error != nil {
+		return nil, res.Error
 	}
-	order := domain.Order{
-		ID:         int64(orderEntity.ID),
-		CustomerID: orderEntity.CustomerID,
-		Status:     orderEntity.Status,
-		OrderItems: orderItems,
-		CreatedAt:  orderEntity.CreatedAt.UnixNano(),
-	}
+	
 	return order, res.Error
 }
 
-func (a Adapter) Save(order *domain.Order) error {
-	var orderItems []OrderItem
-	for _, orderItem := range order.OrderItems {
-		orderItems = append(orderItems, OrderItem{
-			ProductCode: orderItem.ProductCode,
-			UnitPrice:   orderItem.UnitPrice,
-			Quantity:    orderItem.Quantity,
-		})
-	}
-	orderModel := Order{
-		CustomerID: order.CustomerID,
-		Status:     order.Status,
-		OrderItems: orderItems,
-	}
-	res := a.db.Create(&orderModel)
+func (a Adapter) Save(order *domain.Order) (*domain.Order, error) {
+	res := a.db.Create(order)
 	if res.Error == nil {
-		order.ID = int64(orderModel.ID)
+		return nil, res.Error
 	}
-	return res.Error
+
+	return order, nil
 }

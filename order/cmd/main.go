@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	config := config.Read() 
+	config := config.Read()
 
 	dbAdapter, err := db.NewAdapter(&config.Mysql)
 	if err != nil {

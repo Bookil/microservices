@@ -3,7 +3,7 @@ module github.com/Bookil/microservices/order
 go 1.22.5
 
 require (
-	github.com/Bookil/Bookil-Proto v0.0.2
+	github.com/Bookil/Bookil-Proto v0.0.4
 	google.golang.org/grpc v1.65.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.11

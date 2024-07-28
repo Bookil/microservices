@@ -38,7 +38,7 @@ func NewAdapter(url *config.PaymentService) (*Adapter, error) {
 
 func (a *Adapter) Charge(order *domain.Order) error {
 	_, err := a.payment.Create(context.Background(), &paymentv1.CreateRequest{
-		UserId:     order.CustomerID,
+		CustomerId: order.CustomerID,
 		OrderId:    order.ID,
 		TotalPrice: order.TotalPrice(),
 	})

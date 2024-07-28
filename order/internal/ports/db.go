@@ -3,6 +3,6 @@ package ports
 import "github.com/Bookil/microservices/order/internal/application/core/domain"
 
 type DBPort interface {
-	Get(id string) (domain.Order, error)
-	Save(*domain.Order) error
+	Get(id domain.OrderID) (*domain.Order, error)
+	Save(*domain.Order) (*domain.Order, error)
 }

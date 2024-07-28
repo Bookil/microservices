@@ -22,13 +22,13 @@ func NewApplication(db ports.DBPort, paymentPort ports.PaymentPort) *Application
 	}
 }
 
-func (a Application) PlaceOrder(order domain.Order) (domain.Order, error) {
-	err := a.db.Save(&order)
+func (a Application) PlaceOrder(order *domain.Order) (*domain.Order, error) {
+	order, err := a.db.Save(order)
 	if err != nil {
-		return domain.Order{}, err
+		return nil, err
 	}
 
-	paymentErr := a.payment.Charge(&order)
+	paymentErr := a.payment.Charge(order)
 	if paymentErr != nil {
 		st := status.Convert(paymentErr)
 		var allErrors []string
@@ -48,7 +48,8 @@ func (a Application) PlaceOrder(order domain.Order) (domain.Order, error) {
 		badReq.FieldViolations = append(badReq.FieldViolations, fieldErr)
 		orderStatus := status.New(codes.InvalidArgument, "order creation failed")
 		statusWithDetails, _ := orderStatus.WithDetails(badReq)
-		return domain.Order{}, statusWithDetails.Err()
+		return nil, statusWithDetails.Err()
 	}
+
 	return order, nil
 }
