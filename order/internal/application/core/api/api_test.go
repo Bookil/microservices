@@ -28,6 +28,7 @@ func Test_Should_Place_Order(t *testing.T) {
 
 	assert.Nil(t, err)
 }
+
 func Test_Should_Return_Error_When_Db_Persistence_Fail(t *testing.T) {
 	payment := new(mocks.MockedPayment)
 	db := new(mocks.MockedDB)

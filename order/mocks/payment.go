@@ -13,4 +13,3 @@ func (p *MockedPayment) Charge(order *domain.Order) error {
 	args := p.Called(order)
 	return args.Error(0)
 }
-

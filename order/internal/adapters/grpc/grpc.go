@@ -5,6 +5,7 @@ import (
 
 	orderv1 "github.com/Bookil/Bookil-Proto/gen/golang/order/v1"
 	"github.com/Bookil/microservices/order/internal/application/core/domain"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (a Adapter) Create(ctx context.Context, request *orderv1.CreateRequest) (*orderv1.CreateResponse, error) {
@@ -40,7 +41,8 @@ func (a Adapter) Create(ctx context.Context, request *orderv1.CreateRequest) (*o
 	orderResponse := &orderv1.Order{
 		OrderId:    result.ID,
 		CustomerId: result.CustomerID,
-		CreatedAt:  result.CreatedAt,
+		CreatedAt:  timestamppb.New(result.CreatedAt),
+		UpdatedAt:  timestamppb.New(result.UpdatedAt),
 		TotalPrice: result.TotalPrice(),
 		Status:     result.Status,
 		Items:      orderItemResponse,

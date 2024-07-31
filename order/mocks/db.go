@@ -9,7 +9,7 @@ type MockedDB struct {
 	mock.Mock
 }
 
-func (d *MockedDB) Save(order *domain.Order) (*domain.Order,error){
+func (d *MockedDB) Save(order *domain.Order) (*domain.Order, error) {
 	args := d.Called(order)
 	return args.Get(0).(*domain.Order), args.Error(1)
 }

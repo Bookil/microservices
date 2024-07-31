@@ -27,31 +27,30 @@ type (
 		Quantity    uint32  `json:"quantity"`
 		CreatedAt   int64   `json:"created_at"`
 		UpdatedAt   int64   `json:"updated_at"`
+		OrderID     OrderID `json:"order_id" gorm:"type:varchar(191)"`
+	}
+	Order struct {
+		ID         OrderID      `json:"id" gorm:"type:varchar(191);not null"`
+		CustomerID CustomerID   `json:"customer_id" gorm:"type:varchar(191);not null"`
+		Status     Status       `json:"status" gorm:"not null"`
+		OrderItems []*OrderItem `json:"order_items" gorm:"foreignKey:OrderID"`
+		CreatedAt  time.Time    `json:"created_at" gorm:"not null"`
+		UpdatedAt  time.Time    `json:"updated_at" gorm:"not null"`
 	}
 )
-
-type Order struct {
-	ID         OrderID      `json:"id"`
-	CustomerID CustomerID   `json:"customer_id"`
-	Status     Status       `json:"status"`
-	OrderItems []*OrderItem `json:"order_items"`
-	CreatedAt  int64        `json:"created_at"`
-	UpdatedAt  int64        `json:"updated_at"`
-}
 
 func NewOrder(customerId CustomerID, orderItems []*OrderItem) *Order {
 	return &Order{
 		ID:         fmt.Sprintf("%d", random.GenerateUserID()),
-		CreatedAt:  time.Now().Unix(),
 		Status:     Pending,
 		CustomerID: customerId,
 		OrderItems: orderItems,
 	}
 }
 
-func (order *Order) BeforeUpdate() {
-	order.UpdatedAt = time.Now().Unix()
-}
+// func (order *Order) BeforeUpdate() {
+// 	order.UpdatedAt = time.Now().Unix()
+// }
 
 func (order *Order) TotalPrice() float32 {
 	var totalPrice float32
@@ -72,6 +71,6 @@ func NewOrderItem(name, productCode string, unitPrice float32, quantity uint32) 
 	}
 }
 
-func (item *OrderItem) BeforeUpdate() {
-	item.UpdatedAt = time.Now().Unix()
-}
+// func (item *OrderItem) BeforeUpdate() {
+// 	item.UpdatedAt = time.Now().Unix()
+// }
