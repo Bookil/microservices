@@ -6,7 +6,7 @@ server:
 
 mysql:
     host: "127.0.0.1"
-    username: "docker"
-    password: "docker"
+    username: "root"
+    password: "docker@!3A"
     port: 3306
-    db_name: "order"
+    db_name: "payment"
