@@ -26,7 +26,7 @@ type Adapter struct {
 }
 
 func generateURL(url *config.Mysql) string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", url.Username, url.Password, url.Host, url.Port, url.DBName)
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", url.Username, url.Password, url.Host, url.Port, url.DBName)
 }
 
 func NewAdapter(url *config.Mysql) (*Adapter, error) {
