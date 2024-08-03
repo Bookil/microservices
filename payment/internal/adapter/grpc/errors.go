@@ -5,6 +5,4 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var (
-	ErrFailedChargeCreditCard = status.Errorf(codes.Internal, "failed to change credit card")
-)
+var ErrFailedChargeCreditCard = status.Errorf(codes.Internal, "failed to change credit card")

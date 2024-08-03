@@ -8,8 +8,7 @@ import (
 )
 
 func (a Adapter) Create(ctx context.Context, request *paymentv1.CreateRequest) (*paymentv1.CreateResponse, error) {
-
-	newPayment := domain.NewPayment(int32(request.UserId), int32(request.OrderId),request.TotalPrice)
+	newPayment := domain.NewPayment(request.CustomerId, request.OrderId, request.TotalPrice)
 
 	_, err := a.api.Charge(newPayment)
 	if err != nil {
