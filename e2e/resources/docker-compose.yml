@@ -1,0 +1,48 @@
+version: "3.8"
+services:
+  mysql:
+    # networks:
+    #   - test_network
+    image: "mysql:latest"
+    container_name: mysql-e2e
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "docker@!3A"
+    volumes:
+      - "./init.sql:/docker-entrypoint-initdb.d/init.sql"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"]
+      interval: 90s  # Increased interval for testing
+      timeout: 25s
+      retries: 3
+    network_mode: host
+  payment:
+    # networks:
+    #   - test_network
+    restart: always
+    depends_on:
+      mysql: 
+        condition: service_healthy
+    build: ../../payment/
+    environment:
+      PAYMENT_ENV: test
+    network_mode: host
+
+  order:
+    # networks:
+    #   - test_network
+    restart: always
+    depends_on:
+      mysql: 
+        condition: service_healthy
+    build: ../../order/
+    ports:
+      - "8080:8080"
+    environment:
+      ORDER_ENV: "test"
+    network_mode: host
+
+# networks:
+#   test_network:
+#     driver: "host"
+#     name: "host"
