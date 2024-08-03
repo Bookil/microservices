@@ -68,6 +68,8 @@ func ConfigsDirPath() string {
 func Read() *Config {
 	env := strings.ToLower(os.Getenv("ORDER_ENV"))
 
+	log.Println("Env:", env)
+
 	if len(strings.TrimSpace(env)) == 0 || env == "development" {
 		CurrentEnv = Development
 		filename = "config.development.yml"
@@ -89,6 +91,6 @@ func Read() *Config {
 	if err := k.Unmarshal("", config); err != nil {
 		log.Fatalf("error unmarshaling config: %v", err)
 	}
-
+	log.Println("Config: ", config)
 	return config
 }

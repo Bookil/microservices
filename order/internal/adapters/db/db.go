@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/Bookil/microservices/order/config"
@@ -29,7 +30,11 @@ func NewAdapter(url *config.Mysql) (*Adapter, error) {
 	mutex.Lock()
 	defer mutex.Unlock()
 	if dbInc == nil {
-		db, openErr := gorm.Open(mysql.Open(generateURL(url)), &gorm.Config{})
+		genUrl := generateURL(url)
+
+		log.Println("URL:", genUrl)
+
+		db, openErr := gorm.Open(mysql.Open((genUrl)), &gorm.Config{})
 		if openErr != nil {
 			return nil, fmt.Errorf("db connection error: %v", openErr)
 		}
