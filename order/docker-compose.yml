@@ -6,6 +6,7 @@ services:
     restart: always
     container_name: mysql-container
     environment:
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: mysql
       MYSQL_PASSWORD: mysql
       MYSQL_DATABASE: order

@@ -59,7 +59,7 @@ func (a Adapter) Get(id string) (*domain.Order, error) {
 
 func (a Adapter) Save(order *domain.Order) (*domain.Order, error) {
 	res := a.db.Create(order)
-	if res.Error == nil {
+	if res.Error != nil {
 		return nil, res.Error
 	}
 
