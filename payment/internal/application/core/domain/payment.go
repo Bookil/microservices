@@ -1,20 +1,31 @@
 package domain
 
-import "time"
+import (
+	"fmt"
+	"time"
 
-type Payment struct {
-	ID         int64       
-	CreatedAt  int64
-	UserId     int32
-	OrderId    int32
-	TotalPrice float32
-}
+	"github.com/Bookil/Bookil-Microservices/payment/utils/random"
+)
 
-func NewPayment(userId, orderId int32, totalPrice float32) *Payment {
+type (
+	PaymentID  = string
+	OrderID    = string
+	CustomerID = string
+	Payment    struct {
+		ID         PaymentID  `gorm:"type:varchar(191);not null"`
+		CustomerID CustomerID `gorm:"type:varchar(191);not null"`
+		OrderID    OrderID    `gorm:"type:varchar(191);not null"`
+		TotalPrice float32    `gorm:"=not null"`
+		CreatedAt  time.Time
+		UpdatedAt  time.Time
+	}
+)
+
+func NewPayment(customerID CustomerID, orderID OrderID, totalPrice float32) *Payment {
 	return &Payment{
-		CreatedAt:  time.Now().Unix(),
-		UserId:     userId,
-		OrderId:    orderId,
+		ID:         fmt.Sprintf("%d", random.GenerateID()),
+		CustomerID: customerID,
+		OrderID:    orderID,
 		TotalPrice: totalPrice,
 	}
 }
