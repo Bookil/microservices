@@ -41,7 +41,7 @@ type (
 
 func NewOrder(customerId CustomerID, orderItems []*OrderItem) *Order {
 	return &Order{
-		ID:         fmt.Sprintf("%d", random.GenerateUserID()),
+		ID:         fmt.Sprintf("%d", random.GenerateID()),
 		Status:     Pending,
 		CustomerID: customerId,
 		OrderItems: orderItems,
@@ -62,7 +62,7 @@ func (order *Order) TotalPrice() float32 {
 
 func NewOrderItem(name, productCode string, unitPrice float32, quantity uint32) *OrderItem {
 	return &OrderItem{
-		ID:          fmt.Sprintf("%d", random.GenerateUserID()),
+		ID:          fmt.Sprintf("%d", random.GenerateID()),
 		Name:        name,
 		CreatedAt:   time.Now().Unix(),
 		ProductCode: productCode,

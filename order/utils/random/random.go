@@ -20,6 +20,6 @@ func generateRandomNumber(length int) int {
 	return number
 }
 
-func GenerateUserID() int {
+func GenerateID() int {
 	return generateRandomNumber(8)
 }
