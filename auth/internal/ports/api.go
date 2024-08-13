@@ -7,7 +7,7 @@ import (
 )
 
 type APIPort interface {
-	Register(userID domain.UserID, password string) (string, error)
+	Register(userID domain.UserID,email, password,verifyEmailRedirectUrl string) (string, error)
 	Authenticate(accessToken string) domain.UserID
 	VerifyEmail(verifyEmailToken string) error
 	Login(email, password string) (string, string, error)

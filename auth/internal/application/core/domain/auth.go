@@ -11,7 +11,7 @@ type Auth struct {
 	
 }
 
-func NewAuthDomain(userID UserID,hashedPassword string)*Auth{
+func NewAuth(userID UserID,hashedPassword string)*Auth{
 	return &Auth{
 		UserID: userID,
 		HashedPassword: hashedPassword,
