@@ -48,10 +48,9 @@ func NewAdapter(url *config.Mysql) (*Adapter, error) {
 	return dbInc, nil
 }
 
-func (a *Adapter) Create(auth *domain.Auth)error{
+func (a *Adapter) Create(auth *domain.Auth) error {
 	err := a.db.Create(auth).Error
-
-	if err != nil{
+	if err != nil {
 		return err
 	}
 

@@ -7,7 +7,7 @@ import (
 )
 
 type DBPort interface {
-	Create(auth *domain.Auth) (error)
+	Create(auth *domain.Auth) error
 	GetUserAuth(userID domain.UserID) (*domain.Auth, error)
 	ChangePassword(userID domain.UserID, passwordHash string) error
 	VerifyEmail(userID domain.UserID) error

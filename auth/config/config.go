@@ -31,9 +31,9 @@ var (
 
 type (
 	Config struct {
-		ServiceName        string         `koanf:"service_name"`
-		Mysql          Mysql          `koanf:"mysql"`
-		Server         Server         `koanf:"server"`
+		ServiceName string `koanf:"service_name"`
+		Mysql       Mysql  `koanf:"mysql"`
+		Server      Server `koanf:"server"`
 	}
 
 	Server struct {
