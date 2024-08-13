@@ -1,0 +1,17 @@
+service_name: "order"
+
+server:
+    host: "127.0.0.1"
+    port: 8080
+
+mysql:
+    host: "127.0.0.1"
+    username: root
+    password: "docker@!3A"
+    port: 3306
+    db_name: "order"
+    
+
+payment_service:
+    host: "127.0.0.1"
+    port: 8081

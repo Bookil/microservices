@@ -3,8 +3,16 @@ module github.com/Bookil/microservices/auth
 go 1.22.5
 
 require (
+	github.com/knadh/koanf v1.5.0
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.26.0
+)
+
+require (
+	github.com/fsnotify/fsnotify v1.4.9 // indirect
+	github.com/mitchellh/copystructure v1.2.0 // indirect
+	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 )
 
 require (

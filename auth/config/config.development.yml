@@ -1,0 +1,12 @@
+service_name: "auth"
+
+server:
+    host: "127.0.0.1"
+    port: 3003
+
+mysql:
+    host: "127.0.0.1"
+    username: "mysql"
+    password: "mysql"
+    port: 3306
+    db_name: "auth"
