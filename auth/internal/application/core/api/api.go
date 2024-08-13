@@ -35,7 +35,7 @@ func (a *Application) Register(userID domain.UserID,email,password,verifyEmailRe
 
         auth := domain.NewAuth(userID, passwordHash)
 
-        _, err = a.db.Create(auth)
+        err = a.db.Create(auth)
         if err != nil {
                 return "", ErrCreateAuthStore
         }
@@ -55,7 +55,7 @@ func (a *Application) Register(userID domain.UserID,email,password,verifyEmailRe
                 return "", ErrCreateEmailToken
         }
 
-    	err = a.email.SendVerificationEmail(email, verifyEmailRedirectUrl, verifyEmailToken)
+        err = a.email.SendVerificationEmail(email, verifyEmailRedirectUrl, verifyEmailToken)
 
 		//TODO:error handling
 		if err != nil {
