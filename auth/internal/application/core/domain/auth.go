@@ -7,7 +7,7 @@ type Auth struct {
 	HashedPassword      string
 	FailedLoginAttempts int
 	AccountLockedUntil  int64
-	EmailVerified       bool
+	IsEmailVerified     bool
 }
 
 func NewAuth(userID UserID, hashedPassword string) *Auth {
