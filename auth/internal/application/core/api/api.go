@@ -90,7 +90,7 @@ func (a *Application) VerifyEmail(ctx context.Context, verifyEmailToken string) 
 		return ErrAccessDenied
 	}
 
-	err = a.db.VerifyEmail(ctx, tokenClaims.UUID)
+	_, err = a.db.VerifyEmail(ctx, tokenClaims.UUID)
 	if err != nil {
 		return ErrVerifyEmail
 	}
@@ -118,7 +118,7 @@ func (a *Application) Login(ctx context.Context, userId domain.UserID, password 
 	}
 
 	if auth.FailedLoginAttempts >= MaximumFailedLoginAttempts {
-		err := a.db.LockAccount(ctx, userId, LockAccountDuration)
+		_, err := a.db.LockAccount(ctx, userId, LockAccountDuration)
 		if err != nil {
 			return "", "", ErrLockAccount
 		}
@@ -127,7 +127,7 @@ func (a *Application) Login(ctx context.Context, userId domain.UserID, password 
 
 	isPasswordValid := a.hashManager.CheckPasswordHash(password, auth.HashedPassword)
 	if !isPasswordValid {
-		err := a.db.IncrementFailedLoginAttempts(ctx, userId)
+		_, err := a.db.IncrementFailedLoginAttempts(ctx, userId)
 		if err != nil {
 			return "", "", ErrIncrementFailedLoginAttempts
 		}
@@ -148,7 +148,7 @@ func (a *Application) Login(ctx context.Context, userId domain.UserID, password 
 		return "", "", ErrGenerateToken
 	}
 
-	err = a.db.ClearFailedLoginAttempts(ctx, auth.UserID)
+	_, err = a.db.ClearFailedLoginAttempts(ctx, auth.UserID)
 	if err != nil {
 		return "", "", ErrClearFailedLoginAttempts
 	}
@@ -171,7 +171,7 @@ func (a *Application) ChangePassword(ctx context.Context, userID domain.UserID, 
 		return ErrHashingPassword
 	}
 
-	err = a.db.ChangePassword(ctx, userID, newHashedPassword)
+	_, err = a.db.ChangePassword(ctx, userID, newHashedPassword)
 	if err != nil {
 		return ErrChangePassword
 	}
@@ -235,7 +235,7 @@ func (a *Application) SubmitResetPassword(ctx context.Context, resetPasswordToke
 		return ErrHashingPassword
 	}
 
-	err = a.db.ChangePassword(ctx, payload.UUID, hashedPassword)
+	_, err = a.db.ChangePassword(ctx, payload.UUID, hashedPassword)
 	if err != nil {
 		return ErrChangePassword
 	}

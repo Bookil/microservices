@@ -9,7 +9,6 @@ import (
 
 	"github.com/Bookil/microservices/auth/config"
 	"github.com/Bookil/microservices/auth/internal/application/core/domain"
-	"github.com/Bookil/microservices/auth/internal/ports"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -51,10 +50,6 @@ func NewAdapter(url *config.Mysql) (*Adapter, error) {
 	return dbInc, nil
 }
 
-func NewDB(db *gorm.DB) ports.DBPort {
-	return &Adapter{db: db}
-}
-
 func (a *Adapter) Create(ctx context.Context, auth *domain.Auth) error {
 	err := a.db.WithContext(ctx).Create(auth).Error
 	if err != nil {
@@ -75,100 +70,100 @@ func (a *Adapter) GetByID(ctx context.Context, userID domain.UserID) (*domain.Au
 	return auth, nil
 }
 
-func (a *Adapter) ChangePassword(ctx context.Context, userID domain.UserID, hashedPassword string) error {
+func (a *Adapter) ChangePassword(ctx context.Context, userID domain.UserID, hashedPassword string) (*domain.Auth, error) {
 	auth, err := a.GetByID(ctx, userID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	auth.HashedPassword = hashedPassword
 
-	err = a.Save(ctx, auth)
+	savedAuth, err := a.Save(ctx, auth)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return savedAuth, nil
 }
 
-func (a *Adapter) ClearFailedLoginAttempts(ctx context.Context, userID domain.UserID) error {
+func (a *Adapter) ClearFailedLoginAttempts(ctx context.Context, userID domain.UserID) (*domain.Auth, error) {
 	auth, err := a.GetByID(ctx, userID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	auth.FailedLoginAttempts = 0
 
-	err = a.Save(ctx, auth)
+	savedAuth, err := a.Save(ctx, auth)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return savedAuth, nil
 }
 
-func (a *Adapter) LockAccount(ctx context.Context, userID domain.UserID, lockDuration time.Duration) error {
+func (a *Adapter) LockAccount(ctx context.Context, userID domain.UserID, lockDuration time.Duration) (*domain.Auth, error) {
 	auth, err := a.GetByID(ctx, userID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	auth.AccountLockedUntil = time.Now().Add(lockDuration).Unix()
 
-	err = a.Save(ctx, auth)
+	savedAuth, err := a.Save(ctx, auth)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return savedAuth, nil
 }
 
-func (a *Adapter) UnlockAccount(ctx context.Context, userID domain.UserID) error {
+func (a *Adapter) UnlockAccount(ctx context.Context, userID domain.UserID) (*domain.Auth, error) {
 	auth, err := a.GetByID(ctx, userID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	auth.AccountLockedUntil = 0
 
-	err = a.Save(ctx, auth)
+	savedAuth, err := a.Save(ctx, auth)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return savedAuth, err
 }
 
-func (a *Adapter) IncrementFailedLoginAttempts(ctx context.Context, userID domain.UserID) error {
+func (a *Adapter) IncrementFailedLoginAttempts(ctx context.Context, userID domain.UserID) (*domain.Auth, error) {
 	auth, err := a.GetByID(ctx, userID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	auth.FailedLoginAttempts++
 
-	err = a.Save(ctx, auth)
+	savedAuth, err := a.Save(ctx, auth)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return savedAuth, err
 }
 
-func (a *Adapter) VerifyEmail(ctx context.Context, userID domain.UserID) error {
+func (a *Adapter) VerifyEmail(ctx context.Context, userID domain.UserID) (*domain.Auth, error) {
 	auth, err := a.GetByID(ctx, userID)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	auth.IsEmailVerified = true
 
-	err = a.db.Save(auth).Error
+	savedAuth, err := a.Save(ctx, auth)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return savedAuth, nil
 }
 
 func (a *Adapter) DeleteByID(ctx context.Context, userID domain.UserID) error {
@@ -185,11 +180,11 @@ func (a *Adapter) DeleteByID(ctx context.Context, userID domain.UserID) error {
 	return nil
 }
 
-func (a *Adapter) Save(ctx context.Context, auth *domain.Auth) error {
+func (a *Adapter) Save(ctx context.Context, auth *domain.Auth) (*domain.Auth, error) {
 	err := a.db.WithContext(ctx).Save(auth).Error
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return auth, nil
 }
