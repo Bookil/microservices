@@ -167,12 +167,7 @@ func (a *Adapter) VerifyEmail(ctx context.Context, userID domain.UserID) (*domai
 }
 
 func (a *Adapter) DeleteByID(ctx context.Context, userID domain.UserID) error {
-	auth, err := a.GetByID(ctx, userID)
-	if err != nil {
-		return err
-	}
-
-	err = a.db.WithContext(ctx).Delete(auth).Error
+	err := a.db.WithContext(ctx).Where("user_id = ?", userID).Delete(&domain.Auth{}).Error
 	if err != nil {
 		return err
 	}
@@ -181,7 +176,7 @@ func (a *Adapter) DeleteByID(ctx context.Context, userID domain.UserID) error {
 }
 
 func (a *Adapter) Save(ctx context.Context, auth *domain.Auth) (*domain.Auth, error) {
-	err := a.db.WithContext(ctx).Save(auth).Error
+	err := a.db.WithContext(ctx).Where("user_id = ?", auth.UserID).Save(auth).Error
 	if err != nil {
 		return nil, err
 	}

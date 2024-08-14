@@ -25,12 +25,12 @@ type AuthDatabaseTestSuite struct {
 	auth    *domain.Auth
 }
 
-func TestOrderDatabaseTestSuite(t *testing.T) {
+func TestOAuthDatabaseTestSuite(t *testing.T) {
 	suite.Run(t, new(AuthDatabaseTestSuite))
 }
 
 func (o *AuthDatabaseTestSuite) SetupSuite() {
-	ctx := context.Background()
+	ctx := context.TODO()
 
 	err := os.Setenv("AUTH_ENV", "test")
 	if err != nil {
@@ -81,8 +81,8 @@ func (o *AuthDatabaseTestSuite) SetupSuite() {
 	o.adapter = adapter
 }
 
-func (o *AuthDatabaseTestSuite) TestShouldCreateAuth() {
-	ctx := context.Background()
+func (o *AuthDatabaseTestSuite) TestA_ShouldCreateAuth() {
+	ctx := context.TODO()
 
 	auth := domain.NewAuth("123456", "$^&fullyHashedPassword12$")
 
@@ -93,8 +93,8 @@ func (o *AuthDatabaseTestSuite) TestShouldCreateAuth() {
 	o.auth = auth
 }
 
-func (o *AuthDatabaseTestSuite) TestShouldGetAuth() {
-	ctx := context.Background()
+func (o *AuthDatabaseTestSuite) TestB_ShouldGetAuth() {
+	ctx := context.TODO()
 
 	auth, err := o.adapter.GetByID(ctx, o.auth.UserID)
 
@@ -103,8 +103,8 @@ func (o *AuthDatabaseTestSuite) TestShouldGetAuth() {
 	o.Equal(o.auth.HashedPassword, auth.HashedPassword)
 }
 
-func (o *AuthDatabaseTestSuite) TestShouldVerifyEmail() {
-	ctx := context.Background()
+func (o *AuthDatabaseTestSuite) TestC_ShouldVerifyEmail() {
+	ctx := context.TODO()
 
 	savedAuth, err := o.adapter.VerifyEmail(ctx, o.auth.UserID)
 
@@ -116,8 +116,8 @@ func (o *AuthDatabaseTestSuite) TestShouldVerifyEmail() {
 	o.auth.IsEmailVerified = savedAuth.IsEmailVerified
 }
 
-func (o *AuthDatabaseTestSuite) TestShouldChangePassword() {
-	ctx := context.Background()
+func (o *AuthDatabaseTestSuite) TestD_ShouldChangePassword() {
+	ctx := context.TODO()
 
 	savedAuth, err := o.adapter.ChangePassword(ctx, o.auth.UserID, "newFullyHashedPassword@w!##@#")
 
@@ -128,8 +128,8 @@ func (o *AuthDatabaseTestSuite) TestShouldChangePassword() {
 	o.auth.HashedPassword = savedAuth.HashedPassword
 }
 
-func (o *AuthDatabaseTestSuite) TestShouldIncrementFailedLoginAttempts() {
-	ctx := context.Background()
+func (o *AuthDatabaseTestSuite) TestE_ShouldIncrementFailedLoginAttempts() {
+	ctx := context.TODO()
 
 	savedAuth, err := o.adapter.IncrementFailedLoginAttempts(ctx, o.auth.UserID)
 
@@ -140,8 +140,8 @@ func (o *AuthDatabaseTestSuite) TestShouldIncrementFailedLoginAttempts() {
 	o.auth.FailedLoginAttempts = savedAuth.FailedLoginAttempts
 }
 
-func (o *AuthDatabaseTestSuite) TestShouldClearFailedLoginAttempts() {
-	ctx := context.Background()
+func (o *AuthDatabaseTestSuite) TestF_ShouldClearFailedLoginAttempts() {
+	ctx := context.TODO()
 
 	savedAuth, err := o.adapter.ClearFailedLoginAttempts(ctx, o.auth.UserID)
 
@@ -152,8 +152,8 @@ func (o *AuthDatabaseTestSuite) TestShouldClearFailedLoginAttempts() {
 	o.auth.FailedLoginAttempts = savedAuth.FailedLoginAttempts
 }
 
-func (o *AuthDatabaseTestSuite) TestShouldLockAccount() {
-	ctx := context.Background()
+func (o *AuthDatabaseTestSuite) TestG_ShouldLockAccount() {
+	ctx := context.TODO()
 
 	savedAuth, err := o.adapter.LockAccount(ctx, o.auth.UserID, 5*time.Minute)
 
@@ -164,8 +164,8 @@ func (o *AuthDatabaseTestSuite) TestShouldLockAccount() {
 	o.auth.AccountLockedUntil = savedAuth.AccountLockedUntil
 }
 
-func (o *AuthDatabaseTestSuite) TestShouldUnLockAccount() {
-	ctx := context.Background()
+func (o *AuthDatabaseTestSuite) TestH_ShouldUnLockAccount() {
+	ctx := context.TODO()
 
 	savedAuth, err := o.adapter.UnlockAccount(ctx, o.auth.UserID)
 
@@ -176,8 +176,8 @@ func (o *AuthDatabaseTestSuite) TestShouldUnLockAccount() {
 	o.auth.AccountLockedUntil = savedAuth.AccountLockedUntil
 }
 
-func (o *AuthDatabaseTestSuite) TestShouldDeleteAuth() {
-	ctx := context.Background()
+func (o *AuthDatabaseTestSuite) TestI_ShouldDeleteAuth() {
+	ctx := context.TODO()
 
 	err := o.adapter.DeleteByID(ctx, o.auth.UserID)
 
