@@ -8,6 +8,10 @@ import (
 
 type Adapter struct{}
 
+func NewAdapter()*Adapter{
+	return &Adapter{}
+}
+
 func (a *Adapter)SendVerificationEmail(email, verifyEmailRedirectUrl, verifyEmailToken string) error{
 	if config.CurrentEnv == config.Development || config.CurrentEnv == config.Test{
 		sendEmailTestingAndDevelopment()
@@ -16,6 +20,8 @@ func (a *Adapter)SendVerificationEmail(email, verifyEmailRedirectUrl, verifyEmai
 
 	panic("unimplemented")
 }
+
+
 
 func sendEmailTestingAndDevelopment(){
 	log.Println("Email sent")
