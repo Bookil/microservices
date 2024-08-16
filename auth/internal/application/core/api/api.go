@@ -27,7 +27,7 @@ const (
 	MaximumFailedLoginAttempts = 3
 )
 
-func NewApi(db ports.DBPort, email ports.EmailPort, authManager auth_manager.AuthManager, hashManager *hash.HashManager) ports.APIPort {
+func NewApplication(db ports.DBPort, email ports.EmailPort, authManager auth_manager.AuthManager, hashManager *hash.HashManager) ports.APIPort {
 	return &Application{
 		db:          db,
 		email:       email,
