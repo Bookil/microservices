@@ -10,3 +10,10 @@ mysql:
     password: "mysql"
     port: 3306
     db_name: "auth"
+
+redis:
+    host: "127.0.0.1"
+    username: "redis"
+    password:
+    port: 6379
+    db: 0

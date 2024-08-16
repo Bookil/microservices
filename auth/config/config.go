@@ -34,6 +34,7 @@ type (
 		ServiceName string `koanf:"service_name"`
 		Mysql       Mysql  `koanf:"mysql"`
 		Server      Server `koanf:"server"`
+		Redis Redis `koanf:"redis"`
 	}
 
 	Server struct {
@@ -47,6 +48,14 @@ type (
 		Password string `koanf:"password"`
 		Port     int    `koanf:"port"`
 		DBName   string `koanf:"db_name"`
+	}
+
+	Redis struct{
+		Host     string `koanf:"host"`
+		Username string `koanf:"username"`
+		Password string `koanf:"password"`
+		Port     int    `koanf:"port"`
+		DB   string `koanf:"db"`
 	}
 )
 
@@ -79,7 +88,7 @@ func Read() *Config {
 
 	k := koanf.New(ConfigsDirPath())
 	if err := k.Load(file.Provider(fmt.Sprintf("%s/%s", ConfigsDirPath(), filename)), yaml.Parser()); err != nil {
-		log.Fatalf("error loading config: %v", err)
+		panic(fmt.Errorf("error loading config: %v", err))
 	}
 	config := &Config{}
 	if err := k.Unmarshal("", config); err != nil {
