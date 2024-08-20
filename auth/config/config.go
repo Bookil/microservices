@@ -55,7 +55,7 @@ type (
 		Username string `koanf:"username"`
 		Password string `koanf:"password"`
 		Port     int    `koanf:"port"`
-		DB       string `koanf:"db"`
+		DB       int    `koanf:"db"`
 	}
 )
 
