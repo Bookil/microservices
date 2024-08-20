@@ -1,15 +1,12 @@
-package db
+package mysql_adapter
 
 import (
 	"context"
-	"fmt"
-	"log"
-	"sync"
 	"time"
 
 	"github.com/Bookil/microservices/auth/config"
+	"github.com/Bookil/microservices/auth/internal/adapters/db"
 	"github.com/Bookil/microservices/auth/internal/application/core/domain"
-	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
@@ -19,35 +16,15 @@ type (
 	}
 )
 
-var (
-	dbInc *Adapter
-	mutex = new(sync.Mutex)
-)
-
-func generateURL(url *config.Mysql) string {
-	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", url.Username, url.Password, url.Host, url.Port, url.DBName)
-}
-
-func NewAdapter(url *config.Mysql) (*Adapter, error) {
-	mutex.Lock()
-	defer mutex.Unlock()
-	if dbInc == nil {
-		genUrl := generateURL(url)
-
-		log.Println("URL:", genUrl)
-
-		db, openErr := gorm.Open(mysql.Open((genUrl)), &gorm.Config{})
-		if openErr != nil {
-			return nil, fmt.Errorf("db connection error: %v", openErr)
-		}
-
-		err := db.AutoMigrate(&domain.Auth{})
-		if err != nil {
-			return nil, fmt.Errorf("db migration error: %v", err)
-		}
-		dbInc = &Adapter{db: db}
+func NewAdapter(config *config.Mysql) (*Adapter, error) {
+	db, err := db.NewDB(config)
+	if err != nil {
+		return nil, err
 	}
-	return dbInc, nil
+
+	return &Adapter{
+		db: db,
+	}, nil
 }
 
 func (a *Adapter) Create(ctx context.Context, auth *domain.Auth) (*domain.Auth, error) {

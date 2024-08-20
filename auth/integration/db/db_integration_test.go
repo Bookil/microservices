@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/Bookil/microservices/auth/config"
-	"github.com/Bookil/microservices/auth/internal/adapters/db"
+	adapter "github.com/Bookil/microservices/auth/internal/adapters/db/mysql_adapter"
 	"github.com/Bookil/microservices/auth/internal/application/core/domain"
 	"github.com/docker/go-connections/nat"
 	"github.com/stretchr/testify/suite"
@@ -21,7 +21,7 @@ import (
 
 type AuthDatabaseTestSuite struct {
 	suite.Suite
-	adapter *db.Adapter
+	adapter *adapter.Adapter
 	auth    *domain.Auth
 }
 
@@ -73,7 +73,7 @@ func (o *AuthDatabaseTestSuite) SetupSuite() {
 
 	mysqlConfig.Port = endPort
 
-	adapter, err := db.NewAdapter(mysqlConfig)
+	adapter, err := adapter.NewAdapter(mysqlConfig)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -1,4 +1,4 @@
-package db
+package mysql_adapter
 
 import "errors"
 
