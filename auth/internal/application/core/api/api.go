@@ -44,7 +44,7 @@ func (a *Application) Register(ctx context.Context, userID domain.UserID, email,
 
 	auth := domain.NewAuth(userID, hashedPassword)
 
-	err = a.db.Create(ctx, auth)
+	_,err = a.db.Create(ctx, auth)
 	if err != nil {
 		return "", ErrCreateAuthStore
 	}
