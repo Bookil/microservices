@@ -162,7 +162,7 @@ func (a *Application) ChangePassword(ctx context.Context, userID domain.UserID, 
 	}
 
 	isPasswordValid := a.hashManager.CheckPasswordHash(oldPassword, auth.HashedPassword)
-	if isPasswordValid {
+	if !isPasswordValid {
 		return ErrInvalidPassword
 	}
 
