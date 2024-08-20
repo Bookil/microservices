@@ -5,6 +5,9 @@ lint:
 fmt:
 	gofumpt -l -w .
 
+unit_test:
+	go test -coverprofile=coverage.out $(shell go list ./... | grep -v /integration)
+
 integration_test:
 	go test -coverprofile=coverage.out -coverpkg ./internal/adapters/db/mysql_adapter/... ./integration/db
 
