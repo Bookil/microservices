@@ -35,6 +35,7 @@ type (
 		Mysql       Mysql  `koanf:"mysql"`
 		Server      Server `koanf:"server"`
 		Redis       Redis  `koanf:"redis"`
+		JWT JWT 
 	}
 
 	Server struct {
@@ -56,6 +57,10 @@ type (
 		Password string `koanf:"password"`
 		Port     int    `koanf:"port"`
 		DB       int    `koanf:"db"`
+	}
+
+	JWT struct{
+		SecretKey string
 	}
 )
 
@@ -94,6 +99,14 @@ func Read() *Config {
 	if err := k.Unmarshal("", config); err != nil {
 		log.Fatalf("error unmarshaling config: %v", err)
 	}
+
+	secretData, secretErr := os.ReadFile(ConfigsDirPath() + "/jwt_secret.pem")
+	if secretErr != nil {
+		panic(secretErr)
+	}
+
+	config.JWT.SecretKey = strings.TrimSpace(string(secretData))
+
 	log.Println("Config: ", config)
 	return config
 }
