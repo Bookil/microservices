@@ -4,10 +4,10 @@ type UserID = string
 
 type Auth struct {
 	UserID              UserID `gorm:"unique"`
-	HashedPassword      string 
-	FailedLoginAttempts int 
-	AccountLockedUntil  int64 
-	IsEmailVerified     bool 
+	HashedPassword      string
+	FailedLoginAttempts int
+	AccountLockedUntil  int64
+	IsEmailVerified     bool
 }
 
 func NewAuth(userID UserID, hashedPassword string) *Auth {

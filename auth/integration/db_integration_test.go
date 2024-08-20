@@ -104,14 +104,6 @@ func (o *AuthDatabaseTestSuite) TestA_ShouldCreateAuth() {
 			o.Nil(auth)
 		}
 	}
-
-	// auth := domain.NewAuth("123456", "$^&fullyHashedPassword12$")
-
-	// err := o.adapter.Create(ctx, auth)
-
-	// o.Nil(err)
-
-	// o.auth = auth
 }
 
 func (o *AuthDatabaseTestSuite) TestB_ShouldGetAuth() {
@@ -174,12 +166,6 @@ func (o *AuthDatabaseTestSuite) TestC_ShouldVerifyEmail() {
 			o.Nil(auth)
 		}
 	}
-	// auth, err := o.adapter.VerifyEmail(ctx, o.auth.UserID)
-
-	// o.Nil(err)
-	// o.Equal(savedAuth.UserID, o.auth.UserID)
-
-	// o.auth.IsEmailVerified = savedAuth.IsEmailVerified
 }
 
 func (o *AuthDatabaseTestSuite) TestD_ShouldChangePassword() {
@@ -213,11 +199,6 @@ func (o *AuthDatabaseTestSuite) TestD_ShouldChangePassword() {
 			o.Nil(auth)
 		}
 	}
-
-	// o.Nil(err)
-	// o.Equal(o.auth.UserID, savedAuth.UserID)
-	// o.NotEqual(o.auth.HashedPassword, savedAuth.HashedPassword)
-
 }
 
 func (o *AuthDatabaseTestSuite) TestE_ShouldIncrementFailedLoginAttempts() {
@@ -250,13 +231,6 @@ func (o *AuthDatabaseTestSuite) TestE_ShouldIncrementFailedLoginAttempts() {
 			o.Nil(auth)
 		}
 	}
-	// savedAuth, err := o.adapter.IncrementFailedLoginAttempts(ctx, o.auth.UserID)
-
-	// o.Nil(err)
-	// o.Equal(o.auth.UserID, savedAuth.UserID)
-	// o.NotEqual(o.auth.FailedLoginAttempts, savedAuth.FailedLoginAttempts)
-
-	// o.auth.FailedLoginAttempts = savedAuth.FailedLoginAttempts
 }
 
 func (o *AuthDatabaseTestSuite) TestF_ShouldClearFailedLoginAttempts() {
@@ -289,14 +263,6 @@ func (o *AuthDatabaseTestSuite) TestF_ShouldClearFailedLoginAttempts() {
 			o.Nil(auth)
 		}
 	}
-
-	// savedAuth, err := o.adapter.ClearFailedLoginAttempts(ctx, o.auth.UserID)
-
-	// o.Nil(err)
-	// o.Equal(o.auth.UserID, savedAuth.UserID)
-	// o.NotEqual(o.auth.FailedLoginAttempts, savedAuth.FailedLoginAttempts)
-
-	// o.auth.FailedLoginAttempts = savedAuth.FailedLoginAttempts
 }
 
 func (o *AuthDatabaseTestSuite) TestG_ShouldLockAccount() {
@@ -329,14 +295,6 @@ func (o *AuthDatabaseTestSuite) TestG_ShouldLockAccount() {
 			o.Nil(auth)
 		}
 	}
-
-	// savedAuth, err := o.adapter.LockAccount(ctx, o.auth.UserID, 5*time.Minute)
-
-	// o.Nil(err)
-	// o.Equal(o.auth.UserID, savedAuth.UserID)
-	// o.NotEqual(o.auth.AccountLockedUntil, savedAuth.AccountLockedUntil)
-
-	// o.auth.AccountLockedUntil = savedAuth.AccountLockedUntil
 }
 
 func (o *AuthDatabaseTestSuite) TestH_ShouldUnLockAccount() {
@@ -369,14 +327,6 @@ func (o *AuthDatabaseTestSuite) TestH_ShouldUnLockAccount() {
 			o.Nil(auth)
 		}
 	}
-
-	// savedAuth, err := o.adapter.UnlockAccount(ctx, o.auth.UserID)
-
-	// o.Nil(err)
-	// o.Equal(o.auth.UserID, savedAuth.UserID)
-	// o.NotEqual(o.auth.AccountLockedUntil, savedAuth.AccountLockedUntil)
-
-	// o.auth.AccountLockedUntil = savedAuth.AccountLockedUntil
 }
 
 func (o *AuthDatabaseTestSuite) TestI_ShouldDeleteAuth() {
@@ -404,8 +354,4 @@ func (o *AuthDatabaseTestSuite) TestI_ShouldDeleteAuth() {
 			o.Error(err)
 		}
 	}
-
-	// err := o.adapter.DeleteByID(ctx, o.auth.UserID)
-
-	// o.Nil(err)
 }

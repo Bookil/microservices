@@ -19,6 +19,7 @@ func TestDevelopmentConfig(t *testing.T) {
 	require.NotEmpty(t, configs)
 	require.Equal(t, CurrentEnv, Development)
 }
+
 func TestTestConfig(t *testing.T) {
 	os.Setenv("AUTH_ENV", "test")
 
@@ -33,7 +34,7 @@ func TestProductionConfig(t *testing.T) {
 	defer func() {
 		r := recover()
 		if r == nil {
-			require.Fail(t,"should fatal")
+			require.Fail(t, "should fatal")
 		}
 	}()
 
@@ -46,7 +47,7 @@ func TestInvalidEnv(t *testing.T) {
 	defer func() {
 		r := recover()
 		if r == nil {
-			require.Fail(t,"should panic")
+			require.Fail(t, "should panic")
 		}
 	}()
 

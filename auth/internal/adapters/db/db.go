@@ -50,24 +50,24 @@ func NewAdapter(url *config.Mysql) (*Adapter, error) {
 	return dbInc, nil
 }
 
-func (a *Adapter) Create(ctx context.Context, auth *domain.Auth)( *domain.Auth,error ){
+func (a *Adapter) Create(ctx context.Context, auth *domain.Auth) (*domain.Auth, error) {
 	err := a.db.WithContext(ctx).Create(auth).Error
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
-	return auth,err
+	return auth, err
 }
 
 func (a *Adapter) GetByID(ctx context.Context, userID domain.UserID) (*domain.Auth, error) {
 	auth := &domain.Auth{}
 
 	err := a.db.WithContext(ctx).Where("user_id = ?", userID).Find(auth).Error
-	
-	if auth.UserID == ""{
-		return nil,ErrUserNotFound
+
+	if auth.UserID == "" {
+		return nil, ErrUserNotFound
 	}
-	
+
 	if err != nil {
 		return nil, err
 	}
@@ -172,8 +172,8 @@ func (a *Adapter) VerifyEmail(ctx context.Context, userID domain.UserID) (*domai
 }
 
 func (a *Adapter) DeleteByID(ctx context.Context, userID domain.UserID) error {
-	auth,err := a.GetByID(ctx,userID)
-	if err != nil{
+	auth, err := a.GetByID(ctx, userID)
+	if err != nil {
 		return err
 	}
 

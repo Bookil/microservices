@@ -8,12 +8,12 @@ import (
 
 type Adapter struct{}
 
-func NewAdapter()*Adapter{
+func NewAdapter() *Adapter {
 	return &Adapter{}
 }
 
-func (a *Adapter)SendVerificationEmail(email, verifyEmailRedirectUrl, verifyEmailToken string) error{
-	if config.CurrentEnv == config.Development || config.CurrentEnv == config.Test{
+func (a *Adapter) SendVerificationEmail(email, verifyEmailRedirectUrl, verifyEmailToken string) error {
+	if config.CurrentEnv == config.Development || config.CurrentEnv == config.Test {
 		sendEmailTestingAndDevelopment()
 		return nil
 	}
@@ -21,8 +21,6 @@ func (a *Adapter)SendVerificationEmail(email, verifyEmailRedirectUrl, verifyEmai
 	panic("unimplemented")
 }
 
-
-
-func sendEmailTestingAndDevelopment(){
+func sendEmailTestingAndDevelopment() {
 	log.Println("Email sent")
 }

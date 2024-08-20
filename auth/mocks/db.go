@@ -43,11 +43,11 @@ func (d *MockedDB) ClearFailedLoginAttempts(ctx context.Context, userID domain.U
 }
 
 func (d *MockedDB) LockAccount(ctx context.Context, userID domain.UserID, lockDuration time.Duration) (*domain.Auth, error) {
-	args := d.Called(userID,lockDuration)
+	args := d.Called(userID, lockDuration)
 	return args.Get(0).(*domain.Auth), args.Error(1)
 }
 
-func (d *MockedDB) UnlockAccount(ctx context.Context, userID domain.UserID) (*domain.Auth, error){
+func (d *MockedDB) UnlockAccount(ctx context.Context, userID domain.UserID) (*domain.Auth, error) {
 	args := d.Called(userID)
 	return args.Get(0).(*domain.Auth), args.Error(1)
 }
@@ -57,7 +57,7 @@ func (d *MockedDB) DeleteByID(ctx context.Context, userID domain.UserID) error {
 	return args.Error(1)
 }
 
-func (d *MockedDB) Save(ctx context.Context, auth *domain.Auth) (*domain.Auth, error){
+func (d *MockedDB) Save(ctx context.Context, auth *domain.Auth) (*domain.Auth, error) {
 	args := d.Called(auth)
 	return args.Get(0).(*domain.Auth), args.Error(1)
 }

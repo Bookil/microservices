@@ -34,7 +34,7 @@ type (
 		ServiceName string `koanf:"service_name"`
 		Mysql       Mysql  `koanf:"mysql"`
 		Server      Server `koanf:"server"`
-		Redis Redis `koanf:"redis"`
+		Redis       Redis  `koanf:"redis"`
 	}
 
 	Server struct {
@@ -50,12 +50,12 @@ type (
 		DBName   string `koanf:"db_name"`
 	}
 
-	Redis struct{
+	Redis struct {
 		Host     string `koanf:"host"`
 		Username string `koanf:"username"`
 		Password string `koanf:"password"`
 		Port     int    `koanf:"port"`
-		DB   string `koanf:"db"`
+		DB       string `koanf:"db"`
 	}
 )
 
