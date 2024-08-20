@@ -1,0 +1,29 @@
+version: '3.30'
+
+services:
+  mysql:
+    networks:
+      - default_network
+    image: mysql:latest
+    restart: always
+    container_name: mysql-auth-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+      MYSQL_DATABASE: auth
+    ports:
+      - "3306:3306"
+
+  redis:
+    networks:
+      - default_network
+    image: redis:latest
+    restart: always
+    container_name: redis-auth-container
+    ports:
+      - "6379:6379"
+networks:
+  default_network:
+    driver: "bridge"
+    name: "auth_default_network"
