@@ -4,6 +4,7 @@ go 1.22.5
 
 require (
 	github.com/docker/go-connections v0.5.0
+	github.com/go-redis/redis/v8 v8.11.5
 	github.com/knadh/koanf v1.5.0
 	github.com/stretchr/testify v1.9.0
 	github.com/tahadostifam/go-auth-manager v1.0.4
@@ -40,7 +41,6 @@ require (
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
-	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
