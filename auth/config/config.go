@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync"
 
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/yaml"
@@ -25,8 +26,10 @@ const (
 )
 
 var (
-	CurrentEnv Env = Development
-	filename   string
+	CurrentEnv     Env = Development
+	filename       string
+	mu             = &sync.Mutex{}
+	configInstance *Config
 )
 
 type (
@@ -35,7 +38,7 @@ type (
 		Mysql       Mysql  `koanf:"mysql"`
 		Server      Server `koanf:"server"`
 		Redis       Redis  `koanf:"redis"`
-		JWT JWT 
+		JWT         JWT
 	}
 
 	Server struct {
@@ -59,7 +62,7 @@ type (
 		DB       int    `koanf:"db"`
 	}
 
-	JWT struct{
+	JWT struct {
 		SecretKey string
 	}
 )
@@ -74,39 +77,46 @@ func ConfigsDirPath() string {
 }
 
 func Read() *Config {
-	env := strings.ToLower(os.Getenv("AUTH_ENV"))
+	mu.Lock()
+	defer mu.Unlock()
 
-	log.Println("AUTH_ENV:", env)
+	if configInstance == nil {
+		env := strings.ToLower(os.Getenv("AUTH_ENV"))
 
-	if len(strings.TrimSpace(env)) == 0 || env == "development" {
-		CurrentEnv = Development
-		filename = "config.development.yml"
-	} else if env == "production" {
-		CurrentEnv = Production
-		filename = "config.production.yml"
-	} else if env == "test" {
-		CurrentEnv = Test
-		filename = "config.test.yml"
-	} else {
-		panic(errors.New("Invalid env value set for variable AUTH_ENV: " + env))
+		log.Println("AUTH_ENV:", env)
+
+		if len(strings.TrimSpace(env)) == 0 || env == "development" {
+			CurrentEnv = Development
+			filename = "config.development.yml"
+		} else if env == "production" {
+			CurrentEnv = Production
+			filename = "config.production.yml"
+		} else if env == "test" {
+			CurrentEnv = Test
+			filename = "config.test.yml"
+		} else {
+			panic(errors.New("Invalid env value set for variable AUTH_ENV: " + env))
+		}
+
+		k := koanf.New(ConfigsDirPath())
+		if err := k.Load(file.Provider(fmt.Sprintf("%s/%s", ConfigsDirPath(), filename)), yaml.Parser()); err != nil {
+			panic(fmt.Errorf("error loading config: %v", err))
+		}
+		config := &Config{}
+		if err := k.Unmarshal("", config); err != nil {
+			log.Fatalf("error unmarshaling config: %v", err)
+		}
+
+		secretData, secretErr := os.ReadFile(ConfigsDirPath() + "/jwt_secret.pem")
+		if secretErr != nil {
+			panic(secretErr)
+		}
+
+		config.JWT.SecretKey = strings.TrimSpace(string(secretData))
+
+		configInstance = config
+
+		log.Println("Config: ", configInstance)
 	}
-
-	k := koanf.New(ConfigsDirPath())
-	if err := k.Load(file.Provider(fmt.Sprintf("%s/%s", ConfigsDirPath(), filename)), yaml.Parser()); err != nil {
-		panic(fmt.Errorf("error loading config: %v", err))
-	}
-	config := &Config{}
-	if err := k.Unmarshal("", config); err != nil {
-		log.Fatalf("error unmarshaling config: %v", err)
-	}
-
-	secretData, secretErr := os.ReadFile(ConfigsDirPath() + "/jwt_secret.pem")
-	if secretErr != nil {
-		panic(secretErr)
-	}
-
-	config.JWT.SecretKey = strings.TrimSpace(string(secretData))
-
-	log.Println("Config: ", config)
-	return config
+	return configInstance
 }
