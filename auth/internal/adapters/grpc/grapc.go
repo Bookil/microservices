@@ -8,18 +8,18 @@ import (
 )
 
 func (a *Adapter) Register(ctx context.Context, request *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
-	verifyEmailToken, err := a.api.Register(ctx, request.UserId, request.Email, request.Password, request.VerifyEmailRedirectUrl)
+	verificationCode, err := a.api.Register(ctx, request.UserId, request.Password)
 	if err != nil {
 		return nil, ErrFailedRegister
 	}
 
 	return &authv1.RegisterResponse{
-		VerifyEmailToken: verifyEmailToken,
+		VerificationCode: verificationCode,
 	}, nil
 }
 
 func (a *Adapter) VerifyEmail(ctx context.Context, request *authv1.VerifyEmailRequest) (*authv1.VerifyEmailResponse, error) {
-	err := a.api.VerifyEmail(ctx, request.VerifyEmailToken)
+	err := a.api.VerifyEmail(ctx, request.UserId,request.VerificationCode)
 	if err != nil {
 		return nil, ErrFailedVerifyEmil
 	}

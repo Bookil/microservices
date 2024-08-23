@@ -8,9 +8,9 @@ import (
 )
 
 type APIPort interface {
-	Register(ctx context.Context, userID domain.UserID, email, password, verifyEmailRedirectUrl string) (string, error)
+	Register(ctx context.Context, userID domain.UserID, password string) (string, error)
 	Authenticate(ctx context.Context, accessToken string) (domain.UserID, error)
-	VerifyEmail(ctx context.Context, verifyEmailToken string) error
+	VerifyEmail(ctx context.Context,userID domain.UserID, code string) error
 	Login(ctx context.Context, userID, password string) (string, string, error)
 	ChangePassword(ctx context.Context, userID domain.UserID, newPassword string, oldPassword string) error
 	RefreshToken(ctx context.Context, userID domain.UserID, refreshToken string) (string, error)

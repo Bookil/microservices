@@ -3,7 +3,7 @@ module github.com/Bookil/microservices/auth
 go 1.22.5
 
 require (
-	github.com/Bookil/Bookil-Proto v0.1.1
+	github.com/Bookil/Bookil-Proto v0.1.4
 	github.com/docker/go-connections v0.5.0
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/knadh/koanf v1.5.0
@@ -81,3 +81,5 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240528184218-531527333157 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+replace github.com/tahadostifam/go-auth-manager => github.com/AssassinRobot/go-auth-manager v1.0.1

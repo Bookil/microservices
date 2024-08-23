@@ -13,30 +13,29 @@ import (
 
 type Application struct {
 	db          ports.DBPort
-	email       ports.EmailPort
 	authManager auth_manager.AuthManager
 	hashManager *hash.HashManager
 }
 
 const (
-	VerifyEmailTokenExpr       = time.Minute * 5     // 5 minutes
 	ResetPasswordTokenExpr     = time.Minute * 10    // 10 minutes
 	AccessTokenExpr            = time.Minute * 30    // 30 minutes
 	RefreshTokenExpr           = time.Hour * 24 * 14 // 2 weeks
+	VerificationCodeExpr = time.Minute * 2 // 2 minutes
 	LockAccountDuration        = time.Minute * 2
 	MaximumFailedLoginAttempts = 3
+	VerificationCodeLength = 6
 )
 
-func NewApplication(db ports.DBPort, email ports.EmailPort, authManager auth_manager.AuthManager, hashManager *hash.HashManager) ports.APIPort {
+func NewApplication(db ports.DBPort, authManager auth_manager.AuthManager, hashManager *hash.HashManager) ports.APIPort {
 	return &Application{
 		db:          db,
-		email:       email,
 		authManager: authManager,
 		hashManager: hashManager,
 	}
 }
 
-func (a *Application) Register(ctx context.Context, userID domain.UserID, email, password, verifyEmailRedirectUrl string) (string, error) {
+func (a *Application) Register(ctx context.Context, userID domain.UserID, password string) (string, error) {
 	hashedPassword, err := a.hashManager.HashPassword(password)
 	if err != nil {
 		return "", ErrHashingPassword
@@ -49,26 +48,13 @@ func (a *Application) Register(ctx context.Context, userID domain.UserID, email,
 		return "", ErrCreateAuthStore
 	}
 
-	verifyEmailToken, err := a.authManager.GenerateToken(
-		ctx, auth_manager.VerifyEmail,
-		&auth_manager.TokenPayload{
-			UUID:      userID,
-			TokenType: auth_manager.VerifyEmail,
-			CreatedAt: time.Now(),
-		},
-		VerifyEmailTokenExpr,
-	)
+	verificationCode, err := a.authManager.GenerateVerificationCode(ctx,userID,VerificationCodeLength,VerificationCodeExpr)
+
 	if err != nil {
 		return "", ErrCreateEmailToken
 	}
 
-	err = a.email.SendVerificationEmail(email, verifyEmailRedirectUrl, verifyEmailToken)
-	// TODO:error handling
-	if err != nil {
-		return "", err
-	}
-
-	return verifyEmailToken, nil
+	return verificationCode, nil
 }
 
 func (a *Application) Authenticate(ctx context.Context, accessToken string) (domain.UserID, error) {
@@ -84,20 +70,15 @@ func (a *Application) Authenticate(ctx context.Context, accessToken string) (dom
 	return tokenClaims.Payload.UUID, nil
 }
 
-func (a *Application) VerifyEmail(ctx context.Context, verifyEmailToken string) error {
-	tokenClaims, err := a.authManager.DecodeToken(ctx, verifyEmailToken, auth_manager.VerifyEmail)
-	if err != nil {
-		return ErrAccessDenied
+func (a *Application) VerifyEmail(ctx context.Context, userID domain.UserID,verificationCode string) error {
+	isValid, err := a.authManager.CompareVerificationCode(ctx, userID,verificationCode)
+	if !isValid {
+		return err
 	}
 
-	_, err = a.db.VerifyEmail(ctx, tokenClaims.UUID)
+	_, err = a.db.VerifyEmail(ctx,userID)
 	if err != nil {
 		return ErrVerifyEmail
-	}
-
-	err = a.authManager.DestroyToken(context.TODO(), verifyEmailToken)
-	if err != nil {
-		return ErrDestroyToken
 	}
 
 	return nil

@@ -6,7 +6,6 @@ import (
 	"github.com/Bookil/microservices/auth/config"
 	"github.com/Bookil/microservices/auth/internal/adapters/db"
 	"github.com/Bookil/microservices/auth/internal/adapters/db/mysql_adapter"
-	"github.com/Bookil/microservices/auth/internal/adapters/email"
 	"github.com/Bookil/microservices/auth/internal/adapters/grpc"
 	"github.com/Bookil/microservices/auth/internal/application/core/api"
 	"github.com/Bookil/microservices/auth/utils/hash"
@@ -23,17 +22,15 @@ func main() {
 
 	redisClient := db.GetRedisInstance(config.Redis)
 
-	authManger := auth_manager.NewAuthManager(redisClient,auth_manager.AuthManagerOpts{
+	authManger := auth_manager.NewAuthManager(redisClient, auth_manager.AuthManagerOpts{
 		PrivateKey: config.JWT.SecretKey,
 	})
 
 	hashManger := hash.NewHashManager(hash.DefaultHashParams)
 
-	emailAdapter := email.NewAdapter()
+	api := api.NewApplication(mysqlAdapter, authManger, hashManger)
 
-	api := api.NewApplication(mysqlAdapter,emailAdapter,authManger,hashManger)
-
-	server := grpc.NewAdapter(api,config.Server.Port)
+	server := grpc.NewAdapter(api, config.Server.Port)
 
 	server.Run()
 }
