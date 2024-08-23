@@ -19,7 +19,7 @@ func (a *Adapter) Register(ctx context.Context, request *authv1.RegisterRequest)
 }
 
 func (a *Adapter) VerifyEmail(ctx context.Context, request *authv1.VerifyEmailRequest) (*authv1.VerifyEmailResponse, error) {
-	err := a.api.VerifyEmail(ctx, request.UserId,request.VerificationCode)
+	err := a.api.VerifyEmail(ctx, request.UserId, request.VerificationCode)
 	if err != nil {
 		return nil, ErrFailedVerifyEmil
 	}
