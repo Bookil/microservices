@@ -8,8 +8,11 @@ fmt:
 unit_test:
 	go test -coverprofile=coverage.out $(shell go list ./... | grep -v /integration)
 
-integration_test:
+db_integration_test:
 	go test -coverprofile=coverage.out -coverpkg ./internal/adapters/db/mysql_adapter/... ./integration/db
+
+api_integration_test:
+	go test -coverprofile=coverage.out -coverpkg ./internal/application/core/api... ./integration/api
 
 coverage:
 	go tool cover -html="coverage.out"
