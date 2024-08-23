@@ -5,7 +5,7 @@ import "errors"
 var (
 	ErrHashingPassword              = errors.New("error hashing password")
 	ErrCreateAuthStore              = errors.New("error create auth store")
-	ErrCreateEmailToken             = errors.New("error create email token")
+	ErrGenerateVerificationCode     = errors.New("error generate verification code")
 	ErrAccessDenied                 = errors.New("error access denied")
 	ErrNotFound                     = errors.New("error not found")
 	ErrInvalidEmailPassword         = errors.New("invalid email or password")

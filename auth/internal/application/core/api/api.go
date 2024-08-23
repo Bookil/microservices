@@ -21,13 +21,13 @@ const (
 	ResetPasswordTokenExpr     = time.Minute * 10    // 10 minutes
 	AccessTokenExpr            = time.Minute * 30    // 30 minutes
 	RefreshTokenExpr           = time.Hour * 24 * 14 // 2 weeks
-	VerificationCodeExpr = time.Minute * 2 // 2 minutes
+	VerificationCodeExpr       = time.Minute * 2     // 2 minutes
 	LockAccountDuration        = time.Minute * 2
 	MaximumFailedLoginAttempts = 3
-	VerificationCodeLength = 6
+	VerificationCodeLength     = 6
 )
 
-func NewApplication(db ports.DBPort, authManager auth_manager.AuthManager, hashManager *hash.HashManager) ports.APIPort {
+func NewApplication(db ports.DBPort, authManager auth_manager.AuthManager, hashManager *hash.HashManager) *Application {
 	return &Application{
 		db:          db,
 		authManager: authManager,
@@ -43,15 +43,14 @@ func (a *Application) Register(ctx context.Context, userID domain.UserID, passwo
 
 	auth := domain.NewAuth(userID, hashedPassword)
 
-	_,err = a.db.Create(ctx, auth)
+	_, err = a.db.Create(ctx, auth)
 	if err != nil {
 		return "", ErrCreateAuthStore
 	}
 
-	verificationCode, err := a.authManager.GenerateVerificationCode(ctx,userID,VerificationCodeLength,VerificationCodeExpr)
-
+	verificationCode, err := a.authManager.GenerateVerificationCode(ctx, userID, VerificationCodeLength, VerificationCodeExpr)
 	if err != nil {
-		return "", ErrCreateEmailToken
+		return "", ErrGenerateVerificationCode
 	}
 
 	return verificationCode, nil
@@ -70,13 +69,13 @@ func (a *Application) Authenticate(ctx context.Context, accessToken string) (dom
 	return tokenClaims.Payload.UUID, nil
 }
 
-func (a *Application) VerifyEmail(ctx context.Context, userID domain.UserID,verificationCode string) error {
-	isValid, err := a.authManager.CompareVerificationCode(ctx, userID,verificationCode)
-	if !isValid {
-		return err
+func (a *Application) VerifyEmail(ctx context.Context, userID domain.UserID, verificationCode string) error {
+	isValid, err := a.authManager.CompareVerificationCode(ctx, userID, verificationCode)
+	if !isValid || err != nil {
+		return ErrVerifyEmail
 	}
 
-	_, err = a.db.VerifyEmail(ctx,userID)
+	_, err = a.db.VerifyEmail(ctx, userID)
 	if err != nil {
 		return ErrVerifyEmail
 	}
@@ -87,7 +86,7 @@ func (a *Application) VerifyEmail(ctx context.Context, userID domain.UserID,veri
 func (a *Application) Login(ctx context.Context, userId domain.UserID, password string) (string, string, error) {
 	auth, err := a.db.GetByID(ctx, userId)
 	if err != nil {
-		return "", "", err
+		return "", "", ErrNotFound
 	}
 
 	if !auth.IsEmailVerified {
@@ -136,10 +135,10 @@ func (a *Application) Login(ctx context.Context, userId domain.UserID, password 
 	return accessToken, refreshToken, nil
 }
 
-func (a *Application) ChangePassword(ctx context.Context, userID domain.UserID, newPassword string, oldPassword string) error {
+func (a *Application) ChangePassword(ctx context.Context, userID domain.UserID, oldPassword string, newPassword string) error {
 	auth, err := a.db.GetByID(ctx, userID)
 	if err != nil {
-		return err
+		return ErrNotFound
 	}
 
 	isPasswordValid := a.hashManager.CheckPasswordHash(oldPassword, auth.HashedPassword)
