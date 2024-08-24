@@ -7,8 +7,8 @@ import (
 	"github.com/Bookil/microservices/auth/internal/adapters/db"
 	"github.com/Bookil/microservices/auth/internal/adapters/db/mysql_adapter"
 	"github.com/Bookil/microservices/auth/internal/adapters/grpc"
+	"github.com/Bookil/microservices/auth/internal/adapters/hash"
 	"github.com/Bookil/microservices/auth/internal/application/core/api"
-	"github.com/Bookil/microservices/auth/utils/hash"
 	auth_manager "github.com/tahadostifam/go-auth-manager"
 )
 

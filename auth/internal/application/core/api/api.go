@@ -7,14 +7,13 @@ import (
 
 	"github.com/Bookil/microservices/auth/internal/application/core/domain"
 	"github.com/Bookil/microservices/auth/internal/ports"
-	"github.com/Bookil/microservices/auth/utils/hash"
 	auth_manager "github.com/tahadostifam/go-auth-manager"
 )
 
 type Application struct {
 	db          ports.DBPort
 	authManager auth_manager.AuthManager
-	hashManager *hash.HashManager
+	hashManager ports.HashManager
 }
 
 const (
@@ -27,7 +26,7 @@ const (
 	VerificationCodeLength     = 6
 )
 
-func NewApplication(db ports.DBPort, authManager auth_manager.AuthManager, hashManager *hash.HashManager) *Application {
+func NewApplication(db ports.DBPort, authManager auth_manager.AuthManager, hashManager ports.HashManager) *Application {
 	return &Application{
 		db:          db,
 		authManager: authManager,
