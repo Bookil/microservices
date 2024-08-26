@@ -1,0 +1,20 @@
+service_name: "user"
+
+server:
+    host: "127.0.0.1"
+    port: 8082
+
+mysql:
+    host: "127.0.0.1"
+    username: root
+    password: "docker@!3A"
+    port: 3306
+    db_name: "user"
+
+auth:
+  host: "127.0.0.1"
+  port: 8083
+
+email:
+  host: "127.0.0.1"
+  port: 8084
