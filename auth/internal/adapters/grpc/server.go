@@ -14,13 +14,14 @@ import (
 )
 
 type Adapter struct {
-	api  ports.APIPort
-	port int
+	api       ports.APIPort
+	validator ports.Validation
+	port      int
 	authv1.UnimplementedAuthServiceServer
 }
 
-func NewAdapter(api ports.APIPort, port int) *Adapter {
-	return &Adapter{api: api, port: port}
+func NewAdapter(api ports.APIPort, validator ports.Validation, port int) *Adapter {
+	return &Adapter{api: api, validator: validator, port: port}
 }
 
 func (a *Adapter) Run() {

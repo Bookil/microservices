@@ -8,6 +8,7 @@ import (
 	"github.com/Bookil/microservices/auth/internal/adapters/db/mysql_adapter"
 	"github.com/Bookil/microservices/auth/internal/adapters/grpc"
 	"github.com/Bookil/microservices/auth/internal/adapters/hash"
+	"github.com/Bookil/microservices/auth/internal/adapters/validation"
 	"github.com/Bookil/microservices/auth/internal/application/core/api"
 	auth_manager "github.com/tahadostifam/go-auth-manager"
 )
@@ -28,9 +29,11 @@ func main() {
 
 	hashManger := hash.NewHashManager(hash.DefaultHashParams)
 
+	validator := validation.NewValidator()
+
 	api := api.NewApplication(mysqlAdapter, authManger, hashManger)
 
-	server := grpc.NewAdapter(api, config.Server.Port)
+	server := grpc.NewAdapter(api, validator, config.Server.Port)
 
 	server.Run()
 }

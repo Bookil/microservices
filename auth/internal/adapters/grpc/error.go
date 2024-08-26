@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	ErrInvalidInputs = status.Errorf(codes.InvalidArgument,"invalid inputs")
 	ErrFailedRegister            = status.Errorf(codes.Internal, "failed to register")
 	ErrFailedLogin               = status.Errorf(codes.Internal, "failed to login")
 	ErrFailedAuthenticate        = status.Errorf(codes.Internal, "failed to authenticate")

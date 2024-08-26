@@ -8,6 +8,11 @@ import (
 )
 
 func (a *Adapter) Register(ctx context.Context, request *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
+	err := a.validator.ValidateRegisterInputs(request.UserId, request.Password)
+	if err != nil {
+		return nil, ErrInvalidInputs
+	}
+
 	verificationCode, err := a.api.Register(ctx, request.UserId, request.Password)
 	if err != nil {
 		return nil, ErrFailedRegister
@@ -19,7 +24,12 @@ func (a *Adapter) Register(ctx context.Context, request *authv1.RegisterRequest)
 }
 
 func (a *Adapter) VerifyEmail(ctx context.Context, request *authv1.VerifyEmailRequest) (*authv1.VerifyEmailResponse, error) {
-	err := a.api.VerifyEmail(ctx, request.UserId, request.VerificationCode)
+	err := a.validator.ValidateVerifyEmailInputs(request.UserId, request.VerificationCode)
+	if err != nil {
+		return nil, ErrInvalidInputs
+	}
+
+	err = a.api.VerifyEmail(ctx, request.UserId, request.VerificationCode)
 	if err != nil {
 		return nil, ErrFailedVerifyEmil
 	}
@@ -28,6 +38,11 @@ func (a *Adapter) VerifyEmail(ctx context.Context, request *authv1.VerifyEmailRe
 }
 
 func (a *Adapter) Login(ctx context.Context, request *authv1.LoginRequest) (*authv1.LoginResponse, error) {
+	err := a.validator.ValidateLoginInputs(request.UserId, request.Password)
+	if err != nil {
+		return nil, ErrInvalidInputs
+	}
+
 	accessToken, refreshToken, err := a.api.Login(ctx, request.UserId, request.Password)
 	if err != nil {
 		return nil, ErrFailedLogin
@@ -40,6 +55,11 @@ func (a *Adapter) Login(ctx context.Context, request *authv1.LoginRequest) (*aut
 }
 
 func (a *Adapter) Authenticate(ctx context.Context, request *authv1.AuthenticationRequest) (*authv1.AuthenticationResponse, error) {
+	err := a.validator.ValidateAuthenticateInputs(request.AccessToken)
+	if err != nil {
+		return nil, ErrInvalidInputs
+	}
+
 	userID, err := a.api.Authenticate(ctx, request.AccessToken)
 	if err != nil {
 		return nil, ErrFailedAuthenticate
@@ -51,6 +71,11 @@ func (a *Adapter) Authenticate(ctx context.Context, request *authv1.Authenticati
 }
 
 func (a *Adapter) RefreshToken(ctx context.Context, request *authv1.RefreshTokenRequest) (*authv1.RefreshTokenResponse, error) {
+	err := a.validator.ValidateRefreshTokenInputs(request.UserId, request.RefreshToken)
+	if err != nil {
+		return nil, ErrInvalidInputs
+	}
+
 	accessToken, err := a.api.RefreshToken(ctx, request.UserId, request.RefreshToken)
 	if err != nil {
 		return nil, ErrFailedAuthenticate
@@ -62,7 +87,12 @@ func (a *Adapter) RefreshToken(ctx context.Context, request *authv1.RefreshToken
 }
 
 func (a *Adapter) ChangePassword(ctx context.Context, request *authv1.ChangePasswordRequest) (*authv1.ChangePasswordResponse, error) {
-	err := a.api.ChangePassword(ctx, request.UserId, request.NewPassword, request.OldPassword)
+	err := a.validator.ValidateChangePasswordInputs(request.UserId, request.OldPassword, request.NewPassword)
+	if err != nil {
+		return nil, ErrInvalidInputs
+	}
+
+	err = a.api.ChangePassword(ctx, request.UserId, request.NewPassword, request.OldPassword)
 	if err != nil {
 		return nil, ErrFailedChargePassword
 	}
@@ -71,6 +101,11 @@ func (a *Adapter) ChangePassword(ctx context.Context, request *authv1.ChangePass
 }
 
 func (a *Adapter) ResetPassword(ctx context.Context, request *authv1.ResetPasswordRequest) (*authv1.ResetPasswordResponse, error) {
+	err := a.validator.ValidateResetPasswordInputs(request.UserId)
+	if err != nil {
+		return nil, ErrInvalidInputs
+	}
+
 	token, timeout, err := a.api.ResetPassword(ctx, request.UserId)
 	if err != nil {
 		return nil, ErrFailedResetPassword
@@ -84,7 +119,12 @@ func (a *Adapter) ResetPassword(ctx context.Context, request *authv1.ResetPasswo
 }
 
 func (a *Adapter) SubmitResetPassword(ctx context.Context, request *authv1.SubmitResetPasswordRequest) (*authv1.SubmitResetPasswordResponse, error) {
-	err := a.api.SubmitResetPassword(ctx, request.ResetPasswordToken, request.NewPassword)
+	err := a.validator.ValidateSubmitResetPasswordInputs(request.ResetPasswordToken, request.NewPassword)
+	if err != nil {
+		return nil, ErrInvalidInputs
+	}
+
+	err = a.api.SubmitResetPassword(ctx, request.ResetPasswordToken, request.NewPassword)
 	if err != nil {
 		return nil, ErrFailedSubmitResetPassword
 	}
@@ -93,7 +133,12 @@ func (a *Adapter) SubmitResetPassword(ctx context.Context, request *authv1.Submi
 }
 
 func (a *Adapter) DeleteAccount(ctx context.Context, request *authv1.DeleteAccountRequest) (*authv1.DeleteAccountResponse, error) {
-	err := a.api.DeleteAccount(ctx, request.UserId, request.Password)
+	err := a.validator.ValidateDeleteAccountInputs(request.UserId,request.Password)
+	if err != nil {
+		return nil, ErrInvalidInputs
+	}
+
+	err = a.api.DeleteAccount(ctx, request.UserId, request.Password)
 	if err != nil {
 		return nil, ErrFailedDeleteAccount
 	}
