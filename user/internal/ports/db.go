@@ -7,7 +7,9 @@ import (
 )
 
 type DBPort interface {
-	Create(ctx context.Context, firstName, lastName, email string) (*domain.User, error)
-	Update(ctx context.Context, firstName, LastName string) (*domain.User, error)
+	Create(ctx context.Context, user *domain.User) (*domain.User, error)
+	Update(ctx context.Context, userID domain.UserID,firstName, lastName string) (*domain.User, error)
+	GetUserByID(ctx context.Context,id domain.UserID)(*domain.User,error)
+	GetUserByEmail(ctx context.Context,email string)(*domain.User,error)
 	Delete(ctx context.Context, userID domain.UserID) error
 }
