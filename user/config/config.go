@@ -26,9 +26,9 @@ const (
 )
 
 var (
-	CurrentEnv     Env = Development
-	filename       string
-	mu             = &sync.Mutex{}
+	CurrentEnv Env = Development
+	filename   string
+	mu         = &sync.Mutex{}
 )
 
 type (

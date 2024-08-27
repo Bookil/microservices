@@ -44,15 +44,15 @@ func (m *MockedAuth) ChangePassword(ctx context.Context, userID domain.UserID, n
 
 func (m *MockedAuth) ResetPassword(ctx context.Context, userID string) (string, time.Duration, error) {
 	args := m.Called(userID)
-	return args.String(0),time.Duration(args.Int(1)),args.Error(2)
+	return args.String(0), time.Duration(args.Int(1)), args.Error(2)
 }
 
-func(m *MockedAuth)SubmitResetPassword(ctx context.Context, token string, newPassword string) error{
-	args := m.Called(token,newPassword)
+func (m *MockedAuth) SubmitResetPassword(ctx context.Context, token string, newPassword string) error {
+	args := m.Called(token, newPassword)
 	return args.Error(0)
 }
 
-func(m *MockedAuth)DeleteAccount(ctx context.Context, userID domain.UserID, password string) error{
-	args := m.Called(userID,password)
+func (m *MockedAuth) DeleteAccount(ctx context.Context, userID domain.UserID, password string) error {
+	args := m.Called(userID, password)
 	return args.Error(0)
 }
