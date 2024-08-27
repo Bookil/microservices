@@ -8,5 +8,6 @@ type APIPort interface {
 	VerifyEmail(ctx context.Context,email string, code string) error
 	ChangePassword(ctx context.Context,oldPassword, newPassword string) error
 	ResetPassword(ctx context.Context,email string) error
+	Update(ctx context.Context,firstName,lastName string)error
 	DeleteAccount(ctx context.Context,password string) error
 }
