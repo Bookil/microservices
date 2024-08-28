@@ -13,7 +13,7 @@ func NewEmailAdapter() *Adapter {
 	return &Adapter{}
 }
 
-func (a *Adapter) SendResetPassword(url string, duration time.Duration, email string) error {
+func (a *Adapter) SendResetPassword(url, token, email string, duration time.Duration) error {
 	if config.CurrentEnv == config.Development || config.CurrentEnv == config.Test {
 		log.Println("email sent")
 	}

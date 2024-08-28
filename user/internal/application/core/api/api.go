@@ -76,23 +76,22 @@ func (a *Application) ChangePassword(ctx context.Context, accessToken, oldPasswo
 }
 
 func (a *Application) ResetPassword(ctx context.Context, email string) error {
-	// gotUser, err := a.db.GetUserByEmail(ctx, email)
-	// if err != nil {
-	// 	return err
-	// }
+	gotUser, err := a.db.GetUserByEmail(ctx, email)
+	if err != nil {
+		return err
+	}
 
-	// url, duration, err := a.auth.ResetPassword(ctx, gotUser.UserID)
-	// if err != nil {
-	// 	return err
-	// }
+	token, duration, err := a.auth.ResetPassword(ctx, gotUser.UserID)
+	if err != nil {
+		return err
+	}
 
-	// err = a.email.SendResetPassword(url, duration, gotUser.Email)
-	// if err != nil {
-	// 	return err
-	// }
+	err = a.email.SendResetPassword("example.com",token,gotUser.Email,duration)
+	if err != nil {
+		return err
+	}
 
-	// return nil
-	panic("not implemented")
+	return nil
 }
 
 func (a *Application) Update(ctx context.Context, accessToken, firstName, lastName string) error {

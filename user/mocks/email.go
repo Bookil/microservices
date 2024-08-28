@@ -15,8 +15,8 @@ func (m *MockedEmail) SendVerificationCode(email, code string) error {
 	return args.Error(0)
 }
 
-func (m *MockedEmail) SendResetPassword(url string, duration time.Duration, email string) error {
-	args := m.Called(url, duration, email)
+func (m *MockedEmail) SendResetPassword(url,token,email string, duration time.Duration) error {
+	args := m.Called(url, token,duration, email)
 	return args.Error(0)
 }
 
