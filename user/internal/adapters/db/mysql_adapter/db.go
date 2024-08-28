@@ -55,8 +55,13 @@ func (a *Adapter) GetUserByEmail(ctx context.Context, email string) (*domain.Use
 	user := &domain.User{}
 
 	err := a.db.WithContext(ctx).Where("email = ?", email).Find(user).Error
-	if err != nil {
+
+	if user.UserID == "" {
 		return nil, ErrUserNotFound
+	}
+
+	if err != nil {
+		return nil, err
 	}
 
 	return user, nil
