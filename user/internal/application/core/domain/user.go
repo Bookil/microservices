@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/Bookil/microservices/user/utils/random"
 )
@@ -10,10 +11,12 @@ type (
 	UserID = string
 
 	User struct {
-		UserID    UserID
-		FirstName string
+		UserID    UserID `gorm:"unique"`
+		FirstName string 
 		LastName  string
-		Email     string
+		Email     string `gorm:"unique"`
+		CreatedAt time.Time
+		UpdatedAt time.Time
 	}
 )
 
