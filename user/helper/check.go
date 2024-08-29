@@ -3,5 +3,7 @@ package helper
 import "strings"
 
 func IsContains(contain string,err error )bool{
-	return strings.Contains(contain,strings.ToLower(err.Error()))
+	toLoweredErr := strings.ToLower(err.Error())
+	isContains := strings.Contains(toLoweredErr,contain)
+	return isContains
 }

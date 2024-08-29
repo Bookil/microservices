@@ -49,7 +49,7 @@ func (a *Application) Register(ctx context.Context, firstName, lastName, email, 
 func (a *Application) Login(ctx context.Context, email, password string) (string, string, error) {
 	gotUser, err := a.db.GetUserByEmail(ctx, email)
 	if err != nil {
-		if helper.IsContains("not found", err) {
+		if helper.IsContains("found", err) {
 			return "", "", ErrUserNotFindWithThisEmail
 		}
 		return "", "", ErrLoggingFailed
@@ -57,7 +57,7 @@ func (a *Application) Login(ctx context.Context, email, password string) (string
 
 	accessToken, refreshToken, err := a.auth.Login(ctx, gotUser.UserID, password)
 	if err != nil {
-		return "", "", ErrLoggingFailed
+		return "", "", err
 	}
 
 	err = a.email.SendWellCome(gotUser.Email)
@@ -85,10 +85,10 @@ func (a *Application) ChangePassword(ctx context.Context, accessToken, oldPasswo
 func (a *Application) ResetPassword(ctx context.Context, email string) error {
 	gotUser, err := a.db.GetUserByEmail(ctx, email)
 	if err != nil {
-		if helper.IsContains("not found", err) {
+		if helper.IsContains("found", err) {
 			return ErrUserNotFindWithThisEmail
 		}
-		return err
+		return ErrResetPasswordFailed
 	}
 
 	token, duration, err := a.auth.ResetPassword(ctx, gotUser.UserID)

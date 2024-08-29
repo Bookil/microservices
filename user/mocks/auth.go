@@ -33,8 +33,8 @@ func (m *MockedAuth) Update(ctx context.Context, userID domain.UserID, firstName
 }
 
 func (m *MockedAuth) Login(ctx context.Context, userID, password string) (string, string, error) {
-	args := m.Called(userID, userID, password)
-	return args.String(0), args.String(1), args.Error(1)
+	args := m.Called(userID, password)
+	return args.String(0), args.String(1), args.Error(2)
 }
 
 func (m *MockedAuth) ChangePassword(ctx context.Context, userID domain.UserID, newPassword string, oldPassword string) error {
@@ -44,7 +44,7 @@ func (m *MockedAuth) ChangePassword(ctx context.Context, userID domain.UserID, n
 
 func (m *MockedAuth) ResetPassword(ctx context.Context, userID string) (string, time.Duration, error) {
 	args := m.Called(userID)
-	return args.String(0), time.Duration(args.Int(1)), args.Error(2)
+	return args.String(0), time.Duration(args.Int(1)),args.Error(2)
 }
 
 func (m *MockedAuth) SubmitResetPassword(ctx context.Context, token string, newPassword string) error {
