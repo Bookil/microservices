@@ -1,0 +1,14 @@
+version: '3.30'
+
+services:
+  mysql:
+    image: mysql:latest
+    restart: always
+    container_name: mysql-user-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+      MYSQL_DATABASE: user
+    ports:
+      - "3306:3306"
