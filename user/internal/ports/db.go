@@ -11,5 +11,5 @@ type DBPort interface {
 	Update(ctx context.Context, userID domain.UserID, firstName, lastName string) (*domain.User, error)
 	GetUserByID(ctx context.Context, id domain.UserID) (*domain.User, error)
 	GetUserByEmail(ctx context.Context, email string) (*domain.User, error)
-	Delete(ctx context.Context, userID domain.UserID) error
+	DeleteByID(ctx context.Context, userID domain.UserID) error
 }

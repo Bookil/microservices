@@ -31,7 +31,7 @@ func (m *MockedDB) GetUserByEmail(ctx context.Context, email string) (*domain.Us
 	return args.Get(0).(*domain.User), args.Error(1)
 }
 
-func (m *MockedDB) Delete(ctx context.Context, userID domain.UserID) error {
+func (m *MockedDB) DeleteByID(ctx context.Context, userID domain.UserID) error {
 	args := m.Called(userID)
 	return args.Error(0)
 }

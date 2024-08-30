@@ -109,7 +109,7 @@ func (a *Application) Update(ctx context.Context, userID, firstName, lastName st
 }
 
 func (a *Application) DeleteAccount(ctx context.Context, userID, password string) error {
-	err := a.db.Delete(ctx, userID)
+	err := a.db.DeleteByID(ctx, userID)
 	if err != nil {
 		return ErrDeleteAccountFailed
 	}

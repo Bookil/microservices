@@ -449,7 +449,7 @@ func (a *ApplicationTestSuit) TestDeleteAccount() {
 
 	password := "password"
 
-	mockDBCall := a.mockedDB.On("Delete", mock.Anything, mock.Anything).Return(nil)
+	mockDBCall := a.mockedDB.On("DeleteByID", mock.Anything, mock.Anything).Return(nil)
 	mockAuthCall := a.mockedAuth.On("DeleteAccount", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 
 	err := a.api.DeleteAccount(ctx, "userID", password)
@@ -465,7 +465,7 @@ func (a *ApplicationTestSuit) TestDeleteAccountShouldFailWhenDBFails() {
 
 	password := "password"
 
-	mockDBCall := a.mockedDB.On("Delete", mock.Anything, mock.Anything).Return(ErrUnknownError)
+	mockDBCall := a.mockedDB.On("DeleteByID", mock.Anything, mock.Anything).Return(ErrUnknownError)
 	mockAuthCall := a.mockedAuth.On("DeleteAccount", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 
 	err := a.api.DeleteAccount(ctx, "userID", password)
@@ -481,7 +481,7 @@ func (a *ApplicationTestSuit) TestDeleteAccountShouldFailWhenAuthFails() {
 
 	password := "password"
 
-	mockDBCall := a.mockedDB.On("Delete", mock.Anything, mock.Anything).Return(nil)
+	mockDBCall := a.mockedDB.On("DeleteByID", mock.Anything, mock.Anything).Return(nil)
 	mockAuthCall := a.mockedAuth.On("DeleteAccount", mock.Anything, mock.Anything, mock.Anything).Return(ErrUnknownError)
 
 	err := a.api.DeleteAccount(ctx, "userID", password)
