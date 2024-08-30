@@ -280,55 +280,25 @@ func (a *ApplicationTestSuit) TestLoginShouldFailWhenEmailFails() {
 func (a *ApplicationTestSuit) TestChangePassword() {
 	ctx := context.TODO()
 
-	firstName := "John"
-	lastName := "Doe"
-	email := "johnDoe@gmail.com"
-
-	user := domain.NewUser(firstName, lastName, email)
-
-	mockAuthCallAuthentication := a.mockedAuth.On("Authenticate", mock.Anything, mock.Anything).Return(user.UserID, nil)
 	mockAuthCallChangePassword := a.mockedAuth.On("ChangePassword", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil)
 
-	err := a.api.ChangePassword(ctx, "valid", "oldPassword", "newPassword")
+	err := a.api.ChangePassword(ctx, "userID", "oldPassword", "newPassword")
 
 	a.NoError(err)
 
-	mockAuthCallAuthentication.Unset()
-	mockAuthCallChangePassword.Unset()
-}
-
-func (a *ApplicationTestSuit) TestChangePasswordShouldFailWhenAuthenticateFails() {
-	ctx := context.TODO()
-
-	mockAuthCallAuthentication := a.mockedAuth.On("Authenticate", mock.Anything, mock.Anything).Return("", ErrUnknownError)
-	mockAuthCallChangePassword := a.mockedAuth.On("ChangePassword", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(nil)
-
-	err := a.api.ChangePassword(ctx, "valid", "oldPassword", "newPassword")
-
-	a.ErrorIs(err, api.ErrAccessDenied)
-
-	mockAuthCallAuthentication.Unset()
 	mockAuthCallChangePassword.Unset()
 }
 
 func (a *ApplicationTestSuit) TestChangePasswordShouldFailWhenChangePasswordFails() {
 	ctx := context.TODO()
 
-	firstName := "John"
-	lastName := "Doe"
-	email := "johnDoe@gmail.com"
-
-	user := domain.NewUser(firstName, lastName, email)
-
-	mockAuthCallAuthentication := a.mockedAuth.On("Authenticate", mock.Anything, mock.Anything).Return(user.UserID, nil)
-	mockAuthCallChangePassword := a.mockedAuth.On("ChangePassword", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(ErrUnknownError)
+	mockAuthCall := a.mockedAuth.On("ChangePassword", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(ErrUnknownError)
 
 	err := a.api.ChangePassword(ctx, "valid", "oldPassword", "newPassword")
 
 	a.ErrorIs(err, api.ErrChangingPasswordFailed)
 
-	mockAuthCallAuthentication.Unset()
-	mockAuthCallChangePassword.Unset()
+	mockAuthCall.Unset()
 }
 
 func (a *ApplicationTestSuit) TestResetPassword() {
@@ -368,7 +338,7 @@ func (a *ApplicationTestSuit) TestResetPasswordShouldFailWhenAuthFails() {
 
 	err := a.api.ResetPassword(ctx, user.UserID)
 
-	a.ErrorIs(err,api.ErrResetPasswordFailed)
+	a.ErrorIs(err, api.ErrResetPasswordFailed)
 
 	mockDBCall.Unset()
 	mockAuthCall.Unset()
@@ -390,7 +360,7 @@ func (a *ApplicationTestSuit) TestResetPasswordShouldFailWhenDBFails() {
 
 	err := a.api.ResetPassword(ctx, user.UserID)
 
-	a.ErrorIs(err,api.ErrResetPasswordFailed)
+	a.ErrorIs(err, api.ErrResetPasswordFailed)
 
 	mockDBCall.Unset()
 	mockAuthCall.Unset()
@@ -412,7 +382,7 @@ func (a *ApplicationTestSuit) TestResetPasswordShouldFailWhenDBFailsInvalidEmail
 
 	err := a.api.ResetPassword(ctx, user.UserID)
 
-	a.ErrorIs(err,api.ErrUserNotFindWithThisEmail)
+	a.ErrorIs(err, api.ErrUserNotFindWithThisEmail)
 
 	mockDBCall.Unset()
 	mockAuthCall.Unset()
@@ -428,13 +398,13 @@ func (a *ApplicationTestSuit) TestResetPasswordShouldFailWhenEmailFails() {
 
 	user := domain.NewUser(firstName, lastName, email)
 
-	mockDBCall := a.mockedDB.On("GetUserByEmail", mock.Anything, mock.Anything).Return(user,nil)
+	mockDBCall := a.mockedDB.On("GetUserByEmail", mock.Anything, mock.Anything).Return(user, nil)
 	mockAuthCall := a.mockedAuth.On("ResetPassword", mock.Anything, mock.Anything).Return("token", 2, nil)
 	mockEmailCall := a.mockedEmail.On("SendResetPassword", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(ErrUnknownError)
 
 	err := a.api.ResetPassword(ctx, user.UserID)
 
-	a.ErrorIs(err,api.ErrResetPasswordFailed)
+	a.ErrorIs(err, api.ErrResetPasswordFailed)
 
 	mockDBCall.Unset()
 	mockAuthCall.Unset()
@@ -450,15 +420,13 @@ func (a *ApplicationTestSuit) TestUpdate() {
 
 	user := domain.NewUser(firstName, lastName, email)
 
-	mockDBCall := a.mockedDB.On("Update", mock.Anything, mock.Anything,mock.Anything, mock.Anything).Return(user,nil)
-	mockAuthCall := a.mockedAuth.On("Authenticate", mock.Anything, mock.Anything).Return(user.UserID, nil)
+	mockDBCall := a.mockedDB.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(user, nil)
 
-	err := a.api.Update(ctx,"accessToken",firstName,lastName)
+	err := a.api.Update(ctx, "UserID", firstName, lastName)
 
 	a.NoError(err)
 
 	mockDBCall.Unset()
-	mockAuthCall.Unset()
 }
 
 func (a *ApplicationTestSuit) TestUpdateShouldFailWhenDBFails() {
@@ -466,39 +434,14 @@ func (a *ApplicationTestSuit) TestUpdateShouldFailWhenDBFails() {
 
 	firstName := "John"
 	lastName := "Doe"
-	email := "johnDoe@gmail.com"
 
-	user := domain.NewUser(firstName, lastName, email)
+	mockDBCall := a.mockedDB.On("Update", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(&domain.User{}, ErrUnknownError)
 
-	mockDBCall := a.mockedDB.On("Update", mock.Anything, mock.Anything,mock.Anything, mock.Anything).Return(&domain.User{},ErrUnknownError)
-	mockAuthCall := a.mockedAuth.On("Authenticate", mock.Anything, mock.Anything).Return(user.UserID, nil)
+	err := a.api.Update(ctx, "UserID", firstName, lastName)
 
-	err := a.api.Update(ctx,"accessToken",firstName,lastName)
-
-	a.ErrorIs(err,api.ErrUpdateFailed)
+	a.ErrorIs(err, api.ErrUpdateFailed)
 
 	mockDBCall.Unset()
-	mockAuthCall.Unset()
-}
-
-func (a *ApplicationTestSuit) TestUpdateShouldFailWhenAuthFails() {
-	ctx := context.TODO()
-
-	firstName := "John"
-	lastName := "Doe"
-	email := "johnDoe@gmail.com"
-
-	user := domain.NewUser(firstName, lastName, email)
-
-	mockDBCall := a.mockedDB.On("Update", mock.Anything, mock.Anything,mock.Anything, mock.Anything).Return(user,nil)
-	mockAuthCall := a.mockedAuth.On("Authenticate", mock.Anything, mock.Anything).Return("", ErrUnknownError)
-
-	err := a.api.Update(ctx,"accessToken",firstName,lastName)
-
-	a.ErrorIs(err,api.ErrUpdateFailed)
-
-	mockDBCall.Unset()
-	mockAuthCall.Unset()
 }
 
 func (a *ApplicationTestSuit) TestDeleteAccount() {
@@ -506,17 +449,15 @@ func (a *ApplicationTestSuit) TestDeleteAccount() {
 
 	password := "password"
 
-	mockDBCall := a.mockedDB.On("Delete", mock.Anything,mock.Anything).Return(nil)
-	mockAuthCallAuthentication := a.mockedAuth.On("Authenticate", mock.Anything, mock.Anything).Return("id",nil)
-	mockAuthCallDeleteAccount := a.mockedAuth.On("DeleteAccount", mock.Anything, mock.Anything, mock.Anything).Return(nil)
+	mockDBCall := a.mockedDB.On("Delete", mock.Anything, mock.Anything).Return(nil)
+	mockAuthCall := a.mockedAuth.On("DeleteAccount", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 
-	err := a.api.DeleteAccount(ctx,"accessToken",password)
+	err := a.api.DeleteAccount(ctx, "userID", password)
 
 	a.NoError(err)
 
 	mockDBCall.Unset()
-	mockAuthCallAuthentication.Unset()
-	mockAuthCallDeleteAccount.Unset()
+	mockAuthCall.Unset()
 }
 
 func (a *ApplicationTestSuit) TestDeleteAccountShouldFailWhenDBFails() {
@@ -524,35 +465,15 @@ func (a *ApplicationTestSuit) TestDeleteAccountShouldFailWhenDBFails() {
 
 	password := "password"
 
-	mockDBCall := a.mockedDB.On("Delete", mock.Anything,mock.Anything).Return(ErrUnknownError)
-	mockAuthCallAuthentication := a.mockedAuth.On("Authenticate", mock.Anything, mock.Anything).Return("id",nil)
-	mockAuthCallDeleteAccount := a.mockedAuth.On("DeleteAccount", mock.Anything, mock.Anything, mock.Anything).Return(nil)
+	mockDBCall := a.mockedDB.On("Delete", mock.Anything, mock.Anything).Return(ErrUnknownError)
+	mockAuthCall := a.mockedAuth.On("DeleteAccount", mock.Anything, mock.Anything, mock.Anything).Return(nil)
 
-	err := a.api.DeleteAccount(ctx,"accessToken",password)
+	err := a.api.DeleteAccount(ctx, "userID", password)
 
-	a.ErrorIs(err,api.ErrDeleteAccountFailed)
-
-	mockDBCall.Unset()
-	mockAuthCallAuthentication.Unset()
-	mockAuthCallDeleteAccount.Unset()
-}
-
-func (a *ApplicationTestSuit) TestDeleteAccountShouldFailWhenAuthFailsAuthenticate() {
-	ctx := context.TODO()
-
-	password := "password"
-
-	mockDBCall := a.mockedDB.On("Delete", mock.Anything,mock.Anything).Return(nil)
-	mockAuthCallAuthentication := a.mockedAuth.On("Authenticate", mock.Anything, mock.Anything).Return("",ErrUnknownError)
-	mockAuthCallDeleteAccount := a.mockedAuth.On("DeleteAccount", mock.Anything, mock.Anything, mock.Anything).Return(nil)
-
-	err := a.api.DeleteAccount(ctx,"accessToken",password)
-
-	a.ErrorIs(err,api.ErrDeleteAccountFailed)
+	a.ErrorIs(err, api.ErrDeleteAccountFailed)
 
 	mockDBCall.Unset()
-	mockAuthCallAuthentication.Unset()
-	mockAuthCallDeleteAccount.Unset()
+	mockAuthCall.Unset()
 }
 
 func (a *ApplicationTestSuit) TestDeleteAccountShouldFailWhenAuthFails() {
@@ -560,15 +481,13 @@ func (a *ApplicationTestSuit) TestDeleteAccountShouldFailWhenAuthFails() {
 
 	password := "password"
 
-	mockDBCall := a.mockedDB.On("Delete", mock.Anything,mock.Anything).Return(nil)
-	mockAuthCallAuthentication := a.mockedAuth.On("Authenticate", mock.Anything, mock.Anything).Return("id",nil)
-	mockAuthCallDeleteAccount := a.mockedAuth.On("DeleteAccount", mock.Anything, mock.Anything, mock.Anything).Return(ErrUnknownError)
+	mockDBCall := a.mockedDB.On("Delete", mock.Anything, mock.Anything).Return(nil)
+	mockAuthCall := a.mockedAuth.On("DeleteAccount", mock.Anything, mock.Anything, mock.Anything).Return(ErrUnknownError)
 
-	err := a.api.DeleteAccount(ctx,"accessToken",password)
+	err := a.api.DeleteAccount(ctx, "userID", password)
 
-	a.ErrorIs(err,api.ErrDeleteAccountFailed)
+	a.ErrorIs(err, api.ErrDeleteAccountFailed)
 
 	mockDBCall.Unset()
-	mockAuthCallAuthentication.Unset()
-	mockAuthCallDeleteAccount.Unset()
+	mockAuthCall.Unset()
 }

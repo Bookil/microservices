@@ -68,13 +68,8 @@ func (a *Application) Login(ctx context.Context, email, password string) (string
 	return accessToken, refreshToken, nil
 }
 
-func (a *Application) ChangePassword(ctx context.Context, accessToken, oldPassword, newPassword string) error {
-	userID, err := a.auth.Authenticate(ctx, accessToken)
-	if err != nil {
-		return ErrAccessDenied
-	}
-
-	err = a.auth.ChangePassword(ctx, userID, oldPassword, newPassword)
+func (a *Application) ChangePassword(ctx context.Context, userID, oldPassword, newPassword string) error {
+	err := a.auth.ChangePassword(ctx, userID, oldPassword, newPassword)
 	if err != nil {
 		return ErrChangingPasswordFailed
 	}
@@ -104,12 +99,8 @@ func (a *Application) ResetPassword(ctx context.Context, email string) error {
 	return nil
 }
 
-func (a *Application) Update(ctx context.Context, accessToken, firstName, lastName string) error {
-	UserID, err := a.auth.Authenticate(ctx, accessToken)
-	if err != nil {
-		return ErrUpdateFailed
-	}
-	_, err = a.db.Update(ctx, UserID, firstName, lastName)
+func (a *Application) Update(ctx context.Context, userID, firstName, lastName string) error {
+	_, err := a.db.Update(ctx, userID, firstName, lastName)
 	if err != nil {
 		return ErrUpdateFailed
 	}
@@ -117,13 +108,8 @@ func (a *Application) Update(ctx context.Context, accessToken, firstName, lastNa
 	return nil
 }
 
-func (a *Application) DeleteAccount(ctx context.Context, accessToken, password string) error {
-	userID, err := a.auth.Authenticate(ctx, accessToken)
-	if err != nil {
-		return ErrDeleteAccountFailed
-	}
-
-	err = a.db.Delete(ctx, userID)
+func (a *Application) DeleteAccount(ctx context.Context, userID, password string) error {
+	err := a.db.Delete(ctx, userID)
 	if err != nil {
 		return ErrDeleteAccountFailed
 	}
