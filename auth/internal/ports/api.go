@@ -2,19 +2,18 @@ package ports
 
 import (
 	"context"
-	"time"
 
 	"github.com/Bookil/microservices/auth/internal/application/core/domain"
 )
 
 type APIPort interface {
-	Register(ctx context.Context, userID domain.UserID, password string) (string, error)
+	Register(ctx context.Context, firstName, lastName, email, password string) (userID domain.UserID, err error)
+	VerifyEmail(ctx context.Context, userID domain.UserID, verificationCode string) error
+	Login(ctx context.Context, email, password string) (accessToken string, refreshToken string, err error)
+	ResetPassword(ctx context.Context, email string) error
+	SubmitResetPassword(ctx context.Context, SubmitResetPasswordToken string, newPassword string) error
 	Authenticate(ctx context.Context, accessToken string) (domain.UserID, error)
-	VerifyEmail(ctx context.Context, userID domain.UserID, code string) error
-	Login(ctx context.Context, userID, password string) (string, string, error)
 	ChangePassword(ctx context.Context, userID domain.UserID, newPassword string, oldPassword string) error
-	RefreshToken(ctx context.Context, userID domain.UserID, refreshToken string) (string, error)
-	ResetPassword(ctx context.Context, userID string) (string, time.Duration, error)
-	SubmitResetPassword(ctx context.Context, token string, newPassword string) error
-	DeleteAccount(ctx context.Context, userID domain.UserID, password string) error
+	RefreshToken(ctx context.Context, userID domain.UserID, refreshToken string) (accessToken string,err error)
+	DeleteAccount(ctx context.Context, userID, password string) error
 }

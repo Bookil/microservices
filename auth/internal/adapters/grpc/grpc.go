@@ -4,22 +4,21 @@ import (
 	"context"
 
 	authv1 "github.com/Bookil/Bookil-Proto/gen/golang/auth/v1"
-	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 func (a *Adapter) Register(ctx context.Context, request *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
-	err := a.validator.ValidateRegisterInputs(request.UserId, request.Password)
+	err := a.validator.ValidateRegisterInputs(request.FisrtName, request.LastName, request.Email, request.Password)
 	if err != nil {
 		return nil, ErrInvalidInputs
 	}
 
-	verificationCode, err := a.api.Register(ctx, request.UserId, request.Password)
+	userID, err := a.api.Register(ctx, request.FisrtName, request.LastName, request.Email, request.Password)
 	if err != nil {
 		return nil, ErrFailedRegister
 	}
 
 	return &authv1.RegisterResponse{
-		VerificationCode: verificationCode,
+		UserId: userID,
 	}, nil
 }
 
@@ -38,12 +37,12 @@ func (a *Adapter) VerifyEmail(ctx context.Context, request *authv1.VerifyEmailRe
 }
 
 func (a *Adapter) Login(ctx context.Context, request *authv1.LoginRequest) (*authv1.LoginResponse, error) {
-	err := a.validator.ValidateLoginInputs(request.UserId, request.Password)
+	err := a.validator.ValidateLoginInputs(request.Email, request.Password)
 	if err != nil {
 		return nil, ErrInvalidInputs
 	}
 
-	accessToken, refreshToken, err := a.api.Login(ctx, request.UserId, request.Password)
+	accessToken, refreshToken, err := a.api.Login(ctx, request.Email, request.Password)
 	if err != nil {
 		return nil, ErrFailedLogin
 	}
@@ -101,21 +100,17 @@ func (a *Adapter) ChangePassword(ctx context.Context, request *authv1.ChangePass
 }
 
 func (a *Adapter) ResetPassword(ctx context.Context, request *authv1.ResetPasswordRequest) (*authv1.ResetPasswordResponse, error) {
-	err := a.validator.ValidateResetPasswordInputs(request.UserId)
+	err := a.validator.ValidateResetPasswordInputs(request.Email)
 	if err != nil {
 		return nil, ErrInvalidInputs
 	}
 
-	token, timeout, err := a.api.ResetPassword(ctx, request.UserId)
+	err = a.api.ResetPassword(ctx, request.Email)
 	if err != nil {
 		return nil, ErrFailedResetPassword
 	}
 
-	timeoutProto := durationpb.New(timeout)
-	return &authv1.ResetPasswordResponse{
-		ResetPasswordToken: token,
-		Timeout:            timeoutProto,
-	}, nil
+	return &authv1.ResetPasswordResponse{}, nil
 }
 
 func (a *Adapter) SubmitResetPassword(ctx context.Context, request *authv1.SubmitResetPasswordRequest) (*authv1.SubmitResetPasswordResponse, error) {
@@ -133,7 +128,7 @@ func (a *Adapter) SubmitResetPassword(ctx context.Context, request *authv1.Submi
 }
 
 func (a *Adapter) DeleteAccount(ctx context.Context, request *authv1.DeleteAccountRequest) (*authv1.DeleteAccountResponse, error) {
-	err := a.validator.ValidateDeleteAccountInputs(request.UserId,request.Password)
+	err := a.validator.ValidateDeleteAccountInputs(request.UserId, request.Password)
 	if err != nil {
 		return nil, ErrInvalidInputs
 	}

@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 type UserID = string
 
 type Auth struct {
@@ -15,4 +17,20 @@ func NewAuth(userID UserID, hashedPassword string) *Auth {
 		UserID:         userID,
 		HashedPassword: hashedPassword,
 	}
+}
+
+type AccessTokenClaims struct {
+	UserID   string
+	CreateAt time.Time
+}
+
+type RefreshTokenClaims struct {
+	IPAddress  string
+	UserAgent  string
+	LoggedInAt time.Duration
+}
+
+type ResetPasswordTokenClaims struct {
+	UserID   string
+	CreateAt time.Time
 }

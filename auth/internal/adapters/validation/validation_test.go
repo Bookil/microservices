@@ -23,27 +23,51 @@ func (v *VerificationTestSuite) SetupSuite() {
 }
 func (v *VerificationTestSuite) TestValidateRegister() {
 	testCases := []struct {
-		userID   domain.UserID
+		firstName string
+		lastName string
+		email   string
 		password string
 		valid    bool
 	}{
 		{
-			userID:   "",
+			firstName: "",
+			lastName: "valid",
+			email:   "valid@gmail.com",
 			password: "12345678",
 			valid:    false,
 		},
 		{
-			userID:   "1234",
+			firstName: "valid",
+			lastName: "",
+			email:   "valid@gmail.com",
+			password: "12345678",
+			valid:    false,
+		},
+		{
+			firstName: "valid",
+			lastName: "valid",
+			email:   "",
+			password: "12345678",
+			valid:    false,
+		},
+		{
+			firstName: "valid",
+			lastName: "valid",
+			email:   "valid@gmail.com",
 			password: "",
 			valid:    false,
 		},
 		{
-			userID:   "12344566",
+			firstName: "valid",
+			lastName: "valid",
+			email:   "valid@valid.com",
 			password: "12345",
 			valid:    false,
 		},
 		{
-			userID:   "123456789",
+			firstName: "valid",
+			lastName: "valid",
+			email:   "valid@valid.com",
 			password: "12345678",
 			valid:    true,
 		},
@@ -52,7 +76,7 @@ func (v *VerificationTestSuite) TestValidateRegister() {
 	validator := validation.NewValidator()
 
 	for _, tc := range testCases {
-		err := validator.ValidateRegisterInputs(tc.userID, tc.password)
+		err := validator.ValidateRegisterInputs(tc.firstName,tc.lastName,tc.email,tc.password)
 
 		if tc.valid {
 			require.NoError(v.T(), err)
@@ -66,22 +90,27 @@ func (v *VerificationTestSuite) TestValidateRegister() {
 
 func (v *VerificationTestSuite) TestValidateLogin() {
 	testCases := []struct {
-		userID   domain.UserID
+		email   string
 		password string
 		valid    bool
 	}{
 		{
-			userID:   "",
+			email:   "",
 			password: "12345678",
 			valid:    false,
 		},
 		{
-			userID:   "1234",
+			email:   "valid@valid.com",
 			password: "",
 			valid:    false,
 		},
 		{
-			userID:   "123456789",
+			email:   "invalid",
+			password: "12345678",
+			valid:    false,
+		},
+		{
+			email:   "valid@valid.com",
 			password: "12345678",
 			valid:    true,
 		},
@@ -90,7 +119,7 @@ func (v *VerificationTestSuite) TestValidateLogin() {
 	validator := validation.NewValidator()
 
 	for _, tc := range testCases {
-		err := validator.ValidateLoginInputs(tc.userID, tc.password)
+		err := validator.ValidateLoginInputs(tc.email, tc.password)
 
 		if tc.valid {
 			require.NoError(v.T(), err)
@@ -269,15 +298,19 @@ func (v *VerificationTestSuite) TestValidateRefreshToken() {
 
 func (v *VerificationTestSuite) TestValidateResetPassword() {
 	testCases := []struct {
-		userID domain.UserID
+		email string
 		valid  bool
 	}{
 		{
-			userID: "",
+			email: "",
 			valid:  false,
 		},
 		{
-			userID: "12344566",
+			email: "invalid",
+			valid: false,
+		},
+		{
+			email: "valid@valid.com",
 			valid:  true,
 		},
 	}
@@ -285,7 +318,7 @@ func (v *VerificationTestSuite) TestValidateResetPassword() {
 	validator := validation.NewValidator()
 
 	for _, tc := range testCases {
-		err := validator.ValidateResetPasswordInputs(tc.userID)
+		err := validator.ValidateResetPasswordInputs(tc.email)
 
 		if tc.valid {
 			require.NoError(v.T(), err)

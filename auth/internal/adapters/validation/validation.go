@@ -38,9 +38,11 @@ func NewValidator() *Validator {
 	return valiInstance
 }
 
-func (v *Validator) ValidateRegisterInputs(UserID domain.UserID, password string) error {
+func (v *Validator) ValidateRegisterInputs(firstName,lastName,email,password string) error {
 	registerInputs := &registerInputs{
-		UserID:   UserID,
+		FirstName:   firstName,
+		LastName: lastName,
+		Email: email,
 		Password: password,
 	}
 
@@ -49,9 +51,9 @@ func (v *Validator) ValidateRegisterInputs(UserID domain.UserID, password string
 	return err
 }
 
-func (v *Validator) ValidateLoginInputs(UserID domain.UserID, password string) error {
+func (v *Validator) ValidateLoginInputs(email, password string) error {
 	loginInputs := &loginInputs{
-		UserID:   UserID,
+		Email:   email,
 		Password: password,
 	}
 
@@ -104,9 +106,9 @@ err := v.validate(refreshTokenInputs)
 return err
 }
 
-func (v *Validator) ValidateResetPasswordInputs(UserID domain.UserID) error {
+func (v *Validator) ValidateResetPasswordInputs(email string) error {
 	resetPasswordInputs := &resetPasswordInputs{
-		UserID: UserID,
+		Email: email,
 	}
 
 	err := v.validate(resetPasswordInputs)

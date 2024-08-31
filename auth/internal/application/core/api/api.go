@@ -5,36 +5,40 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Bookil/microservices/auth/internal/adapters/auth_manager"
 	"github.com/Bookil/microservices/auth/internal/application/core/domain"
 	"github.com/Bookil/microservices/auth/internal/ports"
-	auth_manager "github.com/tahadostifam/go-auth-manager"
 )
 
 type Application struct {
 	db          ports.DBPort
-	authManager auth_manager.AuthManager
+	user        ports.UserPorts
+	email       ports.EmailPort
+	authManager ports.AuthManager
 	hashManager ports.HashManager
 }
 
 const (
-	ResetPasswordTokenExpr     = time.Minute * 10    // 10 minutes
-	AccessTokenExpr            = time.Minute * 30    // 30 minutes
-	RefreshTokenExpr           = time.Hour * 24 * 14 // 2 weeks
-	VerificationCodeExpr       = time.Minute * 2     // 2 minutes
 	LockAccountDuration        = time.Minute * 2
 	MaximumFailedLoginAttempts = 3
-	VerificationCodeLength     = 6
 )
 
-func NewApplication(db ports.DBPort, authManager auth_manager.AuthManager, hashManager ports.HashManager) *Application {
+func NewApplication(db ports.DBPort, user ports.UserPorts, email ports.EmailPort, authManager ports.AuthManager, hashManager ports.HashManager) *Application {
 	return &Application{
 		db:          db,
+		user:        user,
+		email:       email,
 		authManager: authManager,
 		hashManager: hashManager,
 	}
 }
 
-func (a *Application) Register(ctx context.Context, userID domain.UserID, password string) (string, error) {
+func (a *Application) Register(ctx context.Context, firstName, lastName, email, password string) (userID domain.UserID, _ error) {
+	userID, err := a.user.Register(ctx, firstName, lastName, email)
+	if err != nil {
+		return "", err
+	}
+
 	hashedPassword, err := a.hashManager.HashPassword(password)
 	if err != nil {
 		return "", ErrHashingPassword
@@ -47,25 +51,17 @@ func (a *Application) Register(ctx context.Context, userID domain.UserID, passwo
 		return "", ErrCreateAuthStore
 	}
 
-	verificationCode, err := a.authManager.GenerateVerificationCode(ctx, userID, VerificationCodeLength, VerificationCodeExpr)
+	verificationCode, err := a.authManager.GenerateVerificationCode(ctx, userID)
 	if err != nil {
 		return "", ErrGenerateVerificationCode
 	}
 
-	return verificationCode, nil
-}
-
-func (a *Application) Authenticate(ctx context.Context, accessToken string) (domain.UserID, error) {
-	tokenClaims, err := a.authManager.DecodeAccessToken(ctx, accessToken)
+	err = a.email.SendVerificationCode(email, verificationCode)
 	if err != nil {
-		return "", ErrAccessDenied
+		return "", err
 	}
 
-	if len(strings.TrimSpace(tokenClaims.Payload.UUID)) == 0 {
-		return "", ErrAccessDenied
-	}
-
-	return tokenClaims.Payload.UUID, nil
+	return userID, nil
 }
 
 func (a *Application) VerifyEmail(ctx context.Context, userID domain.UserID, verificationCode string) error {
@@ -82,8 +78,13 @@ func (a *Application) VerifyEmail(ctx context.Context, userID domain.UserID, ver
 	return nil
 }
 
-func (a *Application) Login(ctx context.Context, userId domain.UserID, password string) (string, string, error) {
-	auth, err := a.db.GetByID(ctx, userId)
+func (a *Application) Login(ctx context.Context, email, password string) (accessToken string, refreshToken string, _ error) {
+	userID, err := a.user.GetUserIDByEmail(ctx, email)
+	if err != nil {
+		return "", "", err
+	}
+
+	auth, err := a.db.GetByID(ctx, userID)
 	if err != nil {
 		return "", "", ErrNotFound
 	}
@@ -97,7 +98,7 @@ func (a *Application) Login(ctx context.Context, userId domain.UserID, password 
 	}
 
 	if auth.FailedLoginAttempts >= MaximumFailedLoginAttempts {
-		_, err := a.db.LockAccount(ctx, userId, LockAccountDuration)
+		_, err := a.db.LockAccount(ctx, userID, LockAccountDuration)
 		if err != nil {
 			return "", "", ErrLockAccount
 		}
@@ -106,23 +107,19 @@ func (a *Application) Login(ctx context.Context, userId domain.UserID, password 
 
 	isPasswordValid := a.hashManager.CheckPasswordHash(password, auth.HashedPassword)
 	if !isPasswordValid {
-		_, err := a.db.IncrementFailedLoginAttempts(ctx, userId)
+		_, err := a.db.IncrementFailedLoginAttempts(ctx, userID)
 		if err != nil {
 			return "", "", ErrIncrementFailedLoginAttempts
 		}
 		return "", "", ErrInvalidEmailPassword
 	}
 
-	accessToken, err := a.authManager.GenerateAccessToken(ctx, auth.UserID, AccessTokenExpr)
+	accessToken, err = a.authManager.GenerateAccessToken(ctx, auth.UserID)
 	if err != nil {
 		return "", "", ErrGenerateToken
 	}
 
-	refreshToken, err := a.authManager.GenerateRefreshToken(ctx, auth.UserID, &auth_manager.RefreshTokenPayload{
-		IPAddress:  "not implemented yet",
-		UserAgent:  "not implemented yet",
-		LoggedInAt: time.Duration(time.Now().UnixMilli()),
-	}, RefreshTokenExpr)
+	refreshToken, err = a.authManager.GenerateRefreshToken(ctx, auth.UserID)
 	if err != nil {
 		return "", "", ErrGenerateToken
 	}
@@ -131,7 +128,26 @@ func (a *Application) Login(ctx context.Context, userId domain.UserID, password 
 	if err != nil {
 		return "", "", ErrClearFailedLoginAttempts
 	}
+
+	err = a.email.SendWelcome(email)
+	if err != nil {
+		return "", "", err
+	}
+
 	return accessToken, refreshToken, nil
+}
+
+func (a *Application) Authenticate(ctx context.Context, accessToken string) (domain.UserID, error) {
+	tokenClaims, err := a.authManager.DecodeAccessToken(ctx, accessToken)
+	if err != nil {
+		return "", ErrAccessDenied
+	}
+
+	if len(strings.TrimSpace(tokenClaims.UserID)) == 0 {
+		return "", ErrAccessDenied
+	}
+
+	return tokenClaims.UserID, nil
 }
 
 func (a *Application) ChangePassword(ctx context.Context, userID domain.UserID, oldPassword string, newPassword string) error {
@@ -169,7 +185,7 @@ func (a *Application) RefreshToken(ctx context.Context, userID domain.UserID, re
 		return "", ErrAccessDenied
 	}
 
-	newAccessToken, err := a.authManager.GenerateAccessToken(ctx, userID, AccessTokenExpr)
+	newAccessToken, err := a.authManager.GenerateAccessToken(ctx, userID)
 	if err != nil {
 		return "", ErrGenerateToken
 	}
@@ -177,34 +193,40 @@ func (a *Application) RefreshToken(ctx context.Context, userID domain.UserID, re
 	return newAccessToken, nil
 }
 
-func (a *Application) ResetPassword(ctx context.Context, userID string) (string, time.Duration, error) {
+func (a *Application) ResetPassword(ctx context.Context, email string) error {
+	userID, err := a.user.GetUserIDByEmail(ctx, email)
+	if err != nil {
+		return err
+	}
+
 	auth, err := a.db.GetByID(ctx, userID)
 	if err != nil {
-		return "", 0, ErrNotFound
+		return ErrNotFound
 	}
 
 	if !auth.IsEmailVerified {
-		return "", 0, ErrEmailNotVerified
+		return ErrEmailNotVerified
 	}
 
 	if auth.FailedLoginAttempts >= MaximumFailedLoginAttempts {
-		return "", 0, ErrAccountLocked
+		return ErrAccountLocked
 	}
 
-	resetPasswordToken, err := a.authManager.GenerateToken(ctx, auth_manager.ResetPassword, &auth_manager.TokenPayload{
-		UUID:      auth.UserID,
-		TokenType: auth_manager.ResetPassword,
-		CreatedAt: time.Now(),
-	}, ResetPasswordTokenExpr)
+	resetPasswordToken, err := a.authManager.GenerateResetPasswordToken(ctx, userID)
 	if err != nil {
-		return "", 0, ErrGenerateToken
+		return ErrGenerateToken
 	}
 
-	return resetPasswordToken, ResetPasswordTokenExpr, nil
+	err = a.email.SendResetPassword("example.com", resetPasswordToken, email, auth_manager.ResetPasswordTokenExpr)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (a *Application) SubmitResetPassword(ctx context.Context, resetPasswordToken string, newPassword string) error {
-	payload, err := a.authManager.DecodeToken(ctx, resetPasswordToken, auth_manager.ResetPassword)
+	resetPasswordTokenCliams, err := a.authManager.DecodeResetPasswordToken(ctx, resetPasswordToken)
 	if err != nil {
 		return ErrAccessDenied
 	}
@@ -214,7 +236,7 @@ func (a *Application) SubmitResetPassword(ctx context.Context, resetPasswordToke
 		return ErrHashingPassword
 	}
 
-	_, err = a.db.ChangePassword(ctx, payload.UUID, hashedPassword)
+	_, err = a.db.ChangePassword(ctx, resetPasswordTokenCliams.UserID, hashedPassword)
 	if err != nil {
 		return ErrChangePassword
 	}

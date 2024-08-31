@@ -3,13 +3,15 @@ package validation
 import "github.com/Bookil/microservices/auth/internal/application/core/domain"
 
 type registerInputs struct {
-	UserID   domain.UserID `validate:"required"`
-	Password string `validate:"required,min=8"`
+	FirstName domain.UserID `validate:"required"`
+	LastName  string        `validate:"required"`
+	Email     string        `validate:"required,email"`
+	Password  string        `validate:"required,min=8"`
 }
 
 type loginInputs struct {
-	UserID   domain.UserID `validate:"required"`
-	Password string        `validate:"required"`
+	Email    string `validate:"required,email"`
+	Password string `validate:"required"`
 }
 
 type authenticateInputs struct {
@@ -33,7 +35,7 @@ type refreshTokenInputs struct {
 }
 
 type resetPasswordInputs struct {
-	UserID domain.UserID `validate:"required"`
+	Email string `validate:"required,email"`
 }
 
 type submitResetPasswordInputs struct {
