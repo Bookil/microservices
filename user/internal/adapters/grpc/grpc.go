@@ -10,6 +10,11 @@ import (
 )
 
 func (a *Adapter) Register(ctx context.Context, request *userv1.RegisterRequest) (*userv1.RegisterResponse, error) {
+	err := a.validator.ValidateRegisterInputs(request.FisrtName, request.LastName, request.LastName)
+	if err != nil {
+		return nil, err
+	}
+
 	userID, err := a.api.Register(ctx, request.FisrtName, request.LastName, request.Email)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
@@ -26,7 +31,12 @@ func (a *Adapter) ChangePassword(ctx context.Context, request *userv1.ChangePass
 		return nil, status.Error(codes.Internal, "an error occurred")
 	}
 
-	err := a.api.ChangePassword(ctx, userID, request.NewPassword, request.OldPassword)
+	err := a.validator.ValidateChangePasswordInputs(userID,request.OldPassword, request.NewPassword)
+	if err != nil {
+		return nil, err
+	}
+
+	err = a.api.ChangePassword(ctx, userID, request.NewPassword, request.OldPassword)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -40,7 +50,12 @@ func (a *Adapter) Update(ctx context.Context, request *userv1.UpdateRequest) (*u
 		return nil, status.Error(codes.Internal, "an error occurred")
 	}
 
-	err := a.api.Update(ctx, userID, request.NewFirstName, request.NewLastName)
+	err := a.validator.ValidationUpdateInputs(userID,request.NewFirstName, request.NewLastName)
+	if err != nil {
+		return nil, err
+	}
+
+	err = a.api.Update(ctx, userID, request.NewFirstName, request.NewLastName)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
@@ -53,8 +68,13 @@ func (a *Adapter) DeleteAccount(ctx context.Context, request *userv1.DeleteAccou
 	if !ok {
 		return nil, status.Error(codes.Internal, "an error occurred")
 	}
-	
-	err := a.api.DeleteAccount(ctx, userID, request.Password)
+
+	err := a.validator.ValidateDeleteAccountInputs(userID,request.Password)
+	if err != nil {
+		return nil, err
+	}
+
+	err = a.api.DeleteAccount(ctx, userID, request.Password)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
