@@ -2,7 +2,7 @@ service_name: "user"
 
 server:
     host: "127.0.0.1"
-    port: 3002
+    port: 3003
 
 mysql:
     host: "127.0.0.1"
@@ -13,7 +13,7 @@ mysql:
 
 auth:
   host: "127.0.0.1"
-  port: 3003
+  port: 3002
 
 email:
   host: "127.0.0.1"
