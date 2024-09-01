@@ -3,7 +3,7 @@ module github.com/Bookil/microservices/user
 go 1.22.5
 
 require (
-	github.com/Bookil/Bookil-Proto v0.2.1
+	github.com/Bookil/Bookil-Proto v0.2.2
 	github.com/stretchr/testify v1.9.0
 	google.golang.org/grpc v1.65.0
 	gorm.io/gorm v1.25.7

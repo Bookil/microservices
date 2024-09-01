@@ -9,20 +9,18 @@ import (
 )
 
 type Application struct {
-	auth  ports.AuthPort
-	email ports.EmailPort
-	db    ports.DBPort
+	auth ports.AuthPort
+	db   ports.DBPort
 }
 
-func NewApplication(auth ports.AuthPort, email ports.EmailPort, db ports.DBPort) *Application {
+func NewApplication(auth ports.AuthPort, db ports.DBPort) *Application {
 	return &Application{
-		auth:  auth,
-		email: email,
-		db:    db,
+		auth: auth,
+		db:   db,
 	}
 }
 
-func (a *Application) Register(ctx context.Context, firstName, lastName, email, password string) (domain.UserID, error) {
+func (a *Application) Register(ctx context.Context, firstName, lastName, email string) (domain.UserID, error) {
 	newUser := domain.NewUser(firstName, lastName, email)
 
 	savedUser, err := a.db.Create(ctx, newUser)
@@ -33,67 +31,25 @@ func (a *Application) Register(ctx context.Context, firstName, lastName, email, 
 		return "", ErrRegisterFailed
 	}
 
-	code, err := a.auth.Register(ctx, newUser.UserID, password)
-	if err != nil {
-		return "", ErrRegisterFailed
-	}
+	return savedUser.UserID, nil
+}
 
-	err = a.email.SendVerificationCode(savedUser.Email, code)
+func (a *Application) GetUserIDByEmail(ctx context.Context, email string) (domain.UserID, error) {
+	savedUser, err := a.db.GetUserByEmail(ctx, email)
 	if err != nil {
+		if helper.IsContains("found", err) {
+			return "", ErrUserNotFindWithThisEmail
+		}
 		return "", ErrRegisterFailed
 	}
 
 	return savedUser.UserID, nil
 }
 
-func (a *Application) Login(ctx context.Context, email, password string) (string, string, error) {
-	gotUser, err := a.db.GetUserByEmail(ctx, email)
-	if err != nil {
-		if helper.IsContains("found", err) {
-			return "", "", ErrUserNotFindWithThisEmail
-		}
-		return "", "", ErrLoggingFailed
-	}
-
-	accessToken, refreshToken, err := a.auth.Login(ctx, gotUser.UserID, password)
-	if err != nil {
-		return "", "", err
-	}
-
-	err = a.email.SendWellCome(gotUser.Email)
-	if err != nil {
-		return "", "", ErrLoggingFailed
-	}
-
-	return accessToken, refreshToken, nil
-}
-
 func (a *Application) ChangePassword(ctx context.Context, userID, oldPassword, newPassword string) error {
 	err := a.auth.ChangePassword(ctx, userID, oldPassword, newPassword)
 	if err != nil {
 		return ErrChangingPasswordFailed
-	}
-
-	return nil
-}
-
-func (a *Application) ResetPassword(ctx context.Context, email string) error {
-	gotUser, err := a.db.GetUserByEmail(ctx, email)
-	if err != nil {
-		if helper.IsContains("found", err) {
-			return ErrUserNotFindWithThisEmail
-		}
-		return ErrResetPasswordFailed
-	}
-
-	token, duration, err := a.auth.ResetPassword(ctx, gotUser.UserID)
-	if err != nil {
-		return ErrResetPasswordFailed
-	}
-
-	err = a.email.SendResetPassword("example.com", token, gotUser.Email, duration)
-	if err != nil {
-		return ErrResetPasswordFailed
 	}
 
 	return nil

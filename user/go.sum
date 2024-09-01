@@ -10,6 +10,8 @@ github.com/Bookil/Bookil-Proto v0.1.5 h1:JGNg7KQchI9Ha/OkpHhrqMiuoCa5zzS8qYDxe88
 github.com/Bookil/Bookil-Proto v0.1.5/go.mod h1:C8+ie5nWDtkB/FUyx1y7UImKYp+3M1srAcgw9JinjxU=
 github.com/Bookil/Bookil-Proto v0.2.1 h1:ervMBhJMsZ3kugk3NC3R7/QTfInq4oH23Wpoadlsum8=
 github.com/Bookil/Bookil-Proto v0.2.1/go.mod h1:C8+ie5nWDtkB/FUyx1y7UImKYp+3M1srAcgw9JinjxU=
+github.com/Bookil/Bookil-Proto v0.2.2 h1:htbuxtCX5yGp6refmIV1hSTlSX8KSZsyhNuRcInXiIY=
+github.com/Bookil/Bookil-Proto v0.2.2/go.mod h1:C8+ie5nWDtkB/FUyx1y7UImKYp+3M1srAcgw9JinjxU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
