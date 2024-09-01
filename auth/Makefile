@@ -5,6 +5,10 @@ lint:
 fmt:
 	gofumpt -l -w .
 
+mock_gen:
+	chmod 755 ./scripts/mock_gen.sh
+	./scripts/mock_gen.sh
+
 unit_test:
 	go test -coverprofile=coverage.out $(shell go list ./... | grep -v /integration)
 
