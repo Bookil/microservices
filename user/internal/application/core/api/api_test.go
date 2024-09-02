@@ -73,7 +73,7 @@ func (a *ApplicationTestSuit) TestRegister_OtherError() {
 	lastName := "Doe"
 	email := "john.doe@example.com"
 
-	a.db.EXPECT().Create(ctx,gomock.Any()).Return(nil, ErrUnknownError)
+	a.db.EXPECT().Create(ctx, gomock.Any()).Return(nil, ErrUnknownError)
 
 	userID, err := a.app.Register(ctx, firstName, lastName, email)
 	a.Empty(userID)

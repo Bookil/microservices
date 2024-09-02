@@ -12,7 +12,7 @@ type (
 
 	User struct {
 		UserID    UserID `gorm:"unique"`
-		FirstName string 
+		FirstName string
 		LastName  string
 		Email     string `gorm:"unique"`
 		CreatedAt time.Time

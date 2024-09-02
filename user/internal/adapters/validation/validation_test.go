@@ -22,6 +22,7 @@ func TestVerificationTestSuite(t *testing.T) {
 func (v *VerificationTestSuite) SetupSuite() {
 	v.validator = validation.NewValidator()
 }
+
 func (v *VerificationTestSuite) TestValidateRegister() {
 	testCases := []struct {
 		firstName string
@@ -70,8 +71,8 @@ func (v *VerificationTestSuite) TestValidateRegister() {
 		}
 
 	}
-
 }
+
 func (v *VerificationTestSuite) TestValidateChangePassword() {
 	testCases := []struct {
 		userID      domain.UserID
@@ -126,7 +127,6 @@ func (v *VerificationTestSuite) TestValidateChangePassword() {
 		}
 
 	}
-
 }
 
 func (v *VerificationTestSuite) TestValidateUpdate() {

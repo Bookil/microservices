@@ -2,7 +2,7 @@
 
 mkdir -p mocks
 
-for file in ./internal/ports/*.go; do
+for file in `ls ./internal/ports/*.go`; do
   filename=$(basename "$file" .go)
 
   if [[ ! $filename =~ ^(api|validation) ]]; then

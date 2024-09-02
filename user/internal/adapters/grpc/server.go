@@ -16,7 +16,7 @@ import (
 type Adapter struct {
 	api             ports.APIPort
 	authInterceptor *interceptor.AuthInterceptor
-	validator ports.Validation
+	validator       ports.Validation
 	port            int
 	userv1.UnimplementedUserServiceServer
 }

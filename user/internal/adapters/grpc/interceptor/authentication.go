@@ -18,7 +18,7 @@ type AuthInterceptor struct {
 	auth ports.AuthPort
 }
 
-func NewAuthInterceptor(auth ports.AuthPort) *AuthInterceptor{
+func NewAuthInterceptor(auth ports.AuthPort) *AuthInterceptor {
 	return &AuthInterceptor{
 		auth: auth,
 	}

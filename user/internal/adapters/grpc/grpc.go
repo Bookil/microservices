@@ -31,7 +31,7 @@ func (a *Adapter) ChangePassword(ctx context.Context, request *userv1.ChangePass
 		return nil, status.Error(codes.Internal, "an error occurred")
 	}
 
-	err := a.validator.ValidateChangePasswordInputs(userID,request.OldPassword, request.NewPassword)
+	err := a.validator.ValidateChangePasswordInputs(userID, request.OldPassword, request.NewPassword)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (a *Adapter) Update(ctx context.Context, request *userv1.UpdateRequest) (*u
 		return nil, status.Error(codes.Internal, "an error occurred")
 	}
 
-	err := a.validator.ValidationUpdateInputs(userID,request.NewFirstName, request.NewLastName)
+	err := a.validator.ValidationUpdateInputs(userID, request.NewFirstName, request.NewLastName)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (a *Adapter) DeleteAccount(ctx context.Context, request *userv1.DeleteAccou
 		return nil, status.Error(codes.Internal, "an error occurred")
 	}
 
-	err := a.validator.ValidateDeleteAccountInputs(userID,request.Password)
+	err := a.validator.ValidateDeleteAccountInputs(userID, request.Password)
 	if err != nil {
 		return nil, err
 	}
