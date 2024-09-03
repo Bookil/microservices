@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"strings"
 	"sync"
 
 	"github.com/Bookil/microservices/auth/internal/application/core/domain"
@@ -40,10 +41,10 @@ func NewValidator() *Validator {
 
 func (v *Validator) ValidateRegisterInputs(firstName, lastName, email, password string) error {
 	registerInputs := &registerInputs{
-		FirstName: firstName,
-		LastName:  lastName,
-		Email:     email,
-		Password:  password,
+		FirstName: strings.TrimSpace(firstName),
+		LastName:  strings.TrimSpace(lastName),
+		Email:     strings.TrimSpace(email),
+		Password:  strings.TrimSpace(password),
 	}
 
 	err := v.validate(registerInputs)
@@ -53,8 +54,8 @@ func (v *Validator) ValidateRegisterInputs(firstName, lastName, email, password 
 
 func (v *Validator) ValidateLoginInputs(email, password string) error {
 	loginInputs := &loginInputs{
-		Email:    email,
-		Password: password,
+		Email:    strings.TrimSpace(email),
+		Password: strings.TrimSpace(password),
 	}
 
 	err := v.validate(loginInputs)
@@ -64,7 +65,7 @@ func (v *Validator) ValidateLoginInputs(email, password string) error {
 
 func (v *Validator) ValidateSendVerificationCode(email string) error {
 	sendVerificationCodeAgainInputs := &sendVerificationCodeAgainInputs{
-		Email: email,
+		Email: strings.TrimSpace(email),
 	}
 
 	err := v.validate(sendVerificationCodeAgainInputs)
@@ -74,8 +75,8 @@ func (v *Validator) ValidateSendVerificationCode(email string) error {
 
 func (v *Validator) ValidateVerifyEmailInputs(email, verificationCode string) error {
 	verifyEmailInputs := &verifyEmailInputs{
-		Email:          email,
-		ValidationCode: verificationCode,
+		Email:          strings.TrimSpace(email),
+		ValidationCode: strings.TrimSpace(verificationCode),
 	}
 
 	err := v.validate(verifyEmailInputs)
@@ -85,9 +86,9 @@ func (v *Validator) ValidateVerifyEmailInputs(email, verificationCode string) er
 
 func (v *Validator) ValidateChangePasswordInputs(UserID domain.UserID, oldPassword string, newPassword string) error {
 	changePasswordInputs := &changePasswordInputs{
-		UserID:      UserID,
-		OldPassword: oldPassword,
-		NewPassword: newPassword,
+		UserID:      strings.TrimSpace(UserID),
+		OldPassword: strings.TrimSpace(oldPassword),
+		NewPassword: strings.TrimSpace(newPassword),
 	}
 
 	err := v.validate(changePasswordInputs)
@@ -97,7 +98,7 @@ func (v *Validator) ValidateChangePasswordInputs(UserID domain.UserID, oldPasswo
 
 func (v *Validator) ValidateAuthenticateInputs(accessToken string) error {
 	authenticateInputs := &authenticateInputs{
-		AccessToken: accessToken,
+		AccessToken: strings.TrimSpace(accessToken),
 	}
 
 	err := v.validate(authenticateInputs)
@@ -107,8 +108,8 @@ func (v *Validator) ValidateAuthenticateInputs(accessToken string) error {
 
 func (v *Validator) ValidateRefreshTokenInputs(UserID domain.UserID, refreshToken string) error {
 	refreshTokenInputs := &refreshTokenInputs{
-		UserID:       UserID,
-		RefreshToken: refreshToken,
+		UserID:       strings.TrimSpace(UserID),
+		RefreshToken: strings.TrimSpace(refreshToken),
 	}
 
 	err := v.validate(refreshTokenInputs)
@@ -118,7 +119,7 @@ func (v *Validator) ValidateRefreshTokenInputs(UserID domain.UserID, refreshToke
 
 func (v *Validator) ValidateResetPasswordInputs(email string) error {
 	resetPasswordInputs := &resetPasswordInputs{
-		Email: email,
+		Email: strings.TrimSpace(email),
 	}
 
 	err := v.validate(resetPasswordInputs)
@@ -128,8 +129,8 @@ func (v *Validator) ValidateResetPasswordInputs(email string) error {
 
 func (v *Validator) ValidateSubmitResetPasswordInputs(resetPasswordToken string, newPassword string) error {
 	submitResetPasswordInputs := &submitResetPasswordInputs{
-		ResetPasswordToken: resetPasswordToken,
-		Password:           newPassword,
+		ResetPasswordToken: strings.TrimSpace(resetPasswordToken),
+		Password:           strings.TrimSpace(newPassword),
 	}
 
 	err := v.validate(submitResetPasswordInputs)
@@ -139,8 +140,8 @@ func (v *Validator) ValidateSubmitResetPasswordInputs(resetPasswordToken string,
 
 func (v *Validator) ValidateDeleteAccountInputs(UserID domain.UserID, password string) error {
 	deleteAccountInputs := &deleteAccountInputs{
-		UserID:   UserID,
-		Password: password,
+		UserID:   strings.TrimSpace(UserID),
+		Password: strings.TrimSpace(password),
 	}
 
 	err := v.validate(deleteAccountInputs)

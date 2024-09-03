@@ -66,6 +66,13 @@ func (v *VerificationTestSuite) TestValidateRegister() {
 		},
 		{
 			firstName: "valid",
+			lastName:  "    ",
+			email:     "valid@valid.com",
+			password:  "12345",
+			valid:     false,
+		},
+		{
+			firstName: "valid",
 			lastName:  "valid",
 			email:     "valid@valid.com",
 			password:  "12345678",
