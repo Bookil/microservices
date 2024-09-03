@@ -7,12 +7,12 @@ import (
 )
 
 func (a *Adapter) Register(ctx context.Context, request *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
-	err := a.validator.ValidateRegisterInputs(request.FisrtName, request.LastName, request.Email, request.Password)
+	err := a.validator.ValidateRegisterInputs(request.FirstName, request.LastName, request.Email, request.Password)
 	if err != nil {
 		return nil, ErrInvalidInputs
 	}
 
-	userID, err := a.api.Register(ctx, request.FisrtName, request.LastName, request.Email, request.Password)
+	userID, err := a.api.Register(ctx, request.FirstName, request.LastName, request.Email, request.Password)
 	if err != nil {
 		return nil, ErrFailedRegister
 	}
@@ -23,12 +23,12 @@ func (a *Adapter) Register(ctx context.Context, request *authv1.RegisterRequest)
 }
 
 func (a *Adapter) VerifyEmail(ctx context.Context, request *authv1.VerifyEmailRequest) (*authv1.VerifyEmailResponse, error) {
-	err := a.validator.ValidateVerifyEmailInputs(request.UserId, request.VerificationCode)
+	err := a.validator.ValidateVerifyEmailInputs(request.Email, request.VerificationCode)
 	if err != nil {
 		return nil, ErrInvalidInputs
 	}
 
-	err = a.api.VerifyEmail(ctx, request.UserId, request.VerificationCode)
+	err = a.api.VerifyEmail(ctx, request.Email, request.VerificationCode)
 	if err != nil {
 		return nil, ErrFailedVerifyEmil
 	}

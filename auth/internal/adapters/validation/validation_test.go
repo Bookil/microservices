@@ -88,6 +88,38 @@ func (v *VerificationTestSuite) TestValidateRegister() {
 
 }
 
+func (v *VerificationTestSuite) TestValidateSendVerificationCodeAgain() {
+	testCases := []struct {
+		email    string
+		valid    bool
+	}{
+		{
+			email:    "",
+			valid:    false,
+		},
+		{
+			email:    "invalid",
+			valid:    false,
+		},
+		{
+			email:    "valid@valid.com",
+			valid:    true,
+		},
+	}
+
+	for _, tc := range testCases {
+		err := v.validator.ValidateSendVerificationCode(tc.email)
+
+		if tc.valid {
+			require.NoError(v.T(), err)
+		} else {
+			require.Error(v.T(), err)
+		}
+
+	}
+
+}
+
 func (v *VerificationTestSuite) TestValidateLogin() {
 	testCases := []struct {
 		email    string
@@ -133,34 +165,29 @@ func (v *VerificationTestSuite) TestValidateLogin() {
 
 func (v *VerificationTestSuite) TestValidateVerifyEmail() {
 	testCases := []struct {
-		userID           domain.UserID
+		email           string
 		verificationCode string
 		valid            bool
 	}{
 		{
-			userID:           "",
+			email: "",
 			verificationCode: "123456",
 			valid:            false,
 		},
 		{
-			userID:           "1234",
+			email: "valid@valid.com",
 			verificationCode: "",
 			valid:            false,
 		},
 		{
-			userID:           "12344566",
-			verificationCode: "1234",
-			valid:            false,
-		},
-		{
-			userID:           "123456789",
+			email: "valid@valid.com",
 			verificationCode: "123456",
 			valid:            true,
 		},
 	}
 
 	for _, tc := range testCases {
-		err := v.validator.ValidateVerifyEmailInputs(tc.userID, tc.verificationCode)
+		err := v.validator.ValidateVerifyEmailInputs(tc.email, tc.verificationCode)
 
 		if tc.valid {
 			require.NoError(v.T(), err)

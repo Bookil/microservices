@@ -13,6 +13,6 @@ type AuthManager interface {
 	DecodeRefreshToken(ctx context.Context, userID domain.UserID, RefreshToken string) (*domain.RefreshTokenClaims, error)
 	GenerateResetPasswordToken(ctx context.Context, userID domain.UserID) (resetPasswordToken string, err error)
 	DecodeResetPasswordToken(ctx context.Context, resetPasswordToken string) (*domain.ResetPasswordTokenClaims, error)
-	GenerateVerificationCode(ctx context.Context, userID domain.UserID) (verificationCode string, _ error)
+	GenerateVerificationCode(ctx context.Context,  key string) (verificationCode string, _ error)
 	CompareVerificationCode(ctx context.Context, userID domain.UserID, verificationCode string) (bool, error)
 }

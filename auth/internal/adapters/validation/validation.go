@@ -38,12 +38,12 @@ func NewValidator() *Validator {
 	return valiInstance
 }
 
-func (v *Validator) ValidateRegisterInputs(firstName,lastName,email,password string) error {
+func (v *Validator) ValidateRegisterInputs(firstName, lastName, email, password string) error {
 	registerInputs := &registerInputs{
-		FirstName:   firstName,
-		LastName: lastName,
-		Email: email,
-		Password: password,
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+		Password:  password,
 	}
 
 	err := v.validate(registerInputs)
@@ -53,7 +53,7 @@ func (v *Validator) ValidateRegisterInputs(firstName,lastName,email,password str
 
 func (v *Validator) ValidateLoginInputs(email, password string) error {
 	loginInputs := &loginInputs{
-		Email:   email,
+		Email:    email,
 		Password: password,
 	}
 
@@ -62,9 +62,19 @@ func (v *Validator) ValidateLoginInputs(email, password string) error {
 	return err
 }
 
-func (v *Validator) ValidateVerifyEmailInputs(UserID domain.UserID, verificationCode string) error {
+func (v *Validator) ValidateSendVerificationCode(email string) error {
+	sendVerificationCodeAgainInputs := &sendVerificationCodeAgainInputs{
+		Email: email,
+	}
+
+	err := v.validate(sendVerificationCodeAgainInputs)
+
+	return err
+}
+
+func (v *Validator) ValidateVerifyEmailInputs(email, verificationCode string) error {
 	verifyEmailInputs := &verifyEmailInputs{
-		UserID:         UserID,
+		Email:          email,
 		ValidationCode: verificationCode,
 	}
 
@@ -96,14 +106,14 @@ func (v *Validator) ValidateAuthenticateInputs(accessToken string) error {
 }
 
 func (v *Validator) ValidateRefreshTokenInputs(UserID domain.UserID, refreshToken string) error {
-refreshTokenInputs := &refreshTokenInputs{
-	UserID:       UserID,
-	RefreshToken: refreshToken,
-}
+	refreshTokenInputs := &refreshTokenInputs{
+		UserID:       UserID,
+		RefreshToken: refreshToken,
+	}
 
-err := v.validate(refreshTokenInputs)
+	err := v.validate(refreshTokenInputs)
 
-return err
+	return err
 }
 
 func (v *Validator) ValidateResetPasswordInputs(email string) error {

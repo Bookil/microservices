@@ -33,7 +33,7 @@ func NewApplication(db ports.DBPort, user ports.UserPorts, email ports.EmailPort
 	}
 }
 
-func (a *Application) Register(ctx context.Context, firstName, lastName, email, password string) (userID domain.UserID, _ error) {
+func (a *Application) Register(ctx context.Context, firstName, lastName, email, password string) (string, error) {
 	userID, err := a.user.Register(ctx, firstName, lastName, email)
 	if err != nil {
 		return "", err
@@ -51,23 +51,37 @@ func (a *Application) Register(ctx context.Context, firstName, lastName, email, 
 		return "", ErrCreateAuthStore
 	}
 
-	verificationCode, err := a.authManager.GenerateVerificationCode(ctx, userID)
-	if err != nil {
-		return "", ErrGenerateVerificationCode
-	}
-
-	err = a.email.SendVerificationCode(email, verificationCode)
+	err = a.SendVerificationCode(ctx, email)
 	if err != nil {
 		return "", err
 	}
 
-	return userID, nil
+	return email, nil
 }
 
-func (a *Application) VerifyEmail(ctx context.Context, userID domain.UserID, verificationCode string) error {
-	isValid, err := a.authManager.CompareVerificationCode(ctx, userID, verificationCode)
+func (a *Application) SendVerificationCode(ctx context.Context, email string) error {
+	verificationCode, err := a.authManager.GenerateVerificationCode(ctx, email)
+	if err != nil {
+		return ErrGenerateVerificationCode
+	}
+
+	err = a.email.SendVerificationCode(email, verificationCode)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a *Application) VerifyEmail(ctx context.Context, email string, verificationCode string) error {
+	isValid, err := a.authManager.CompareVerificationCode(ctx, email, verificationCode)
 	if !isValid || err != nil {
 		return ErrVerifyEmail
+	}
+
+	userID,err := a.user.GetUserIDByEmail(ctx,email)
+	if err != nil{
+		return err
 	}
 
 	_, err = a.db.VerifyEmail(ctx, userID)

@@ -9,6 +9,10 @@ type registerInputs struct {
 	Password  string        `validate:"required,min=8"`
 }
 
+type sendVerificationCodeAgainInputs struct {
+	Email    string `validate:"required,email"`
+}
+
 type loginInputs struct {
 	Email    string `validate:"required,email"`
 	Password string `validate:"required"`
@@ -19,7 +23,7 @@ type authenticateInputs struct {
 }
 
 type verifyEmailInputs struct {
-	UserID         domain.UserID `validate:"required"`
+	Email         string `validate:"required,email"`
 	ValidationCode string        `validate:"required,len=6"`
 }
 

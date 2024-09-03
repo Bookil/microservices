@@ -107,8 +107,8 @@ func (a *Adapter) DecodeResetPasswordToken(ctx context.Context, resetPasswordTok
 	return resetPasswordTokeClaims, nil
 }
 
-func (a *Adapter) GenerateVerificationCode(ctx context.Context, userID domain.UserID) (verificationCode string, _ error) {
-	verificationCode, err := a.authManger.GenerateVerificationCode(ctx, userID, VerificationCodeLength, VerificationCodeExpr)
+func (a *Adapter) GenerateVerificationCode(ctx context.Context, key string) (verificationCode string, _ error) {
+	verificationCode, err := a.authManger.GenerateVerificationCode(ctx, key, VerificationCodeLength, VerificationCodeExpr)
 	if err != nil {
 		return "", err
 	}

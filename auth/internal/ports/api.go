@@ -7,13 +7,14 @@ import (
 )
 
 type APIPort interface {
-	Register(ctx context.Context, firstName, lastName, email, password string) (userID domain.UserID, err error)
+	Register(ctx context.Context, firstName, lastName, email, password string) (string, error)
 	VerifyEmail(ctx context.Context, userID domain.UserID, verificationCode string) error
+	SendVerificationCode(ctx context.Context, userID domain.UserID) error
 	Login(ctx context.Context, email, password string) (accessToken string, refreshToken string, err error)
 	ResetPassword(ctx context.Context, email string) error
 	SubmitResetPassword(ctx context.Context, SubmitResetPasswordToken string, newPassword string) error
 	Authenticate(ctx context.Context, accessToken string) (domain.UserID, error)
 	ChangePassword(ctx context.Context, userID domain.UserID, newPassword string, oldPassword string) error
-	RefreshToken(ctx context.Context, userID domain.UserID, refreshToken string) (accessToken string,err error)
+	RefreshToken(ctx context.Context, userID domain.UserID, refreshToken string) (accessToken string, err error)
 	DeleteAccount(ctx context.Context, userID, password string) error
 }
