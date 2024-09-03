@@ -24,59 +24,59 @@ func (v *VerificationTestSuite) SetupSuite() {
 func (v *VerificationTestSuite) TestValidateRegister() {
 	testCases := []struct {
 		firstName string
-		lastName string
-		email   string
-		password string
-		valid    bool
+		lastName  string
+		email     string
+		password  string
+		valid     bool
 	}{
 		{
 			firstName: "",
-			lastName: "valid",
-			email:   "valid@gmail.com",
-			password: "12345678",
-			valid:    false,
+			lastName:  "valid",
+			email:     "valid@gmail.com",
+			password:  "12345678",
+			valid:     false,
 		},
 		{
 			firstName: "valid",
-			lastName: "",
-			email:   "valid@gmail.com",
-			password: "12345678",
-			valid:    false,
+			lastName:  "",
+			email:     "valid@gmail.com",
+			password:  "12345678",
+			valid:     false,
 		},
 		{
 			firstName: "valid",
-			lastName: "valid",
-			email:   "",
-			password: "12345678",
-			valid:    false,
+			lastName:  "valid",
+			email:     "",
+			password:  "12345678",
+			valid:     false,
 		},
 		{
 			firstName: "valid",
-			lastName: "valid",
-			email:   "valid@gmail.com",
-			password: "",
-			valid:    false,
+			lastName:  "valid",
+			email:     "valid@gmail.com",
+			password:  "",
+			valid:     false,
 		},
 		{
 			firstName: "valid",
-			lastName: "valid",
-			email:   "valid@valid.com",
-			password: "12345",
-			valid:    false,
+			lastName:  "valid",
+			email:     "valid@valid.com",
+			password:  "12345",
+			valid:     false,
 		},
 		{
 			firstName: "valid",
-			lastName: "valid",
-			email:   "valid@valid.com",
-			password: "12345678",
-			valid:    true,
+			lastName:  "valid",
+			email:     "valid@valid.com",
+			password:  "12345678",
+			valid:     true,
 		},
 	}
 
 	validator := validation.NewValidator()
 
 	for _, tc := range testCases {
-		err := validator.ValidateRegisterInputs(tc.firstName,tc.lastName,tc.email,tc.password)
+		err := validator.ValidateRegisterInputs(tc.firstName, tc.lastName, tc.email, tc.password)
 
 		if tc.valid {
 			require.NoError(v.T(), err)
@@ -90,27 +90,27 @@ func (v *VerificationTestSuite) TestValidateRegister() {
 
 func (v *VerificationTestSuite) TestValidateLogin() {
 	testCases := []struct {
-		email   string
+		email    string
 		password string
 		valid    bool
 	}{
 		{
-			email:   "",
+			email:    "",
 			password: "12345678",
 			valid:    false,
 		},
 		{
-			email:   "valid@valid.com",
+			email:    "valid@valid.com",
 			password: "",
 			valid:    false,
 		},
 		{
-			email:   "invalid",
+			email:    "invalid",
 			password: "12345678",
 			valid:    false,
 		},
 		{
-			email:   "valid@valid.com",
+			email:    "valid@valid.com",
 			password: "12345678",
 			valid:    true,
 		},
@@ -159,10 +159,8 @@ func (v *VerificationTestSuite) TestValidateVerifyEmail() {
 		},
 	}
 
-	validator := validation.NewValidator()
-
 	for _, tc := range testCases {
-		err := validator.ValidateVerifyEmailInputs(tc.userID, tc.verificationCode)
+		err := v.validator.ValidateVerifyEmailInputs(tc.userID, tc.verificationCode)
 
 		if tc.valid {
 			require.NoError(v.T(), err)
@@ -184,15 +182,17 @@ func (v *VerificationTestSuite) TestValidateAuthenticate() {
 			valid:       false,
 		},
 		{
-			accessToken: "valid",
+			accessToken: "invalid",
+			valid:       false,
+		},
+		{
+			accessToken: "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJQYXlsb2FkIjp7InV1aWQiOiI4Mzc0NTciLCJjcmVhdGVkQXQiOiIyMDI0LTA5LTAzVDE5OjQ3OjU1LjE3NTM3NjU2NyswMzozMCIsInRva2VuVHlwZSI6Mn0sImlzcyI6ImdvLWF1dGgtbWFuYWdlciIsImV4cCI6MTcyNTM4MjA3NX0.H5maSOM8H_t2ayMoVzpJqxhrtDxtvbvYCRbfnh5zChzW6B0qiP8hnldlS4etzfQAiMEOVx6my6bOw_7R8iyikQ",
 			valid:       true,
 		},
 	}
 
-	validator := validation.NewValidator()
-
 	for _, tc := range testCases {
-		err := validator.ValidateAuthenticateInputs(tc.accessToken)
+		err := v.validator.ValidateAuthenticateInputs(tc.accessToken)
 
 		if tc.valid {
 			require.NoError(v.T(), err)
@@ -276,7 +276,12 @@ func (v *VerificationTestSuite) TestValidateRefreshToken() {
 		},
 		{
 			userID:       "123456789",
-			refreshToken: "valid",
+			refreshToken: "invalid",
+			valid:        false,
+		},
+		{
+			userID:       "123456789",
+			refreshToken: "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJQYXlsb2FkIjp7InV1aWQiOiI4Mzc0NTciLCJjcmVhdGVkQXQiOiIyMDI0LTA5LTAzVDE5OjQ3OjU1LjE3NTM3NjU2NyswMzozMCIsInRva2VuVHlwZSI6Mn0sImlzcyI6ImdvLWF1dGgtbWFuYWdlciIsImV4cCI6MTcyNTM4MjA3NX0.H5maSOM8H_t2ayMoVzpJqxhrtDxtvbvYCRbfnh5zChzW6B0qiP8hnldlS4etzfQAiMEOVx6my6bOw_7R8iyikQ",
 			valid:        true,
 		},
 	}
@@ -299,11 +304,11 @@ func (v *VerificationTestSuite) TestValidateRefreshToken() {
 func (v *VerificationTestSuite) TestValidateResetPassword() {
 	testCases := []struct {
 		email string
-		valid  bool
+		valid bool
 	}{
 		{
 			email: "",
-			valid:  false,
+			valid: false,
 		},
 		{
 			email: "invalid",
@@ -311,7 +316,7 @@ func (v *VerificationTestSuite) TestValidateResetPassword() {
 		},
 		{
 			email: "valid@valid.com",
-			valid:  true,
+			valid: true,
 		},
 	}
 
@@ -337,7 +342,7 @@ func (v *VerificationTestSuite) TestValidateSubmitResetPassword() {
 		valid              bool
 	}{
 		{
-			resetPasswordToken: "valid",
+			resetPasswordToken: "invalid",
 			newPassword:        "",
 			valid:              false,
 		},
@@ -352,7 +357,12 @@ func (v *VerificationTestSuite) TestValidateSubmitResetPassword() {
 			valid:              false,
 		},
 		{
-			resetPasswordToken: "7412",
+			resetPasswordToken: "invalid",
+			newPassword:        "23456788",
+			valid:              false,
+		},
+		{
+			resetPasswordToken: "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJQYXlsb2FkIjp7InV1aWQiOiI4Mzc0NTciLCJjcmVhdGVkQXQiOiIyMDI0LTA5LTAzVDE5OjQ3OjU1LjE3NTM3NjU2NyswMzozMCIsInRva2VuVHlwZSI6Mn0sImlzcyI6ImdvLWF1dGgtbWFuYWdlciIsImV4cCI6MTcyNTM4MjA3NX0.H5maSOM8H_t2ayMoVzpJqxhrtDxtvbvYCRbfnh5zChzW6B0qiP8hnldlS4etzfQAiMEOVx6my6bOw_7R8iyikQ",
 			newPassword:        "23456788",
 			valid:              true,
 		},
