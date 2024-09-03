@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const accessTokenHeader = "X-Access-Token"
+const accessTokenHeader = "x-access-token"
 
 type UserID struct{}
 
@@ -27,8 +27,9 @@ func NewAuthInterceptor(auth ports.AuthPort) *AuthInterceptor {
 func (a *AuthInterceptor) AuthInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	// List of methods that require authentication
 	authMethods := map[string]bool{
-		"/userv1.UserService/Update":         true,
-		"/userv1.UserService/ChangePassword": true,
+		"/user.v1.UserService/Update":         true,
+		"/user.v1.UserService/ChangePassword": true,
+		"/user.v1.UserService/DeleteAccount": true,
 	}
 
 	if authMethods[info.FullMethod] {
@@ -38,7 +39,8 @@ func (a *AuthInterceptor) AuthInterceptor(ctx context.Context, req interface{}, 
 			return nil, status.Errorf(codes.Unauthenticated, "missing metadata")
 		}
 
-		if token, ok := md[accessTokenHeader]; ok && len(token) > 0 {
+		token, ok := md[accessTokenHeader]
+		if ok && len(token) > 0 {
 			userID, err := a.auth.Authenticate(ctx, token[0])
 			if err != nil {
 				return nil, status.Errorf(codes.Unauthenticated, err.Error())
@@ -47,9 +49,10 @@ func (a *AuthInterceptor) AuthInterceptor(ctx context.Context, req interface{}, 
 				ctx = context.WithValue(ctx, UserID{}, userID)
 				return handler(ctx, req)
 			}
-		}
+		} else {
+			return nil, status.Errorf(codes.Unauthenticated, "access dined")
 
-		return nil, status.Errorf(codes.Unauthenticated, "access dined")
+		}
 	}
 
 	return handler(ctx, req)

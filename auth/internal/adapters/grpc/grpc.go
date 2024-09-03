@@ -53,7 +53,7 @@ func (a *Adapter) Login(ctx context.Context, request *authv1.LoginRequest) (*aut
 	}, nil
 }
 
-func (a *Adapter) Authenticate(ctx context.Context, request *authv1.AuthenticationRequest) (*authv1.AuthenticationResponse, error) {
+func (a *Adapter) Authentication(ctx context.Context, request *authv1.AuthenticationRequest) (*authv1.AuthenticationResponse, error) {
 	err := a.validator.ValidateAuthenticateInputs(request.AccessToken)
 	if err != nil {
 		return nil, ErrInvalidInputs
@@ -91,7 +91,7 @@ func (a *Adapter) ChangePassword(ctx context.Context, request *authv1.ChangePass
 		return nil, ErrInvalidInputs
 	}
 
-	err = a.api.ChangePassword(ctx, request.UserId, request.NewPassword, request.OldPassword)
+	err = a.api.ChangePassword(ctx, request.UserId, request.OldPassword, request.NewPassword)
 	if err != nil {
 		return nil, ErrFailedChargePassword
 	}

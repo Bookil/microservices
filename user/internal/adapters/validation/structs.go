@@ -8,6 +8,10 @@ type registerInputs struct {
 	Email     string `validate:"required,email"`
 }
 
+type getUserIDByEmailInputs struct {
+	Email string `validate:"required,email"`
+}
+
 type changePasswordInputs struct {
 	UserID      domain.UserID `validate:"required"`
 	OldPassword string        `validate:"required"`

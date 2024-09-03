@@ -3,8 +3,6 @@ package mysql_adapter
 import (
 	"context"
 
-	"github.com/Bookil/microservices/user/config"
-	"github.com/Bookil/microservices/user/internal/adapters/db"
 	"github.com/Bookil/microservices/user/internal/application/core/domain"
 	"gorm.io/gorm"
 )
@@ -15,12 +13,7 @@ type (
 	}
 )
 
-func NewAdapter(config *config.Mysql) (*Adapter, error) {
-	db, err := db.NewDB(config)
-	if err != nil {
-		return nil, err
-	}
-
+func NewAdapter(db *gorm.DB) (*Adapter, error) {
 	return &Adapter{
 		db: db,
 	}, nil

@@ -39,6 +39,8 @@ func (a *Adapter) Run() {
 		reflection.Register(grpcServer)
 	}
 
+	log.Printf("Starting gRPC server on %d\n", a.port)
+
 	if err := grpcServer.Serve(listen); err != nil {
 		log.Fatalf("failed to serve grpc on port ")
 	}

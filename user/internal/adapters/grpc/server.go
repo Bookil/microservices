@@ -21,9 +21,10 @@ type Adapter struct {
 	userv1.UnimplementedUserServiceServer
 }
 
-func NewAdapter(api ports.APIPort, auth ports.AuthPort, port int) *Adapter {
+func NewAdapter(api ports.APIPort, auth ports.AuthPort, validator ports.Validation, port int) *Adapter {
 	return &Adapter{
 		api:             api,
+		validator: validator,
 		port:            port,
 		authInterceptor: interceptor.NewAuthInterceptor(auth),
 	}

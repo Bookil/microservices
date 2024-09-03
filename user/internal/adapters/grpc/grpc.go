@@ -10,7 +10,7 @@ import (
 )
 
 func (a *Adapter) Register(ctx context.Context, request *userv1.RegisterRequest) (*userv1.RegisterResponse, error) {
-	err := a.validator.ValidateRegisterInputs(request.FisrtName, request.LastName, request.LastName)
+	err := a.validator.ValidateRegisterInputs(request.FisrtName, request.LastName, request.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -36,12 +36,28 @@ func (a *Adapter) ChangePassword(ctx context.Context, request *userv1.ChangePass
 		return nil, err
 	}
 
-	err = a.api.ChangePassword(ctx, userID, request.NewPassword, request.OldPassword)
+	err = a.api.ChangePassword(ctx, userID, request.OldPassword, request.NewPassword)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	return &userv1.ChangePasswordResponse{}, nil
+}
+
+func (a *Adapter) GetUserIDByEmail(ctx context.Context, request *userv1.GetUserIDByEmailRequest) (*userv1.GetUserIDByEmailResponse, error) {
+	err := a.validator.ValidateGetUserIDByEmailInputs(request.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	userID, err := a.api.GetUserIDByEmail(ctx, request.Email)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &userv1.GetUserIDByEmailResponse{
+		UserId: userID,
+	}, nil
 }
 
 func (a *Adapter) Update(ctx context.Context, request *userv1.UpdateRequest) (*userv1.UpdateResponse, error) {
@@ -50,7 +66,7 @@ func (a *Adapter) Update(ctx context.Context, request *userv1.UpdateRequest) (*u
 		return nil, status.Error(codes.Internal, "an error occurred")
 	}
 
-	err := a.validator.ValidationUpdateInputs(userID, request.NewFirstName, request.NewLastName)
+	err := a.validator.ValidateUpdateInputs(userID, request.NewFirstName, request.NewLastName)
 	if err != nil {
 		return nil, err
 	}

@@ -45,7 +45,7 @@ func (a *Adapter) Authenticate(ctx context.Context, accessToken string) (domain.
 	return response.UserId, nil
 }
 
-func (a *Adapter) ChangePassword(ctx context.Context, userID domain.UserID, newPassword string, oldPassword string) error {
+func (a *Adapter) ChangePassword(ctx context.Context, userID domain.UserID, oldPassword string, newPassword string) error {
 	_, err := a.auth.ChangePassword(ctx, &authv1.ChangePasswordRequest{
 		UserId:      userID,
 		NewPassword: newPassword,

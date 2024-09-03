@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/Bookil/microservices/user/config"
+	"github.com/Bookil/microservices/user/internal/adapters/db"
 	adapter "github.com/Bookil/microservices/user/internal/adapters/db/mysql_adapter"
 	"github.com/Bookil/microservices/user/internal/application/core/domain"
 	"github.com/docker/go-connections/nat"
@@ -73,7 +74,12 @@ func (o *UserDatabaseTestSuite) SetupSuite() {
 
 	mysqlConfig.Port = endPort
 
-	adapter, err := adapter.NewAdapter(&mysqlConfig)
+	db, err := db.NewDB(&mysqlConfig)
+	if err != nil {
+		log.Fatalf("error getting DB instance:%v", err)
+	}
+
+	adapter, err := adapter.NewAdapter(db)
 	if err != nil {
 		log.Fatal(err)
 	}

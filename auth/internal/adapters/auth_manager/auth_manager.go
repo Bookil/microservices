@@ -48,7 +48,7 @@ func (a *Adapter) DecodeAccessToken(ctx context.Context, accessToken string) (*d
 	}
 
 	accessTokenClaims := &domain.AccessTokenClaims{
-		UserID: accessTokenPayload.ID,
+		UserID: accessTokenPayload.Payload.UUID,
 	}
 
 	return accessTokenClaims, nil

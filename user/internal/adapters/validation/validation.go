@@ -40,13 +40,29 @@ func NewValidator() *Validator {
 }
 
 func (v *Validator) ValidateRegisterInputs(firstName, lastName, email string) error {
+	trimSpacedFirstName := strings.TrimSpace(firstName)
+	trimSpacedLastName := strings.TrimSpace(lastName)
+	trimSpacedEmail := strings.TrimSpace(email)
+
 	registerInputs := &registerInputs{
-		FirstName: strings.TrimSpace(firstName),
-		LastName:  strings.TrimSpace(lastName),
-		Email:     strings.TrimSpace(email),
+		FirstName: trimSpacedFirstName,
+		LastName:  trimSpacedLastName,
+		Email:     trimSpacedEmail,
 	}
 
 	err := v.validate(registerInputs)
+
+	return err
+}
+
+func (v *Validator) ValidateGetUserIDByEmailInputs(email string) error {
+	trimSpacedEmail := strings.TrimSpace(email)
+
+	getUserIDByEmailInputs := &getUserIDByEmailInputs{
+		Email: trimSpacedEmail,
+	}
+
+	err := v.validate(getUserIDByEmailInputs)
 
 	return err
 }
