@@ -85,8 +85,8 @@ func (a *Adapter) DecodeRefreshToken(ctx context.Context, userID domain.UserID, 
 	return refreshTokenClaims, err
 }
 
-func (a *Adapter) GenerateResetPasswordToken(ctx context.Context, token string) (resetPasswordToken string, _ error) {
-	resetPasswordToken, err := a.authManger.GenerateToken(ctx, auth_manager.ResetPassword, &auth_manager.TokenPayload{}, ResetPasswordTokenExpr)
+func (a *Adapter) GenerateResetPasswordToken(ctx context.Context, userID domain.UserID) (resetPasswordToken string, _ error) {
+	resetPasswordToken, err := a.authManger.GenerateToken(ctx, auth_manager.ResetPassword, &auth_manager.TokenPayload{UUID: userID}, ResetPasswordTokenExpr)
 	if err != nil {
 		return "", err
 	}
