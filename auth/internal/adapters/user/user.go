@@ -3,11 +3,14 @@ package user
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	userv1 "github.com/Bookil/Bookil-Proto/gen/golang/user/v1"
 	"github.com/Bookil/microservices/auth/config"
+	"github.com/Bookil/microservices/auth/internal/adapters/grpc/interceptor"
 	"github.com/Bookil/microservices/auth/internal/application/core/domain"
+	"github.com/sony/gobreaker"
 
 	retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"google.golang.org/grpc"
@@ -24,8 +27,25 @@ func generateURL(url *config.UserService) string {
 }
 
 func NewAdapter(url *config.UserService) (*Adapter, error) {
+	cb := gobreaker.NewCircuitBreaker(
+		gobreaker.Settings{
+			Name:        "user",
+			MaxRequests: 5,
+			Timeout:     5 * time.Second,
+			ReadyToTrip: func(counts gobreaker.Counts) bool {
+				failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
+				return failureRatio > 0.5
+			},
+			OnStateChange: func(name string, from gobreaker.State, to gobreaker.State) {
+				log.Println("Circcuit breaker state changed:", name, from, to)
+			},
+		},
+	)
+
 	var opts []grpc.DialOption
 
+	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	opts = append(opts, grpc.WithUnaryInterceptor(interceptor.CircuitBreakerInterceptor(cb)))
 	opts = append(opts, grpc.WithUnaryInterceptor(
 		retry.UnaryClientInterceptor(
 			retry.WithCodes(codes.ResourceExhausted, codes.Unavailable),
@@ -35,7 +55,6 @@ func NewAdapter(url *config.UserService) (*Adapter, error) {
 		),
 	))
 
-	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	conn, err := grpc.NewClient(generateURL(url), opts...)
 	if err != nil {
 		return nil, err
