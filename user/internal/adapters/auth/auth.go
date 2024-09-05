@@ -3,11 +3,14 @@ package auth
 import (
 	"context"
 	"fmt"
+	"time"
 
 	authv1 "github.com/Bookil/Bookil-Proto/gen/golang/auth/v1"
 	"github.com/Bookil/microservices/user/config"
 	"github.com/Bookil/microservices/user/internal/application/core/domain"
+	retry "github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
@@ -21,6 +24,15 @@ func generateURL(url *config.Auth) string {
 
 func NewAdapter(url *config.Auth) (*Adapter, error) {
 	var opts []grpc.DialOption
+
+	opts = append(opts, grpc.WithUnaryInterceptor(
+		retry.UnaryClientInterceptor(
+			retry.WithCodes(codes.ResourceExhausted, codes.Unavailable),
+			retry.WithMax(3),
+			retry.WithPerRetryTimeout(time.Second),
+			retry.WithBackoff(retry.BackoffLinear(2*time.Second)),
+		),
+	))
 
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
