@@ -29,7 +29,7 @@ func (a *AuthInterceptor) AuthInterceptor(ctx context.Context, req interface{}, 
 	authMethods := map[string]bool{
 		"/user.v1.UserService/Update":         true,
 		"/user.v1.UserService/ChangePassword": true,
-		"/user.v1.UserService/DeleteAccount": true,
+		"/user.v1.UserService/DeleteAccount":  true,
 	}
 
 	if authMethods[info.FullMethod] {
@@ -51,7 +51,6 @@ func (a *AuthInterceptor) AuthInterceptor(ctx context.Context, req interface{}, 
 			}
 		} else {
 			return nil, status.Errorf(codes.Unauthenticated, "access dined")
-
 		}
 	}
 

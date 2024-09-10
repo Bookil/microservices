@@ -79,8 +79,8 @@ func (a *Application) VerifyEmail(ctx context.Context, email string, verificatio
 		return ErrVerifyEmail
 	}
 
-	userID,err := a.user.GetUserIDByEmail(ctx,email)
-	if err != nil{
+	userID, err := a.user.GetUserIDByEmail(ctx, email)
+	if err != nil {
 		return err
 	}
 

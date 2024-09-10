@@ -4,7 +4,7 @@ import "github.com/Bookil/microservices/auth/internal/application/core/domain"
 
 type Validation interface {
 	ValidateRegisterInputs(firstName, lastName, email, password string) error
-	ValidateLoginInputs(email,password string) error
+	ValidateLoginInputs(email, password string) error
 	ValidateSendVerificationCode(email string) error
 	ValidateVerifyEmailInputs(string, string) error
 	ValidateChangePasswordInputs(domain.UserID, string, string) error

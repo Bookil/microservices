@@ -34,7 +34,10 @@ func NewValidator() *Validator {
 		vi := validator.New()
 
 		valiInstance = &Validator{vi}
-		valiInstance.translateOverride()
+		err := valiInstance.translateOverride()
+		if err != nil{
+			panic(err)
+		}
 	}
 	return valiInstance
 }
@@ -107,6 +110,7 @@ func (v *Validator) validate(s interface{}) error {
 	return err
 }
 
-func (v *Validator) translateOverride() {
-	en_translations.RegisterDefaultTranslations(v.vi, ValiTranslator)
+func (v *Validator) translateOverride()error{
+	err := en_translations.RegisterDefaultTranslations(v.vi, ValiTranslator)
+	return err
 }

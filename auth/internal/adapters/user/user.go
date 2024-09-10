@@ -71,7 +71,6 @@ func (a *Adapter) Register(ctx context.Context, firstName, lastName, email strin
 		LastName:  lastName,
 		Email:     email,
 	})
-
 	if err != nil {
 		return "", err
 	}
@@ -83,7 +82,6 @@ func (a *Adapter) GetUserIDByEmail(ctx context.Context, email string) (domain.Us
 	response, err := a.user.GetUserIDByEmail(ctx, &userv1.GetUserIDByEmailRequest{
 		Email: email,
 	})
-
 	if err != nil {
 		return "", err
 	}

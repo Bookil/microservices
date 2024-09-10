@@ -10,7 +10,7 @@ type registerInputs struct {
 }
 
 type sendVerificationCodeAgainInputs struct {
-	Email    string `validate:"required,email"`
+	Email string `validate:"required,email"`
 }
 
 type loginInputs struct {
@@ -23,8 +23,8 @@ type authenticateInputs struct {
 }
 
 type verifyEmailInputs struct {
-	Email         string `validate:"required,email"`
-	ValidationCode string        `validate:"required,len=6"`
+	Email          string `validate:"required,email"`
+	ValidationCode string `validate:"required,len=6"`
 }
 
 type changePasswordInputs struct {

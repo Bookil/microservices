@@ -25,20 +25,19 @@ func main() {
 
 	redisClient := db.GetRedisInstance(config.Redis)
 
-	userService,err := user.NewAdapter(&config.UserService)
+	userService, err := user.NewAdapter(&config.UserService)
 	if err != nil {
 		log.Fatalf("Failed to connect to database. Error: %v", err)
 	}
 
 	emailService := email.NewEmailAdapter()
-	authManger := auth_manager.NewAdapter(redisClient,config.JWT)
-
+	authManger := auth_manager.NewAdapter(redisClient, config.JWT)
 
 	hashManger := hash.NewHashManager(hash.DefaultHashParams)
 
 	validator := validation.NewValidator()
 
-	api := api.NewApplication(mysqlAdapter, userService,emailService,authManger, hashManger)
+	api := api.NewApplication(mysqlAdapter, userService, emailService, authManger, hashManger)
 
 	server := grpc.NewAdapter(api, validator, config.Server.Port)
 

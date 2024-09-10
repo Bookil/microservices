@@ -24,7 +24,7 @@ type Adapter struct {
 func NewAdapter(api ports.APIPort, auth ports.AuthPort, validator ports.Validation, port int) *Adapter {
 	return &Adapter{
 		api:             api,
-		validator: validator,
+		validator:       validator,
 		port:            port,
 		authInterceptor: interceptor.NewAuthInterceptor(auth),
 	}

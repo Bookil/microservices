@@ -188,7 +188,6 @@ func (a *ApplicationTestSuit) TestVerifyEmail_VerifyEmailDBError() {
 	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
 	a.DB.EXPECT().VerifyEmail(ctx, userID).Return(nil, ErrUnknownError)
 
-
 	err := a.api.VerifyEmail(ctx, email, verificationCode)
 	a.Error(err)
 }

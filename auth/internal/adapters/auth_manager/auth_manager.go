@@ -61,7 +61,6 @@ func (a *Adapter) GenerateRefreshToken(ctx context.Context, userID domain.UserID
 		LoggedInAt: time.Duration(time.Now().UnixMilli()),
 	},
 		RefreshTokenExpr)
-
 	if err != nil {
 		return "", err
 	}
@@ -71,7 +70,6 @@ func (a *Adapter) GenerateRefreshToken(ctx context.Context, userID domain.UserID
 
 func (a *Adapter) DecodeRefreshToken(ctx context.Context, userID domain.UserID, RefreshToken string) (*domain.RefreshTokenClaims, error) {
 	refreshTokenPayload, err := a.authManger.DecodeRefreshToken(ctx, userID, RefreshToken)
-
 	if err != nil {
 		return nil, err
 	}

@@ -21,6 +21,7 @@ func TestVerificationTestSuite(t *testing.T) {
 func (v *VerificationTestSuite) SetupSuite() {
 	v.validator = validation.NewValidator()
 }
+
 func (v *VerificationTestSuite) TestValidateRegister() {
 	testCases := []struct {
 		firstName string
@@ -92,7 +93,6 @@ func (v *VerificationTestSuite) TestValidateRegister() {
 		}
 
 	}
-
 }
 
 func (v *VerificationTestSuite) TestValidateSendVerificationCodeAgain() {
@@ -124,7 +124,6 @@ func (v *VerificationTestSuite) TestValidateSendVerificationCodeAgain() {
 		}
 
 	}
-
 }
 
 func (v *VerificationTestSuite) TestValidateLogin() {
@@ -167,7 +166,6 @@ func (v *VerificationTestSuite) TestValidateLogin() {
 		}
 
 	}
-
 }
 
 func (v *VerificationTestSuite) TestValidateVerifyEmail() {
@@ -203,7 +201,6 @@ func (v *VerificationTestSuite) TestValidateVerifyEmail() {
 		}
 
 	}
-
 }
 
 func (v *VerificationTestSuite) TestValidateAuthenticate() {
@@ -231,7 +228,6 @@ func (v *VerificationTestSuite) TestValidateAuthenticate() {
 		}
 
 	}
-
 }
 
 func (v *VerificationTestSuite) TestValidateChangePassword() {
@@ -285,7 +281,6 @@ func (v *VerificationTestSuite) TestValidateChangePassword() {
 		}
 
 	}
-
 }
 
 func (v *VerificationTestSuite) TestValidateRefreshToken() {
@@ -323,7 +318,6 @@ func (v *VerificationTestSuite) TestValidateRefreshToken() {
 		}
 
 	}
-
 }
 
 func (v *VerificationTestSuite) TestValidateResetPassword() {
@@ -357,7 +351,6 @@ func (v *VerificationTestSuite) TestValidateResetPassword() {
 		}
 
 	}
-
 }
 
 func (v *VerificationTestSuite) TestValidateSubmitResetPassword() {
@@ -400,7 +393,6 @@ func (v *VerificationTestSuite) TestValidateSubmitResetPassword() {
 		}
 
 	}
-
 }
 
 func (v *VerificationTestSuite) TestValidateDeleteAccount() {
@@ -438,5 +430,4 @@ func (v *VerificationTestSuite) TestValidateDeleteAccount() {
 		}
 
 	}
-
 }
