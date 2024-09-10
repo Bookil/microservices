@@ -10,7 +10,7 @@ import (
 
 var (
 	redisLock     = &sync.Mutex{}
-	redisInstance = &redis.Client{}
+	redisInstance *redis.Client
 )
 
 func GetRedisInstance(config config.Redis) *redis.Client {
