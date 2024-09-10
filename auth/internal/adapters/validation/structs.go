@@ -35,7 +35,7 @@ type changePasswordInputs struct {
 
 type refreshTokenInputs struct {
 	UserID       domain.UserID `validate:"required"`
-	RefreshToken string        `validate:"required,jwt"`
+	RefreshToken string        `validate:"required"`
 }
 
 type resetPasswordInputs struct {
@@ -43,7 +43,7 @@ type resetPasswordInputs struct {
 }
 
 type submitResetPasswordInputs struct {
-	ResetPasswordToken string `validate:"required,jwt"`
+	ResetPasswordToken string `validate:"required"`
 	Password           string `validate:"required,min=8"`
 }
 

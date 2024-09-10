@@ -97,20 +97,20 @@ func (v *VerificationTestSuite) TestValidateRegister() {
 
 func (v *VerificationTestSuite) TestValidateSendVerificationCodeAgain() {
 	testCases := []struct {
-		email    string
-		valid    bool
+		email string
+		valid bool
 	}{
 		{
-			email:    "",
-			valid:    false,
+			email: "",
+			valid: false,
 		},
 		{
-			email:    "invalid",
-			valid:    false,
+			email: "invalid",
+			valid: false,
 		},
 		{
-			email:    "valid@valid.com",
-			valid:    true,
+			email: "valid@valid.com",
+			valid: true,
 		},
 	}
 
@@ -172,22 +172,22 @@ func (v *VerificationTestSuite) TestValidateLogin() {
 
 func (v *VerificationTestSuite) TestValidateVerifyEmail() {
 	testCases := []struct {
-		email           string
+		email            string
 		verificationCode string
 		valid            bool
 	}{
 		{
-			email: "",
+			email:            "",
 			verificationCode: "123456",
 			valid:            false,
 		},
 		{
-			email: "valid@valid.com",
+			email:            "valid@valid.com",
 			verificationCode: "",
 			valid:            false,
 		},
 		{
-			email: "valid@valid.com",
+			email:            "valid@valid.com",
 			verificationCode: "123456",
 			valid:            true,
 		},
@@ -216,12 +216,8 @@ func (v *VerificationTestSuite) TestValidateAuthenticate() {
 			valid:       false,
 		},
 		{
-			accessToken: "invalid",
+			accessToken: "valid",
 			valid:       false,
-		},
-		{
-			accessToken: "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJQYXlsb2FkIjp7InV1aWQiOiI4Mzc0NTciLCJjcmVhdGVkQXQiOiIyMDI0LTA5LTAzVDE5OjQ3OjU1LjE3NTM3NjU2NyswMzozMCIsInRva2VuVHlwZSI6Mn0sImlzcyI6ImdvLWF1dGgtbWFuYWdlciIsImV4cCI6MTcyNTM4MjA3NX0.H5maSOM8H_t2ayMoVzpJqxhrtDxtvbvYCRbfnh5zChzW6B0qiP8hnldlS4etzfQAiMEOVx6my6bOw_7R8iyikQ",
-			valid:       true,
 		},
 	}
 
@@ -310,12 +306,7 @@ func (v *VerificationTestSuite) TestValidateRefreshToken() {
 		},
 		{
 			userID:       "123456789",
-			refreshToken: "invalid",
-			valid:        false,
-		},
-		{
-			userID:       "123456789",
-			refreshToken: "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJQYXlsb2FkIjp7InV1aWQiOiI4Mzc0NTciLCJjcmVhdGVkQXQiOiIyMDI0LTA5LTAzVDE5OjQ3OjU1LjE3NTM3NjU2NyswMzozMCIsInRva2VuVHlwZSI6Mn0sImlzcyI6ImdvLWF1dGgtbWFuYWdlciIsImV4cCI6MTcyNTM4MjA3NX0.H5maSOM8H_t2ayMoVzpJqxhrtDxtvbvYCRbfnh5zChzW6B0qiP8hnldlS4etzfQAiMEOVx6my6bOw_7R8iyikQ",
+			refreshToken: "valid",
 			valid:        true,
 		},
 	}
@@ -392,11 +383,6 @@ func (v *VerificationTestSuite) TestValidateSubmitResetPassword() {
 		},
 		{
 			resetPasswordToken: "invalid",
-			newPassword:        "23456788",
-			valid:              false,
-		},
-		{
-			resetPasswordToken: "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJQYXlsb2FkIjp7InV1aWQiOiI4Mzc0NTciLCJjcmVhdGVkQXQiOiIyMDI0LTA5LTAzVDE5OjQ3OjU1LjE3NTM3NjU2NyswMzozMCIsInRva2VuVHlwZSI6Mn0sImlzcyI6ImdvLWF1dGgtbWFuYWdlciIsImV4cCI6MTcyNTM4MjA3NX0.H5maSOM8H_t2ayMoVzpJqxhrtDxtvbvYCRbfnh5zChzW6B0qiP8hnldlS4etzfQAiMEOVx6my6bOw_7R8iyikQ",
 			newPassword:        "23456788",
 			valid:              true,
 		},

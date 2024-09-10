@@ -55,7 +55,7 @@ func (a *Adapter) DecodeAccessToken(ctx context.Context, accessToken string) (*d
 }
 
 func (a *Adapter) GenerateRefreshToken(ctx context.Context, userID domain.UserID) (refreshToken string, _ error) {
-	accessTokenClaims, err := a.authManger.GenerateRefreshToken(ctx, userID, &auth_manager.RefreshTokenPayload{
+	refreshTokenClaims, err := a.authManger.GenerateRefreshToken(ctx, userID, &auth_manager.RefreshTokenPayload{
 		IPAddress:  "not implemented yet",
 		UserAgent:  "not implemented yet",
 		LoggedInAt: time.Duration(time.Now().UnixMilli()),
@@ -66,7 +66,7 @@ func (a *Adapter) GenerateRefreshToken(ctx context.Context, userID domain.UserID
 		return "", err
 	}
 
-	return accessTokenClaims, nil
+	return refreshTokenClaims, nil
 }
 
 func (a *Adapter) DecodeRefreshToken(ctx context.Context, userID domain.UserID, RefreshToken string) (*domain.RefreshTokenClaims, error) {

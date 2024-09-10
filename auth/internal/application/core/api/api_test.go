@@ -118,8 +118,8 @@ func (a *ApplicationTestSuit) TestRegister_GenerateVerificationCodeError() {
 	a.DB.EXPECT().Create(ctx, gomock.Any()).Return(nil, nil)
 	a.authManger.EXPECT().GenerateVerificationCode(ctx, email).Return("", ErrUnknownError)
 
-	userID, err := a.api.Register(ctx, "John", "Doe", email, password)
-	a.Empty(userID)
+	email, err := a.api.Register(ctx, "John", "Doe", email, password)
+	a.Empty(email)
 	a.Error(err)
 }
 
