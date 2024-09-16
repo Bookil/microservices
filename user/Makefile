@@ -13,7 +13,3 @@ db_integration_test:
 
 coverage:
 	go tool cover -html="coverage.out"
-
-gen_mocks:	
-	chmod 755 ./scripts/mock_gen.sh
-	./scripts/mock_gen.sh
