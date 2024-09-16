@@ -48,10 +48,6 @@ func NewOrder(customerId CustomerID, orderItems []*OrderItem) *Order {
 	}
 }
 
-// func (order *Order) BeforeUpdate() {
-// 	order.UpdatedAt = time.Now().Unix()
-// }
-
 func (order *Order) TotalPrice() float32 {
 	var totalPrice float32
 	for _, item := range order.OrderItems {
@@ -70,7 +66,3 @@ func NewOrderItem(name, productCode string, unitPrice float32, quantity uint32) 
 		Quantity:    quantity,
 	}
 }
-
-// func (item *OrderItem) BeforeUpdate() {
-// 	item.UpdatedAt = time.Now().Unix()
-// }
