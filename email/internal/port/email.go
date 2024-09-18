@@ -1,9 +1,7 @@
 package port
 
-import "time"
-
 type SMTPPort interface {
-	SendVerificationCode(email, code string) error
-	SendResetPassword(url, token, email string, duration time.Duration) error
-	SendWelcome(email string) error
+	SendVerificationCode(email,name,code string) error
+	SendResetPassword(email, url, token, expiry string) error
+	SendWelcome(fullName,email string) error
 }
