@@ -1,7 +1,7 @@
 package api
 
 
-import "email/internal/port"
+import "email/internal/ports"
 
 //TODO:Handle Errors
 
