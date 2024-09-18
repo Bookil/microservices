@@ -21,3 +21,6 @@ gen_order_mocks:
 gen_user_mocks:
 	@chmod 755 scripts/gen_mock.sh
 	@./scripts/gen_mock.sh user
+gen_email_mocks:
+	@chmod 755 scripts/gen_mock.sh
+	@./scripts/gen_mock.sh email
