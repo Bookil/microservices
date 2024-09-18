@@ -1,19 +1,20 @@
 package smtp
 
 import (
-	"email/config"
-	"email/internal/application/core/domain"
 	"fmt"
 	"net/smtp"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"email/config"
+	"email/internal/application/core/domain"
 )
 
-var templatesPath = fmt.Sprintf("%s/%s/%s/%s/%s",config.ProjectRootPath,"internal","adapter","smtp","templates")
+var templatesPath = fmt.Sprintf("%s/%s/%s/%s/%s", config.ProjectRootPath, "internal", "adapter", "smtp", "templates")
 
 type EmailOtp struct {
-	configs       *config.SMTP
+	configs *config.SMTP
 }
 
 func NewSMTPAdapter(configs *config.SMTP) *EmailOtp {
@@ -21,7 +22,6 @@ func NewSMTPAdapter(configs *config.SMTP) *EmailOtp {
 }
 
 func (s *EmailOtp) sendEmail(msg *domain.EmailMessage) error {
-
 	template, err := renderTemplate(msg.Template, msg.Args)
 	if err != nil {
 		return err
@@ -41,11 +41,11 @@ func (s *EmailOtp) sendEmail(msg *domain.EmailMessage) error {
 	return nil
 }
 
-func (s *EmailOtp) SendVerificationCode(recipientEmail,name, code string) error {
+func (s *EmailOtp) SendVerificationCode(recipientEmail, name, code string) error {
 	msg := domain.NewEmailMessage(
 		"verify_email.html",
 		"Verify Email",
-		map[string]interface{}{"name":name,"code": code},
+		map[string]interface{}{"name": name, "code": code},
 		[]string{recipientEmail},
 	)
 
@@ -72,7 +72,7 @@ func (s *EmailOtp) SendResetPassword(recipientEmail, name, url, expiry string) e
 	return nil
 }
 
-func (s *EmailOtp) SendWelcome(email,fullName string) error {
+func (s *EmailOtp) SendWelcome(email, fullName string) error {
 	msg := domain.NewEmailMessage(
 		"welcome.html",
 		"Welcome",

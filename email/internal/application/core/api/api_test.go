@@ -1,10 +1,11 @@
 package api_test
 
 import (
-	"email/internal/application/core/api"
-	"email/mocks"
 	"fmt"
 	"testing"
+
+	"email/internal/application/core/api"
+	"email/mocks"
 
 	"go.uber.org/mock/gomock"
 )
@@ -19,13 +20,11 @@ func TestSendResetPassword(t *testing.T) {
 	email := "test@example.com"
 	name := "John Doe"
 	url := "https://example.com/reset-password"
-	expiry := "120" //seconds
+	expiry := "120" // seconds
 
 	mockSMTPPort.EXPECT().SendResetPassword(email, name, url, expiry).Return(nil)
 
-
-	
-	err := application.SendResetPassword(email,name,url,expiry)
+	err := application.SendResetPassword(email, name, url, expiry)
 	if err != nil {
 		t.Errorf("Expected no error, but got %v", err)
 	}
@@ -38,7 +37,6 @@ func TestSendVerificationCode(t *testing.T) {
 	mockSMTPPort := mocks.NewMockSMTPPort(ctrl)
 	application := api.NewApplication(mockSMTPPort)
 
-	
 	email := "test@example.com"
 	name := "John Doe"
 	code := "123456"
@@ -57,7 +55,7 @@ func TestSendWelcome(t *testing.T) {
 
 	mockSMTPPort := mocks.NewMockSMTPPort(ctrl)
 	application := api.NewApplication(mockSMTPPort)
-	
+
 	fullName := "John Doe"
 	email := "test@example.com"
 

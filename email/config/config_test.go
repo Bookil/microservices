@@ -16,11 +16,11 @@ func TestConfigsDirPath(t *testing.T) {
 
 func TestDevelopmentConfig(t *testing.T) {
 	err := checkAndSet("development")
-	if err != nil{
-		if isFileNotExists(err){
+	if err != nil {
+		if isFileNotExists(err) {
 			return
 		}
-		require.Error(t,err)
+		require.Error(t, err)
 	}
 
 	configs := Read()
@@ -30,11 +30,11 @@ func TestDevelopmentConfig(t *testing.T) {
 
 func TestProductionConfig(t *testing.T) {
 	err := checkAndSet("production")
-	if err != nil{
-		if isFileNotExists(err){
+	if err != nil {
+		if isFileNotExists(err) {
 			return
 		}
-		require.Error(t,err)
+		require.Error(t, err)
 	}
 
 	configs := Read()
@@ -44,11 +44,11 @@ func TestProductionConfig(t *testing.T) {
 
 func TestTestConfig(t *testing.T) {
 	err := checkAndSet("test")
-	if err != nil{
-		if isFileNotExists(err){
+	if err != nil {
+		if isFileNotExists(err) {
 			return
 		}
-		require.Error(t,err)
+		require.Error(t, err)
 	}
 
 	configs := Read()
@@ -68,8 +68,6 @@ func TestInvalidEnv(t *testing.T) {
 	Read()
 }
 
-
-
 func checkAndSet(env string) error {
 	_, err := os.Stat(fmt.Sprintf("config.%s.yml", env))
 	if err != nil {
@@ -81,8 +79,8 @@ func checkAndSet(env string) error {
 	return nil
 }
 
-func isFileNotExists(err error)bool{
-	isFileNotExists := errors.Unwrap(err).Error() == "no such file or directory" 
+func isFileNotExists(err error) bool {
+	isFileNotExists := errors.Unwrap(err).Error() == "no such file or directory"
 
 	return isFileNotExists
 }
