@@ -16,7 +16,7 @@ type EmailOtp struct {
 	configs       *config.SMTP
 }
 
-func NewEmailService(configs *config.SMTP) *EmailOtp {
+func NewSMTPAdapter(configs *config.SMTP) *EmailOtp {
 	return &EmailOtp{configs}
 }
 
@@ -72,7 +72,7 @@ func (s *EmailOtp) SendResetPassword(recipientEmail, name, url, expiry string) e
 	return nil
 }
 
-func (s *EmailOtp) SendWelcome(fullName, email string) error {
+func (s *EmailOtp) SendWelcome(email,fullName string) error {
 	msg := domain.NewEmailMessage(
 		"welcome.html",
 		"Welcome",
