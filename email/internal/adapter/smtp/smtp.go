@@ -69,15 +69,16 @@ func (s *EmailOtp) SendResetPassword(recipientEmail, name, url, expiry string) e
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
-func (s *EmailOtp) SendWelcome(email, fullName string) error {
+func (s *EmailOtp) SendWelcome(recipientEmail, name string) error {
 	msg := domain.NewEmailMessage(
 		"welcome.html",
 		"Welcome",
-		map[string]interface{}{"fullName": fullName},
-		[]string{email},
+		map[string]interface{}{"name": name},
+		[]string{recipientEmail},
 	)
 
 	err := s.sendEmail(msg)
