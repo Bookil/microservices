@@ -1,4 +1,4 @@
-package port
+package ports
 
 type SMTPPort interface {
 	SendVerificationCode(email, name, code string) error

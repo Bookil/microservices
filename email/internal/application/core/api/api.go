@@ -4,10 +4,10 @@ import "email/internal/ports"
 
 // TODO:Handle Errors
 type Application struct {
-	smtp port.SMTPPort
+	smtp ports.SMTPPort
 }
 
-func NewApplication(smtp port.SMTPPort) *Application {
+func NewApplication(smtp ports.SMTPPort) *Application {
 	return &Application{
 		smtp: smtp,
 	}
