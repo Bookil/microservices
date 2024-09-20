@@ -3,7 +3,7 @@ module github.com/Bookil/microservices/user
 go 1.22.5
 
 require (
-	github.com/Bookil/Bookil-Proto v0.2.2
+	github.com/Bookil/Bookil-Proto v0.3.0
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.22.0

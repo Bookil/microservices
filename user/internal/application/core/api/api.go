@@ -34,16 +34,16 @@ func (a *Application) Register(ctx context.Context, firstName, lastName, email s
 	return savedUser.UserID, nil
 }
 
-func (a *Application) GetUserIDByEmail(ctx context.Context, email string) (domain.UserID, error) {
+func (a *Application) 	GetUserIDAndNameByEmail(ctx context.Context, email string) (domain.UserID, string,error){
 	savedUser, err := a.db.GetUserByEmail(ctx, email)
 	if err != nil {
 		if helper.IsContains("found", err) {
-			return "", ErrUserNotFindWithThisEmail
+			return "", "",ErrUserNotFindWithThisEmail
 		}
-		return "", ErrRegisterFailed
+		return "", "",ErrRegisterFailed
 	}
 
-	return savedUser.UserID, nil
+	return savedUser.UserID, savedUser.FirstName,nil
 }
 
 func (a *Application) ChangePassword(ctx context.Context, userID, oldPassword, newPassword string) error {

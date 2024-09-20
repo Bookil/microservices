@@ -44,19 +44,20 @@ func (a *Adapter) ChangePassword(ctx context.Context, request *userv1.ChangePass
 	return &userv1.ChangePasswordResponse{}, nil
 }
 
-func (a *Adapter) GetUserIDByEmail(ctx context.Context, request *userv1.GetUserIDByEmailRequest) (*userv1.GetUserIDByEmailResponse, error) {
+func (a *Adapter) GetUserIDAndNameByEmail(ctx context.Context, request *userv1.GetUserIDAndNameByEmailRequest) (*userv1.GetUserIDAndNameByEmailResponse, error) {
 	err := a.validator.ValidateGetUserIDByEmailInputs(request.Email)
 	if err != nil {
 		return nil, err
 	}
 
-	userID, err := a.api.GetUserIDByEmail(ctx, request.Email)
+	userID, firstName, err := a.api.GetUserIDAndNameByEmail(ctx, request.Email)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &userv1.GetUserIDByEmailResponse{
+	return &userv1.GetUserIDAndNameByEmailResponse{
 		UserId: userID,
+		FirstName: firstName,
 	}, nil
 }
 

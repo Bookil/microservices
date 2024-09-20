@@ -80,37 +80,40 @@ func (a *ApplicationTestSuit) TestRegister_OtherError() {
 	a.Error(err)
 }
 
-func (a *ApplicationTestSuit) TestGetUserIDByEmail_Success() {
+func (a *ApplicationTestSuit) TestGetUserIDAndNameByEmail_Success() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
-	savedUser := &domain.User{UserID: "123", Email: email}
+	savedUser := &domain.User{UserID: "123",FirstName: "amir",Email: email}
 
 	a.db.EXPECT().GetUserByEmail(ctx, email).Return(savedUser, nil)
 
-	userID, err := a.app.GetUserIDByEmail(ctx, email)
+	userID,name,err := a.app.GetUserIDAndNameByEmail(ctx, email)
 	a.NotEmpty(userID)
+	a.NotEmpty(name)
 	a.NoError(err)
 }
 
-func (a *ApplicationTestSuit) TestGetUserIDByEmail_UserNotFound() {
+func (a *ApplicationTestSuit) TestGetUserIDAndNameByEmail_UserNotFound() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
 
-	a.db.EXPECT().GetUserByEmail(ctx, email).Return(nil, errors.New("not found"))
+	a.db.EXPECT().GetUserByEmail(ctx, email).Return(nil,errors.New("not found"))
 
-	userID, err := a.app.GetUserIDByEmail(ctx, email)
+	userID, name,err := a.app.GetUserIDAndNameByEmail(ctx, email)
 	a.Empty(userID)
+	a.Empty(name)
 	a.Error(err)
 }
 
-func (a *ApplicationTestSuit) TestGetUserIDByEmail_OtherError() {
+func (a *ApplicationTestSuit) TestGetUserIDAndNameByEmail_OtherError() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
 
-	a.db.EXPECT().GetUserByEmail(ctx, email).Return(nil, ErrUnknownError)
+	a.db.EXPECT().GetUserByEmail(ctx, email).Return(nil,ErrUnknownError)
 
-	userID, err := a.app.GetUserIDByEmail(ctx, email)
+	userID,name,err := a.app.GetUserIDAndNameByEmail(ctx, email)
 	a.Empty(userID)
+	a.Empty(name)
 	a.Error(err)
 }
 
