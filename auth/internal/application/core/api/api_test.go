@@ -63,7 +63,7 @@ func (a *ApplicationTestSuit) TestRegister_Success() {
 	a.hashManager.EXPECT().HashPassword(password).Return(hashedPassword, nil)
 	a.DB.EXPECT().Create(ctx, gomock.Any()).Return(nil, nil)
 	a.authManger.EXPECT().GenerateVerificationCode(ctx, email).Return(verificationCode, nil)
-	a.email.EXPECT().SendVerificationCode("john.doe@example.com", verificationCode).Return(nil)
+	a.email.EXPECT().SendVerificationCode(ctx, "john.doe@example.com", gomock.Any(), verificationCode).Return(nil)
 
 	userID, err := a.api.Register(ctx, "John", "Doe", email, password)
 	a.NotEmpty(userID)
@@ -134,7 +134,7 @@ func (a *ApplicationTestSuit) TestRegister_SendVerificationCodeError() {
 	a.hashManager.EXPECT().HashPassword(password).Return(hashedPassword, nil)
 	a.DB.EXPECT().Create(ctx, gomock.Any()).Return(nil, nil)
 	a.authManger.EXPECT().GenerateVerificationCode(ctx, email).Return(verificationCode, nil)
-	a.email.EXPECT().SendVerificationCode(email, verificationCode).Return(ErrUnknownError)
+	a.email.EXPECT().SendVerificationCode(ctx, email, gomock.Any(), verificationCode).Return(ErrUnknownError)
 
 	userID, err := a.api.Register(ctx, "John", "Doe", email, password)
 	a.Empty(userID)
@@ -144,11 +144,12 @@ func (a *ApplicationTestSuit) TestRegister_SendVerificationCodeError() {
 func (a *ApplicationTestSuit) TestVerifyEmail_Success() {
 	ctx := context.TODO()
 	expectedUserID := "123456"
+	name := "name"
 	email := "john.doe@example.com"
 	verificationCode := "validCode"
 
 	a.authManger.EXPECT().CompareVerificationCode(ctx, email, verificationCode).Return(true, nil)
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(expectedUserID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(expectedUserID, name, nil)
 	a.DB.EXPECT().VerifyEmail(ctx, expectedUserID).Return(nil, nil)
 
 	err := a.api.VerifyEmail(ctx, email, verificationCode)
@@ -172,7 +173,7 @@ func (a *ApplicationTestSuit) TestVerifyEmail_VerifyEmailUserError() {
 	verificationCode := "validCode"
 
 	a.authManger.EXPECT().CompareVerificationCode(ctx, email, verificationCode).Return(true, nil)
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return("", ErrUnknownError)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return("", "", ErrUnknownError)
 
 	err := a.api.VerifyEmail(ctx, email, verificationCode)
 	a.Error(err)
@@ -181,11 +182,12 @@ func (a *ApplicationTestSuit) TestVerifyEmail_VerifyEmailUserError() {
 func (a *ApplicationTestSuit) TestVerifyEmail_VerifyEmailDBError() {
 	ctx := context.TODO()
 	userID := "123456"
+	name := "name"
 	email := "john.doe@example.com"
 	verificationCode := "validCode"
 
 	a.authManger.EXPECT().CompareVerificationCode(ctx, email, verificationCode).Return(true, nil)
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().VerifyEmail(ctx, userID).Return(nil, ErrUnknownError)
 
 	err := a.api.VerifyEmail(ctx, email, verificationCode)
@@ -197,6 +199,7 @@ func (a *ApplicationTestSuit) TestLogin_Success() {
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 	hashedPassword := "hashedPassword"
 	accessToken := "accessToken"
 	refreshToken := "refreshToken"
@@ -209,13 +212,13 @@ func (a *ApplicationTestSuit) TestLogin_Success() {
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(true)
 	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return(accessToken, nil)
 	a.authManger.EXPECT().GenerateRefreshToken(ctx, userID).Return(refreshToken, nil)
 	a.DB.EXPECT().ClearFailedLoginAttempts(ctx, userID).Return(nil, nil)
-	a.email.EXPECT().SendWelcome(email).Return(nil)
+	a.email.EXPECT().SendWelcome(ctx, email, "name").Return(nil)
 
 	at, rt, err := a.api.Login(ctx, email, password)
 	a.NotEmpty(at)
@@ -228,7 +231,7 @@ func (a *ApplicationTestSuit) TestLogin_GetUserIDByEmailError() {
 	email := "john.doe@example.com"
 	password := "password"
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return("", ErrUnknownError)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return("", "", ErrUnknownError)
 
 	at, rt, err := a.api.Login(ctx, email, password)
 	a.Empty(at)
@@ -241,8 +244,9 @@ func (a *ApplicationTestSuit) TestLogin_GetByIDError() {
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(nil, ErrUnknownError)
 
 	at, rt, err := a.api.Login(ctx, email, password)
@@ -256,6 +260,7 @@ func (a *ApplicationTestSuit) TestLogin_EmailNotVerified() {
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 	hashedPassword := "hashedPassword"
 
 	auth := &domain.Auth{
@@ -266,7 +271,7 @@ func (a *ApplicationTestSuit) TestLogin_EmailNotVerified() {
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 
 	at, rt, err := a.api.Login(ctx, email, password)
@@ -280,6 +285,7 @@ func (a *ApplicationTestSuit) TestLogin_AccountLocked() {
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 	hashedPassword := "hashedPassword"
 	futureTime := time.Now().Add(time.Hour).Unix()
 
@@ -291,7 +297,7 @@ func (a *ApplicationTestSuit) TestLogin_AccountLocked() {
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 
 	at, rt, err := a.api.Login(ctx, email, password)
@@ -305,6 +311,7 @@ func (a *ApplicationTestSuit) TestLogin_TooManyFailedAttempts() {
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 	hashedPassword := "hashedPassword"
 
 	auth := &domain.Auth{
@@ -315,7 +322,7 @@ func (a *ApplicationTestSuit) TestLogin_TooManyFailedAttempts() {
 		FailedLoginAttempts: api.MaximumFailedLoginAttempts,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.DB.EXPECT().LockAccount(ctx, userID, api.LockAccountDuration).Return(nil, nil)
 
@@ -330,6 +337,7 @@ func (a *ApplicationTestSuit) TestLogin_TooManyFailedAttemptsAndFailedLockAccoun
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 	hashedPassword := "hashedPassword"
 
 	auth := &domain.Auth{
@@ -340,7 +348,7 @@ func (a *ApplicationTestSuit) TestLogin_TooManyFailedAttemptsAndFailedLockAccoun
 		FailedLoginAttempts: api.MaximumFailedLoginAttempts,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.DB.EXPECT().LockAccount(ctx, userID, api.LockAccountDuration).Return(nil, ErrUnknownError)
 
@@ -355,6 +363,7 @@ func (a *ApplicationTestSuit) TestLogin_InvalidPassword() {
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 	hashedPassword := "hashedPassword"
 
 	auth := &domain.Auth{
@@ -365,7 +374,7 @@ func (a *ApplicationTestSuit) TestLogin_InvalidPassword() {
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(false)
 	a.DB.EXPECT().IncrementFailedLoginAttempts(ctx, userID).Return(nil, nil)
@@ -381,6 +390,7 @@ func (a *ApplicationTestSuit) TestLogin_InvalidPasswordAndIncrementFailedLoginAt
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 	hashedPassword := "hashedPassword"
 
 	auth := &domain.Auth{
@@ -391,7 +401,7 @@ func (a *ApplicationTestSuit) TestLogin_InvalidPasswordAndIncrementFailedLoginAt
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(false)
 	a.DB.EXPECT().IncrementFailedLoginAttempts(ctx, userID).Return(nil, ErrUnknownError)
@@ -407,6 +417,7 @@ func (a *ApplicationTestSuit) TestLogin_GenerateAccessTokenError() {
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 	hashedPassword := "hashedPassword"
 
 	auth := &domain.Auth{
@@ -417,7 +428,7 @@ func (a *ApplicationTestSuit) TestLogin_GenerateAccessTokenError() {
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(true)
 	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return("", ErrUnknownError)
@@ -433,6 +444,7 @@ func (a *ApplicationTestSuit) TestLogin_GenerateRefreshTokenError() {
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 	hashedPassword := "hashedPassword"
 	accessToken := "accessToken"
 
@@ -444,7 +456,7 @@ func (a *ApplicationTestSuit) TestLogin_GenerateRefreshTokenError() {
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(true)
 	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return(accessToken, nil)
@@ -461,6 +473,7 @@ func (a *ApplicationTestSuit) TestLogin_ClearFailedLoginAttemptsError() {
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 	hashedPassword := "hashedPassword"
 	accessToken := "accessToken"
 	refreshToken := "refreshToken"
@@ -473,7 +486,7 @@ func (a *ApplicationTestSuit) TestLogin_ClearFailedLoginAttemptsError() {
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(true)
 	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return(accessToken, nil)
@@ -491,6 +504,7 @@ func (a *ApplicationTestSuit) TestLogin_SendWelcomeEmailError() {
 	email := "john.doe@example.com"
 	password := "password"
 	userID := "123456"
+	name := "name"
 	hashedPassword := "hashedPassword"
 	accessToken := "accessToken"
 	refreshToken := "refreshToken"
@@ -503,13 +517,13 @@ func (a *ApplicationTestSuit) TestLogin_SendWelcomeEmailError() {
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(true)
 	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return(accessToken, nil)
 	a.authManger.EXPECT().GenerateRefreshToken(ctx, userID).Return(refreshToken, nil)
 	a.DB.EXPECT().ClearFailedLoginAttempts(ctx, userID).Return(nil, nil)
-	a.email.EXPECT().SendWelcome(email).Return(ErrUnknownError)
+	a.email.EXPECT().SendWelcome(ctx, email, "name").Return(ErrUnknownError)
 
 	at, rt, err := a.api.Login(ctx, email, password)
 	a.Empty(at)
@@ -720,6 +734,7 @@ func (a *ApplicationTestSuit) TestResetPassword_Success() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
 	userID := "123456"
+	name := "name"
 	resetPasswordToken := "resetPasswordToken"
 
 	auth := &domain.Auth{
@@ -728,10 +743,10 @@ func (a *ApplicationTestSuit) TestResetPassword_Success() {
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.authManger.EXPECT().GenerateResetPasswordToken(ctx, userID).Return(resetPasswordToken, nil)
-	a.email.EXPECT().SendResetPassword("example.com", resetPasswordToken, email, auth_manager.ResetPasswordTokenExpr).Return(nil)
+	a.email.EXPECT().SendResetPassword(ctx, email, name, gomock.Any(), auth_manager.ResetPasswordTokenExpr).Return(nil)
 
 	err := a.api.ResetPassword(ctx, email)
 	a.NoError(err)
@@ -740,7 +755,7 @@ func (a *ApplicationTestSuit) TestResetPassword_Success() {
 func (a *ApplicationTestSuit) TestResetPassword_GetUserIDByEmailError() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return("", ErrUnknownError)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return("", "", ErrUnknownError)
 
 	err := a.api.ResetPassword(ctx, email)
 	a.Error(err)
@@ -749,9 +764,10 @@ func (a *ApplicationTestSuit) TestResetPassword_GetUserIDByEmailError() {
 func (a *ApplicationTestSuit) TestResetPassword_GetByIDError() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
+	name := "name"
 	userID := "123456"
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(nil, ErrUnknownError)
 
 	err := a.api.ResetPassword(ctx, email)
@@ -761,6 +777,7 @@ func (a *ApplicationTestSuit) TestResetPassword_GetByIDError() {
 func (a *ApplicationTestSuit) TestResetPassword_EmailNotVerified() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
+	name := "name"
 	userID := "123456"
 
 	auth := &domain.Auth{
@@ -769,7 +786,7 @@ func (a *ApplicationTestSuit) TestResetPassword_EmailNotVerified() {
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 
 	err := a.api.ResetPassword(ctx, email)
@@ -779,6 +796,7 @@ func (a *ApplicationTestSuit) TestResetPassword_EmailNotVerified() {
 func (a *ApplicationTestSuit) TestResetPassword_AccountLocked() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
+	name := "name"
 	userID := "123456"
 
 	auth := &domain.Auth{
@@ -787,7 +805,7 @@ func (a *ApplicationTestSuit) TestResetPassword_AccountLocked() {
 		FailedLoginAttempts: api.MaximumFailedLoginAttempts,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 
 	err := a.api.ResetPassword(ctx, email)
@@ -797,6 +815,7 @@ func (a *ApplicationTestSuit) TestResetPassword_AccountLocked() {
 func (a *ApplicationTestSuit) TestResetPassword_GenerateResetPasswordTokenError() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
+	name := "name"
 	userID := "123456"
 
 	auth := &domain.Auth{
@@ -805,7 +824,7 @@ func (a *ApplicationTestSuit) TestResetPassword_GenerateResetPasswordTokenError(
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.authManger.EXPECT().GenerateResetPasswordToken(ctx, userID).Return("", ErrUnknownError)
 
@@ -817,6 +836,7 @@ func (a *ApplicationTestSuit) TestResetPassword_SendResetPasswordEmailError() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
 	userID := "123456"
+	name := "name"
 	resetPasswordToken := "resetPasswordToken"
 
 	auth := &domain.Auth{
@@ -825,10 +845,10 @@ func (a *ApplicationTestSuit) TestResetPassword_SendResetPasswordEmailError() {
 		FailedLoginAttempts: 0,
 	}
 
-	a.user.EXPECT().GetUserIDByEmail(ctx, email).Return(userID, nil)
+	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.authManger.EXPECT().GenerateResetPasswordToken(ctx, userID).Return(resetPasswordToken, nil)
-	a.email.EXPECT().SendResetPassword("example.com", resetPasswordToken, email, auth_manager.ResetPasswordTokenExpr).Return(ErrUnknownError)
+	a.email.EXPECT().SendResetPassword(ctx, email, name, gomock.Any(), auth_manager.ResetPasswordTokenExpr).Return(ErrUnknownError)
 
 	err := a.api.ResetPassword(ctx, email)
 	a.Error(err)

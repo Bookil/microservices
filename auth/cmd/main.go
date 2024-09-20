@@ -13,25 +13,32 @@ import (
 	"github.com/Bookil/microservices/auth/internal/adapters/user"
 	"github.com/Bookil/microservices/auth/internal/adapters/validation"
 	"github.com/Bookil/microservices/auth/internal/application/core/api"
+	"github.com/Bookil/microservices/auth/internal/ports"
 )
 
 func main() {
-	config := config.Read()
+	configs := config.Read()
 
-	mysqlAdapter, err := mysql_adapter.NewAdapter(&config.Mysql)
+	mysqlAdapter, err := mysql_adapter.NewAdapter(&configs.Mysql)
 	if err != nil {
 		log.Fatalf("Failed to connect to database. Error: %v", err)
 	}
 
-	redisClient := db.GetRedisInstance(config.Redis)
+	redisClient := db.GetRedisInstance(configs.Redis)
 
-	userService, err := user.NewAdapter(&config.UserService)
+	userService, err := user.NewAdapter(&configs.UserService)
 	if err != nil {
 		log.Fatalf("Failed to connect to database. Error: %v", err)
 	}
 
-	emailService := email.NewEmailAdapter()
-	authManger := auth_manager.NewAdapter(redisClient, config.JWT)
+	var emailService ports.EmailPort
+	if config.CurrentEnv != config.Production {
+		emailService = email.NewDevEmailAdapter()
+	} else {
+		// TODO
+	}
+
+	authManger := auth_manager.NewAdapter(redisClient, configs.JWT)
 
 	hashManger := hash.NewHashManager(hash.DefaultHashParams)
 
@@ -39,7 +46,7 @@ func main() {
 
 	api := api.NewApplication(mysqlAdapter, userService, emailService, authManger, hashManger)
 
-	server := grpc.NewAdapter(api, validator, config.Server.Port)
+	server := grpc.NewAdapter(api, validator, configs.Server.Port)
 
 	server.Run()
 }

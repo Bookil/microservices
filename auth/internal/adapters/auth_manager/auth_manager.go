@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ResetPasswordTokenExpr = time.Minute * 10    // 10 minutes
+	ResetPasswordTokenExpr = time.Second * 360   // 5 minutes
 	AccessTokenExpr        = time.Minute * 30    // 30 minutes
 	RefreshTokenExpr       = time.Hour * 24 * 14 // 2 weeks
 	VerificationCodeExpr   = time.Minute * 2     // 2 minutes

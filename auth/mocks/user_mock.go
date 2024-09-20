@@ -40,19 +40,20 @@ func (m *MockUserPorts) EXPECT() *MockUserPortsMockRecorder {
 	return m.recorder
 }
 
-// GetUserIDByEmail mocks base method.
-func (m *MockUserPorts) GetUserIDByEmail(ctx context.Context, email string) (domain.UserID, error) {
+// GetUserIDAndNameByEmail mocks base method.
+func (m *MockUserPorts) GetUserIDAndNameByEmail(ctx context.Context, email string) (domain.UserID, string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserIDByEmail", ctx, email)
+	ret := m.ctrl.Call(m, "GetUserIDAndNameByEmail", ctx, email)
 	ret0, _ := ret[0].(domain.UserID)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(string)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
-// GetUserIDByEmail indicates an expected call of GetUserIDByEmail.
-func (mr *MockUserPortsMockRecorder) GetUserIDByEmail(ctx, email any) *gomock.Call {
+// GetUserIDAndNameByEmail indicates an expected call of GetUserIDAndNameByEmail.
+func (mr *MockUserPortsMockRecorder) GetUserIDAndNameByEmail(ctx, email any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserIDByEmail", reflect.TypeOf((*MockUserPorts)(nil).GetUserIDByEmail), ctx, email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserIDAndNameByEmail", reflect.TypeOf((*MockUserPorts)(nil).GetUserIDAndNameByEmail), ctx, email)
 }
 
 // Register mocks base method.

@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -51,7 +52,7 @@ func (a *Application) Register(ctx context.Context, firstName, lastName, email, 
 		return "", ErrCreateAuthStore
 	}
 
-	err = a.SendVerificationCode(ctx, email)
+	err = a.SendVerificationCode(ctx, email, firstName)
 	if err != nil {
 		return "", err
 	}
@@ -59,13 +60,13 @@ func (a *Application) Register(ctx context.Context, firstName, lastName, email, 
 	return email, nil
 }
 
-func (a *Application) SendVerificationCode(ctx context.Context, email string) error {
+func (a *Application) SendVerificationCode(ctx context.Context, email, name string) error {
 	verificationCode, err := a.authManager.GenerateVerificationCode(ctx, email)
 	if err != nil {
 		return ErrGenerateVerificationCode
 	}
 
-	err = a.email.SendVerificationCode(email, verificationCode)
+	err = a.email.SendVerificationCode(ctx, email, name, verificationCode)
 	if err != nil {
 		return err
 	}
@@ -79,7 +80,7 @@ func (a *Application) VerifyEmail(ctx context.Context, email string, verificatio
 		return ErrVerifyEmail
 	}
 
-	userID, err := a.user.GetUserIDByEmail(ctx, email)
+	userID, _, err := a.user.GetUserIDAndNameByEmail(ctx, email)
 	if err != nil {
 		return err
 	}
@@ -93,7 +94,7 @@ func (a *Application) VerifyEmail(ctx context.Context, email string, verificatio
 }
 
 func (a *Application) Login(ctx context.Context, email, password string) (accessToken string, refreshToken string, _ error) {
-	userID, err := a.user.GetUserIDByEmail(ctx, email)
+	userID, name, err := a.user.GetUserIDAndNameByEmail(ctx, email)
 	if err != nil {
 		return "", "", err
 	}
@@ -143,7 +144,7 @@ func (a *Application) Login(ctx context.Context, email, password string) (access
 		return "", "", ErrClearFailedLoginAttempts
 	}
 
-	err = a.email.SendWelcome(email)
+	err = a.email.SendWelcome(ctx, email, name)
 	if err != nil {
 		return "", "", err
 	}
@@ -208,7 +209,7 @@ func (a *Application) RefreshToken(ctx context.Context, userID domain.UserID, re
 }
 
 func (a *Application) ResetPassword(ctx context.Context, email string) error {
-	userID, err := a.user.GetUserIDByEmail(ctx, email)
+	userID, name, err := a.user.GetUserIDAndNameByEmail(ctx, email)
 	if err != nil {
 		return err
 	}
@@ -231,7 +232,9 @@ func (a *Application) ResetPassword(ctx context.Context, email string) error {
 		return ErrGenerateToken
 	}
 
-	err = a.email.SendResetPassword("example.com", resetPasswordToken, email, auth_manager.ResetPasswordTokenExpr)
+	url := fmt.Sprintf("bookil.com/auth/submitResetPassword?t=%s", resetPasswordToken)
+
+	err = a.email.SendResetPassword(ctx, email, name, url, auth_manager.ResetPasswordTokenExpr)
 	if err != nil {
 		return err
 	}

@@ -10,6 +10,7 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 	time "time"
 
@@ -40,43 +41,43 @@ func (m *MockEmailPort) EXPECT() *MockEmailPortMockRecorder {
 }
 
 // SendResetPassword mocks base method.
-func (m *MockEmailPort) SendResetPassword(url, token, email string, duration time.Duration) error {
+func (m *MockEmailPort) SendResetPassword(ctx context.Context, email, name, url string, duration time.Duration) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendResetPassword", url, token, email, duration)
+	ret := m.ctrl.Call(m, "SendResetPassword", ctx, email, name, url, duration)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // SendResetPassword indicates an expected call of SendResetPassword.
-func (mr *MockEmailPortMockRecorder) SendResetPassword(url, token, email, duration any) *gomock.Call {
+func (mr *MockEmailPortMockRecorder) SendResetPassword(ctx, email, name, url, duration any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendResetPassword", reflect.TypeOf((*MockEmailPort)(nil).SendResetPassword), url, token, email, duration)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendResetPassword", reflect.TypeOf((*MockEmailPort)(nil).SendResetPassword), ctx, email, name, url, duration)
 }
 
 // SendVerificationCode mocks base method.
-func (m *MockEmailPort) SendVerificationCode(email, code string) error {
+func (m *MockEmailPort) SendVerificationCode(ctx context.Context, email, name, code string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendVerificationCode", email, code)
+	ret := m.ctrl.Call(m, "SendVerificationCode", ctx, email, name, code)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // SendVerificationCode indicates an expected call of SendVerificationCode.
-func (mr *MockEmailPortMockRecorder) SendVerificationCode(email, code any) *gomock.Call {
+func (mr *MockEmailPortMockRecorder) SendVerificationCode(ctx, email, name, code any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendVerificationCode", reflect.TypeOf((*MockEmailPort)(nil).SendVerificationCode), email, code)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendVerificationCode", reflect.TypeOf((*MockEmailPort)(nil).SendVerificationCode), ctx, email, name, code)
 }
 
 // SendWelcome mocks base method.
-func (m *MockEmailPort) SendWelcome(email string) error {
+func (m *MockEmailPort) SendWelcome(ctx context.Context, email, name string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendWelcome", email)
+	ret := m.ctrl.Call(m, "SendWelcome", ctx, email, name)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
 // SendWelcome indicates an expected call of SendWelcome.
-func (mr *MockEmailPortMockRecorder) SendWelcome(email any) *gomock.Call {
+func (mr *MockEmailPortMockRecorder) SendWelcome(ctx, email, name any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendWelcome", reflect.TypeOf((*MockEmailPort)(nil).SendWelcome), email)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendWelcome", reflect.TypeOf((*MockEmailPort)(nil).SendWelcome), ctx, email, name)
 }

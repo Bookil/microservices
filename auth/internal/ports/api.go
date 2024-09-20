@@ -9,7 +9,7 @@ import (
 type APIPort interface {
 	Register(ctx context.Context, firstName, lastName, email, password string) (string, error)
 	VerifyEmail(ctx context.Context, userID domain.UserID, verificationCode string) error
-	SendVerificationCode(ctx context.Context, userID domain.UserID) error
+	SendVerificationCode(ctx context.Context, userID domain.UserID, name string) error
 	Login(ctx context.Context, email, password string) (accessToken string, refreshToken string, err error)
 	ResetPassword(ctx context.Context, email string) error
 	SubmitResetPassword(ctx context.Context, SubmitResetPasswordToken string, newPassword string) error

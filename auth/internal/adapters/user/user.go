@@ -78,13 +78,13 @@ func (a *Adapter) Register(ctx context.Context, firstName, lastName, email strin
 	return response.UserId, nil
 }
 
-func (a *Adapter) GetUserIDByEmail(ctx context.Context, email string) (domain.UserID, error) {
-	response, err := a.user.GetUserIDByEmail(ctx, &userv1.GetUserIDByEmailRequest{
+func (a *Adapter) GetUserIDAndNameByEmail(ctx context.Context, email string) (domain.UserID, string, error) {
+	response, err := a.user.GetUserIDAndNameByEmail(ctx, &userv1.GetUserIDAndNameByEmailRequest{
 		Email: email,
 	})
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
-	return response.UserId, nil
+	return response.GetUserId(), response.GetFirstName(), nil
 }
