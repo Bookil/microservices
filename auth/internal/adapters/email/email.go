@@ -21,42 +21,42 @@ type Adapter struct {
 	email emailv1.EmailServiceClient
 }
 
-func NewEmailAdapter() *Adapter {
-	return &Adapter{}
-}
 
-func generateURL(url *config.UserService) string {
+func generateURL(url *config.EmailService) string {
 	return fmt.Sprintf("%s:%d", url.Host, url.Port)
 }
 
-func NewAdapter(url *config.UserService) (*Adapter, error) {
-	cb := gobreaker.NewCircuitBreaker(
-		gobreaker.Settings{
-			Name:        "email",
-			MaxRequests: 5,
-			Timeout:     5 * time.Second,
-			ReadyToTrip: func(counts gobreaker.Counts) bool {
-				failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
-				return failureRatio > 0.5
-			},
-			OnStateChange: func(name string, from gobreaker.State, to gobreaker.State) {
-				log.Println("Circcuit breaker state changed:", name, from, to)
-			},
-		},
-	)
-
+func NewAdapter(url *config.EmailService) (*Adapter, error) {
 	var opts []grpc.DialOption
 
+	if config.CurrentEnv == config.Production{
+		cb := gobreaker.NewCircuitBreaker(
+			gobreaker.Settings{
+				Name:        "email",
+				MaxRequests: 5,
+				Timeout:     5 * time.Second,
+				ReadyToTrip: func(counts gobreaker.Counts) bool {
+					failureRatio := float64(counts.TotalFailures) / float64(counts.Requests)
+					return failureRatio > 0.5
+				},
+				OnStateChange: func(name string, from gobreaker.State, to gobreaker.State) {
+					log.Println("Circcuit breaker state changed:", name, from, to)
+				},
+			},
+		)
+
+		opts = append(opts, grpc.WithUnaryInterceptor(interceptor.CircuitBreakerInterceptor(cb)))
+		opts = append(opts, grpc.WithUnaryInterceptor(
+			retry.UnaryClientInterceptor(
+				retry.WithCodes(codes.ResourceExhausted, codes.Unavailable),
+				retry.WithMax(3),
+				retry.WithPerRetryTimeout(time.Second),
+				retry.WithBackoff(retry.BackoffLinear(2*time.Second)),
+			),
+		))
+	}
+	
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	opts = append(opts, grpc.WithUnaryInterceptor(interceptor.CircuitBreakerInterceptor(cb)))
-	opts = append(opts, grpc.WithUnaryInterceptor(
-		retry.UnaryClientInterceptor(
-			retry.WithCodes(codes.ResourceExhausted, codes.Unavailable),
-			retry.WithMax(3),
-			retry.WithPerRetryTimeout(time.Second),
-			retry.WithBackoff(retry.BackoffLinear(2*time.Second)),
-		),
-	))
 
 	conn, err := grpc.NewClient(generateURL(url), opts...)
 	if err != nil {
