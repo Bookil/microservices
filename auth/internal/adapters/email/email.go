@@ -21,7 +21,6 @@ type Adapter struct {
 	email emailv1.EmailServiceClient
 }
 
-
 func generateURL(url *config.EmailService) string {
 	return fmt.Sprintf("%s:%d", url.Host, url.Port)
 }
@@ -29,7 +28,7 @@ func generateURL(url *config.EmailService) string {
 func NewAdapter(url *config.EmailService) (*Adapter, error) {
 	var opts []grpc.DialOption
 
-	if config.CurrentEnv == config.Production{
+	if config.CurrentEnv == config.Production {
 		cb := gobreaker.NewCircuitBreaker(
 			gobreaker.Settings{
 				Name:        "email",
@@ -55,7 +54,7 @@ func NewAdapter(url *config.EmailService) (*Adapter, error) {
 			),
 		))
 	}
-	
+
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	conn, err := grpc.NewClient(generateURL(url), opts...)

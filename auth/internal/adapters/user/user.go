@@ -29,7 +29,7 @@ func generateURL(url *config.UserService) string {
 func NewAdapter(url *config.UserService) (*Adapter, error) {
 	var opts []grpc.DialOption
 
-	if config.CurrentEnv == config.Production{
+	if config.CurrentEnv == config.Production {
 		cb := gobreaker.NewCircuitBreaker(
 			gobreaker.Settings{
 				Name:        "user",
@@ -55,10 +55,8 @@ func NewAdapter(url *config.UserService) (*Adapter, error) {
 				retry.WithBackoff(retry.BackoffLinear(2*time.Second)),
 			),
 		))
-	
+
 	}
-
-
 
 	opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 

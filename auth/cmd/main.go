@@ -32,14 +32,16 @@ func main() {
 	}
 
 	var emailService ports.EmailPort
+
+	// tmp
 	isProduct := config.CurrentEnv == config.Production
 
-	log.Println("env:",isProduct)
-	
+	log.Println("env:", isProduct)
+
 	if isProduct {
-		emailProductService,err := email.NewAdapter(&configs.EmailService)
-		if err != nil{
-			log.Fatalf("Failed to connect to email service:%v",err)
+		emailProductService, err := email.NewAdapter(&configs.EmailService)
+		if err != nil {
+			log.Fatalf("Failed to connect to email service:%v", err)
 		}
 
 		emailService = emailProductService

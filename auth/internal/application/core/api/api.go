@@ -60,6 +60,17 @@ func (a *Application) Register(ctx context.Context, firstName, lastName, email, 
 	return email, nil
 }
 
+func (a *Application) SendVerificationCodeAgain(ctx context.Context, email string) error {
+	_, name, err := a.user.GetUserIDAndNameByEmail(ctx, email)
+	if err != nil {
+		return err
+	}
+
+	err = a.SendVerificationCode(ctx, email, name)
+
+	return err
+}
+
 func (a *Application) SendVerificationCode(ctx context.Context, email, name string) error {
 	verificationCode, err := a.authManager.GenerateVerificationCode(ctx, email)
 	if err != nil {

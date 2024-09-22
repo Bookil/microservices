@@ -22,6 +22,20 @@ func (a *Adapter) Register(ctx context.Context, request *authv1.RegisterRequest)
 	}, nil
 }
 
+func (a *Adapter) SendVerificationCodeAgain(ctx context.Context, request *authv1.SendVerificationCodeAgainRequest) (*authv1.SendVerificationCodeAgainResponse, error) {
+	err := a.validator.ValidateSendVerificationCode(request.Email)
+	if err != nil {
+		return nil, ErrInvalidInputs
+	}
+
+	err = a.api.SendVerificationCodeAgain(ctx, request.Email)
+	if err != nil {
+		return nil, ErrFailedRegister
+	}
+
+	return &authv1.SendVerificationCodeAgainResponse{}, nil
+}
+
 func (a *Adapter) VerifyEmail(ctx context.Context, request *authv1.VerifyEmailRequest) (*authv1.VerifyEmailResponse, error) {
 	err := a.validator.ValidateVerifyEmailInputs(request.Email, request.VerificationCode)
 	if err != nil {

@@ -15,7 +15,7 @@ func (a *Adapter) SendVerificationCode(ctx context.Context, req *emailv1.SendVer
 	return &emailv1.SendVerificationCodeResponse{}, nil
 }
 
-func (a *Adapter) SendRestPassword(ctx context.Context, req *emailv1.SendResetPasswordRequest) (*emailv1.SendResetPasswordResponse, error) {
+func (a *Adapter) SendResetPassword(ctx context.Context, req *emailv1.SendResetPasswordRequest) (*emailv1.SendResetPasswordResponse, error) {
 	err := a.api.SendResetPassword(req.GetEmail(), req.GetName(), req.GetUrl(), req.GetExpiry())
 	if err != nil {
 		return nil, err

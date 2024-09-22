@@ -56,7 +56,7 @@ func (a *Adapter) GetUserIDAndNameByEmail(ctx context.Context, request *userv1.G
 	}
 
 	return &userv1.GetUserIDAndNameByEmailResponse{
-		UserId: userID,
+		UserId:    userID,
 		FirstName: firstName,
 	}, nil
 }

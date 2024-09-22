@@ -83,11 +83,11 @@ func (a *ApplicationTestSuit) TestRegister_OtherError() {
 func (a *ApplicationTestSuit) TestGetUserIDAndNameByEmail_Success() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
-	savedUser := &domain.User{UserID: "123",FirstName: "amir",Email: email}
+	savedUser := &domain.User{UserID: "123", FirstName: "amir", Email: email}
 
 	a.db.EXPECT().GetUserByEmail(ctx, email).Return(savedUser, nil)
 
-	userID,name,err := a.app.GetUserIDAndNameByEmail(ctx, email)
+	userID, name, err := a.app.GetUserIDAndNameByEmail(ctx, email)
 	a.NotEmpty(userID)
 	a.NotEmpty(name)
 	a.NoError(err)
@@ -97,9 +97,9 @@ func (a *ApplicationTestSuit) TestGetUserIDAndNameByEmail_UserNotFound() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
 
-	a.db.EXPECT().GetUserByEmail(ctx, email).Return(nil,errors.New("not found"))
+	a.db.EXPECT().GetUserByEmail(ctx, email).Return(nil, errors.New("not found"))
 
-	userID, name,err := a.app.GetUserIDAndNameByEmail(ctx, email)
+	userID, name, err := a.app.GetUserIDAndNameByEmail(ctx, email)
 	a.Empty(userID)
 	a.Empty(name)
 	a.Error(err)
@@ -109,9 +109,9 @@ func (a *ApplicationTestSuit) TestGetUserIDAndNameByEmail_OtherError() {
 	ctx := context.TODO()
 	email := "john.doe@example.com"
 
-	a.db.EXPECT().GetUserByEmail(ctx, email).Return(nil,ErrUnknownError)
+	a.db.EXPECT().GetUserByEmail(ctx, email).Return(nil, ErrUnknownError)
 
-	userID,name,err := a.app.GetUserIDAndNameByEmail(ctx, email)
+	userID, name, err := a.app.GetUserIDAndNameByEmail(ctx, email)
 	a.Empty(userID)
 	a.Empty(name)
 	a.Error(err)
