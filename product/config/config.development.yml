@@ -1,0 +1,16 @@
+service_name: "product"
+
+server:
+    host: "127.0.0.1"
+    port: 3005
+
+mysql:
+    host: "127.0.0.1"
+    username: "mysql"
+    password: "mysql"
+    port: 3306
+    db_name: "product"
+
+order_service:
+    host: "127.0.0.1"
+    port: 3000
