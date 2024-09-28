@@ -2,6 +2,7 @@ package mysql_adapter
 
 import (
 	"context"
+
 	"product/internal/application/core/domain"
 )
 
@@ -80,10 +81,10 @@ func (a *Adapter) GetBooksByGenre(ctx context.Context, genreName string) ([]doma
 	return books, err
 }
 
-func (a *Adapter) ModifyBookByID(ctx context.Context, ID domain.BookID,book *domain.Book) (*domain.Book, error) {
+func (a *Adapter) ModifyBookByID(ctx context.Context, ID domain.BookID, book *domain.Book) (*domain.Book, error) {
 	savedBook, err := a.GetBookByID(ctx, ID)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	savedBook.Title = book.Title
@@ -94,20 +95,20 @@ func (a *Adapter) ModifyBookByID(ctx context.Context, ID domain.BookID,book *dom
 
 	err = a.db.Model(savedBook).Association("Authors").Replace(book.Authors)
 	if err != nil {
-        return nil,err 
-    }
+		return nil, err
+	}
 
-    err = a.db.Model(savedBook).Association("Genres").Replace(book.Genres)
+	err = a.db.Model(savedBook).Association("Genres").Replace(book.Genres)
 	if err != nil {
-		return nil,err
-    }
+		return nil, err
+	}
 
-    err = a.db.Save(savedBook).Error
+	err = a.db.Save(savedBook).Error
 	if err != nil {
-        return nil,err 
-    }
+		return nil, err
+	}
 
-	return savedBook,nil
+	return savedBook, nil
 }
 
 func (a *Adapter) DeleteBookByID(ctx context.Context, ID domain.BookID) error {
@@ -118,7 +119,7 @@ func (a *Adapter) DeleteBookByID(ctx context.Context, ID domain.BookID) error {
 
 	err = a.db.Model(&book).Association("Authors").Clear()
 	if err != nil {
-		return err 
+		return err
 	}
 
 	err = a.db.Model(&book).Association("Genres").Clear()
@@ -128,8 +129,8 @@ func (a *Adapter) DeleteBookByID(ctx context.Context, ID domain.BookID) error {
 
 	err = a.db.Delete(&book).Error
 	if err != nil {
-		return err 
+		return err
 	}
 
-	return nil 
+	return nil
 }

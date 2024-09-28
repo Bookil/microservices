@@ -6,13 +6,12 @@ import (
 
 type (
 	BookID = uint
-
 )
 
 type Book struct {
 	ID          BookID `gorm:"primaryKey"`
 	Quantity    uint
-	Authors      []*Author `gorm:"many2many:book_authors;"`
+	Authors     []*Author `gorm:"many2many:book_authors;"`
 	Title       string
 	Year        uint
 	Description string
@@ -22,14 +21,14 @@ type Book struct {
 	UpdatedAt   time.Time
 }
 
-func NewBook(title, description string,author []*Author,quantity uint,year uint, Genre []*Genre, price float64) *Book {
+func NewBook(title, description string, author []*Author, quantity uint, year uint, Genre []*Genre, price float64) *Book {
 	return &Book{
-		Authors: author,
+		Authors:     author,
 		Title:       title,
-		Genres:       Genre,
+		Genres:      Genre,
 		Description: description,
-		Quantity: quantity,
-		Year: year,
-		Price: price,
+		Quantity:    quantity,
+		Year:        year,
+		Price:       price,
 	}
 }

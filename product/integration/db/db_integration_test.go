@@ -5,14 +5,15 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"product/config"
-	"product/internal/adapters/db"
-	adapter "product/internal/adapters/db/mysql_adapter"
-	"product/internal/application/core/domain"
 	"strconv"
 	"strings"
 	"testing"
 	"time"
+
+	"product/config"
+	"product/internal/adapters/db"
+	adapter "product/internal/adapters/db/mysql_adapter"
+	"product/internal/application/core/domain"
 
 	"github.com/docker/go-connections/nat"
 	"github.com/stretchr/testify/suite"
@@ -21,15 +22,16 @@ import (
 )
 
 var genres = []*domain.Genre{
-	{ID: 1, Name: "Fiction"}, {ID: 2, Name: "Non-Fiction"},
-	{ID: 3, Name: "Science Fiction"}, {ID: 4, Name: "Fantasy"},
+	{ID: 1, Name: "Fiction"},
+	{ID: 2, Name: "Non-Fiction"},
+	{ID: 3, Name: "Science Fiction"},
+	{ID: 4, Name: "Fantasy"},
 }
 
 var authors = []*domain.Author{
 	{ID: 1, Name: "author 1", About: "this is author 1"},
 	{ID: 2, Name: "author 2", About: "this is author 2"},
 	{ID: 3, Name: "author 3", About: "this is author 3"},
-
 }
 
 type ProductDatabaseTestSuite struct {
@@ -303,27 +305,27 @@ func (o *ProductDatabaseTestSuite) TestF_GetBooksByAuthorName() {
 
 func (o *ProductDatabaseTestSuite) TestG_ModifyBookByID() {
 	ctx := context.TODO()
-	
+
 	testCases := []struct {
 		bookID domain.BookID
-		book *domain.Book 
-		Valid      bool
+		book   *domain.Book
+		Valid  bool
 	}{
 		{
 			bookID: o.book.ID,
-			book: domain.NewBook("book 7","my fav book",[]*domain.Author{authors[0]},15,1917,genres,35),
-			Valid:      true,
+			book:   domain.NewBook("book 7", "my fav book", []*domain.Author{authors[0]}, 15, 1917, genres, 35),
+			Valid:  true,
 		},
 
 		{
 			bookID: 55,
-			book: domain.NewBook("book 7","my fav book",[]*domain.Author{authors[1]},15,1917,genres,35),
-			Valid:      false,
+			book:   domain.NewBook("book 7", "my fav book", []*domain.Author{authors[1]}, 15, 1917, genres, 35),
+			Valid:  false,
 		},
 	}
 
 	for _, tc := range testCases {
-		savedBook,err := o.adapter.ModifyBookByID(ctx, tc.bookID,tc.book)
+		savedBook, err := o.adapter.ModifyBookByID(ctx, tc.bookID, tc.book)
 		if tc.Valid {
 			o.NoError(err)
 			o.NotNil(savedBook)
@@ -339,16 +341,16 @@ func (o *ProductDatabaseTestSuite) TestH_DeleteBookByID() {
 
 	testCases := []struct {
 		bookID domain.BookID
-		Valid      bool
+		Valid  bool
 	}{
 		{
 			bookID: o.book.ID,
-			Valid:      true,
+			Valid:  true,
 		},
 
 		{
 			bookID: 55,
-			Valid:      false,
+			Valid:  false,
 		},
 	}
 
@@ -370,8 +372,6 @@ func (o *ProductDatabaseTestSuite) TestI_GetAllGenres() {
 	o.NotNil(genres)
 }
 
-
-
 func (o *ProductDatabaseTestSuite) TestJ_GetAllAuthors() {
 	ctx := context.TODO()
 
@@ -379,4 +379,3 @@ func (o *ProductDatabaseTestSuite) TestJ_GetAllAuthors() {
 	o.NoError(err)
 	o.NotNil(authors)
 }
-

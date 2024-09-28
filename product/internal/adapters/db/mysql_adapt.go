@@ -3,9 +3,10 @@ package db
 import (
 	"fmt"
 	"log"
+	"sync"
+
 	"product/config"
 	"product/internal/application/core/domain"
-	"sync"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -33,7 +34,7 @@ func NewDB(config *config.Mysql) (*gorm.DB, error) {
 			return nil, fmt.Errorf("db connection error: %v", openErr)
 		}
 
-		err := db.AutoMigrate(&domain.Book{}, &domain.Genre{},&domain.Author{})
+		err := db.AutoMigrate(&domain.Book{}, &domain.Genre{}, &domain.Author{})
 		if err != nil {
 			return nil, fmt.Errorf("db migration error: %v", err)
 		}

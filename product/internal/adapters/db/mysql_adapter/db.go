@@ -15,4 +15,3 @@ func NewAdapter(db *gorm.DB) *Adapter {
 		db: db,
 	}
 }
-

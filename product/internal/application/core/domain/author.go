@@ -1,15 +1,15 @@
 package domain
 
 type Author struct {
-	ID   uint `gorm:"primaryKey"`
-	Name string 
+	ID    uint `gorm:"primaryKey"`
+	Name  string
 	About string
 	Books []*Book `gorm:"many2many:book_authors;"`
 }
 
-func NewAuthor(name,about string)*Author{
+func NewAuthor(name, about string) *Author {
 	return &Author{
-		Name: name,
+		Name:  name,
 		About: about,
 	}
 }
