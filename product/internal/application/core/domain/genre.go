@@ -2,7 +2,7 @@ package domain
 
 type Genre struct {
 	ID   uint `gorm:"primaryKey"`
-	Name string 
+	Name string `gorm:"unique"`
 	Books []*Book `gorm:"many2many:book_genres;"`
 }
 
