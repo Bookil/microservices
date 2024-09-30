@@ -11,6 +11,11 @@ mysql:
     port: 3306
     db_name: "book"
 
-order_service:
+auth_service:
     host: "127.0.0.1"
-    port: 8080
+    port: 8082
+
+cart_service:
+    host: "127.0.0.1"
+    port: 8086
+

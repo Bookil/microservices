@@ -31,10 +31,11 @@ var (
 
 type (
 	Config struct {
-		ServiceName  string       `koanf:"service_name"`
-		Server       Server       `koanf:"server"`
-		Mysql        Mysql        `koanf:"mysql"`
-		OrderService OrderService `koanf:"order_service"`
+		ServiceName string      `koanf:"service_name"`
+		Server      Server      `koanf:"server"`
+		Mysql       Mysql       `koanf:"mysql"`
+		AuthService AuthService `koanf:"auth_service"`
+		CartService CartService `koanf:"cart_service"`
 	}
 
 	Server struct {
@@ -50,7 +51,12 @@ type (
 		DBName   string `koanf:"db_name"`
 	}
 
-	OrderService struct {
+	AuthService struct {
+		Host string `koanf:"host"`
+		Port int    `koanf:"port"`
+	}
+
+	CartService struct {
 		Host string `koanf:"host"`
 		Port int    `koanf:"port"`
 	}
