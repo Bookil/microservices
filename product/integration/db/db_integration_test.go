@@ -131,6 +131,10 @@ func (o *ProductDatabaseTestSuite) TestA_CreateBook() {
 			book:  domain.NewBook("Book 6", "Bad Book For You", []*domain.Author{authors[1]}, 5, 2024, []*domain.Genre{genres[1]}, 3600),
 			Valid: true,
 		},
+		{
+			book:  domain.NewBook("Book 7", "Bad Book For You", []*domain.Author{domain.NewAuthor("Bahram Sadeghi", "Iranian Author")}, 5, 2024, []*domain.Genre{domain.NewGenre("mystery")}, 3600),
+			Valid: true,
+		},
 	}
 
 	for _, tc := range testCases {

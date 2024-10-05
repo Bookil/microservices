@@ -6,7 +6,7 @@ import (
 	"product/internal/application/core/domain"
 )
 
-type DBPorts interface {
+type DBPort interface {
 	AddAuthor(ctx context.Context, author *domain.Author) (*domain.Author, error)
 	GetAllAuthors(ctx context.Context) ([]domain.Author, error)
 	AddBook(ctx context.Context, book *domain.Book) (*domain.Book, error)
