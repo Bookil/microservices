@@ -12,7 +12,7 @@ type Application struct {
 	DB   ports.DBPort
 }
 
-func NewApplication(cart ports.CartPort, db ports.DBPort) ports.APIPort {
+func NewApplication(cart ports.CartPort, db ports.DBPort) *Application {
 	return &Application{
 		cart: cart,
 		DB:   db,

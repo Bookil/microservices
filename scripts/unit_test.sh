@@ -1,7 +1,7 @@
 #!/bin/bash
 
 for file in $(ls); do
-    if [[ $file =~ ^(user|auth|email) ]]; 
+    if [[ $file =~ ^(user|auth|email|product) ]]; 
     then
         cd $file
         make unit_test
