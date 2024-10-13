@@ -3,7 +3,7 @@ module product
 go 1.23.0
 
 require (
-	github.com/Bookil/Bookil-Proto v0.3.2
+	github.com/Bookil/Bookil-Proto v0.3.5
 	github.com/docker/go-connections v0.5.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/knadh/koanf v1.5.0
@@ -12,6 +12,7 @@ require (
 	github.com/testcontainers/testcontainers-go v0.33.0
 	go.uber.org/mock v0.4.0
 	google.golang.org/grpc v1.65.0
+	google.golang.org/protobuf v1.34.2
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.12
 )
@@ -71,6 +72,5 @@ require (
 	golang.org/x/sys v0.21.0 // indirect
 	golang.org/x/text v0.15.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240528184218-531527333157 // indirect
-	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
