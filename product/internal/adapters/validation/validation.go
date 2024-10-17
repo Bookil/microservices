@@ -4,8 +4,6 @@ import (
 	"strings"
 	"sync"
 
-	"product/internal/application/core/domain"
-
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -79,24 +77,24 @@ func (v *Validator) ValidateGetBooksByGenre(genre string) error {
 	return err
 }
 
-func (v *Validator) ValidateAddBook(book *domain.Book) error {
-	return v.validateBookData(book)
+func (v *Validator) ValidateAddBook(title string, description string, price float32, quantity uint, year uint) error {
+	return v.validateBookData(title, description, price, quantity, year)
 }
 
-func (v *Validator) ValidateModifyBookByID(book *domain.Book) error {
-	return v.validateBookData(book)
+func (v *Validator) ValidateModifyBookByID(title string, description string, price float32, quantity uint, year uint) error {
+	return v.validateBookData(title, description, price, quantity, year)
 }
 
-func (v *Validator) validateBookData(book *domain.Book) error {
-	trimSpacedTitle := strings.TrimSpace(book.Title)
-	trimSpacedDescription := strings.TrimSpace(book.Description)
+func (v *Validator) validateBookData(title string, description string, price float32, quantity uint, year uint) error {
+	trimSpacedTitle := strings.TrimSpace(title)
+	trimSpacedDescription := strings.TrimSpace(description)
 
 	registerInputs := &bookInput{
 		Title:       trimSpacedTitle,
 		Description: trimSpacedDescription,
-		Price:       float32(book.Price),
-		Year:        book.Year,
-		Quantity:    book.Quantity,
+		Price:       float32(price),
+		Year:        year,
+		Quantity:    quantity,
 	}
 
 	err := v.validate(registerInputs)

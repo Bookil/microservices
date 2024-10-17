@@ -17,15 +17,16 @@ import (
 type Adapter struct {
 	api             ports.APIPort
 	authInterceptor *interceptor.AuthInterceptor
-	// validator       ports.Validation
+	validator       ports.Validation
 	port int
 	productv1.UnimplementedProductServiceServer
 }
 
-func NewAdapter(api ports.APIPort, auth ports.AuthPort, port int) *Adapter {
+func NewAdapter(api ports.APIPort, auth ports.AuthPort,validator ports.Validation, port int) *Adapter {
 	return &Adapter{
 		api:             api,
 		port:            port,
+		validator: validator,
 		authInterceptor: interceptor.NewAuthInterceptor(auth),
 	}
 }
@@ -37,7 +38,7 @@ func (a *Adapter) Run() {
 	}
 
 	grpcServer := grpc.NewServer(
-		grpc.UnaryInterceptor(a.authInterceptor.AuthInterceptor),
+		// grpc.UnaryInterceptor(a.authInterceptor.AuthInterceptor),
 	)
 
 	productv1.RegisterProductServiceServer(grpcServer, a)

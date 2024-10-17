@@ -9,6 +9,7 @@ import (
 	"product/internal/adapters/db"
 	"product/internal/adapters/db/mysql_adapter"
 	"product/internal/adapters/grpc"
+	"product/internal/adapters/validation"
 	"product/internal/application/core/api"
 )
 
@@ -28,7 +29,9 @@ func main() {
 
 	application := api.NewApplication(cartAdapter, dbAdapter)
 
-	grpcAdapter := grpc.NewAdapter(application, authAdapter, configs.Server.Port)
+	validator := validation.NewValidator()
+	
+	grpcAdapter := grpc.NewAdapter(application, authAdapter, validator,configs.Server.Port)
 
 	grpcAdapter.Run()
 }

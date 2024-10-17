@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"product/internal/adapters/validation"
-	"product/internal/application/core/domain"
 
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
@@ -119,32 +118,61 @@ func (v *VerificationTestSuite) TestValidateGetBooksByGenre() {
 
 func (v *VerificationTestSuite) TestValidateAddBook() {
 	testCases := []struct {
-		book  *domain.Book
-		valid bool
+		title       string
+		description string
+		price       float32
+		quantity    uint
+		year        uint
+		valid       bool
 	}{
 		{
-			book:  domain.NewBook("  ", "valid", nil, 12, 1900, nil, 25),
-			valid: false,
+			title:       "  ",
+			description: "valid",
+			quantity:    12,
+			year:        1900,
+			price:       25,
+			valid:       false,
 		},
 		{
-			book:  domain.NewBook("valid", " ", nil, 12, 1900, nil, 25),
-			valid: false,
+			title:       "valid",
+			description: " ",
+			quantity:    12,
+			year:        1900,
+			price:       25,
+			valid:       false,
 		},
 		{
-			book:  domain.NewBook("valid", "valid", nil, 0, 1900, nil, 25),
-			valid: false,
+			title:       "valid",
+			description: " ",
+			quantity:    12,
+			year:        1900,
+			price:       0,
+			valid:       false,
 		},
 		{
-			book:  domain.NewBook("valid", "valid", nil, 12, 0, nil, 25),
-			valid: false,
+			title:       "valid",
+			description: "valid",
+			quantity:    0,
+			year:        1900,
+			price:       25,
+			valid:       false,
 		},
 		{
-			book:  domain.NewBook("valid", "valid", nil, 12, 1900, nil, 0),
-			valid: false,
+			title:       "valid",
+			description: "valid",
+			quantity:    12,
+			year:        0,
+			price:       25,
+			valid:       false,
 		},
+
 		{
-			book:  domain.NewBook("valid", "valid", nil, 12, 1900, nil, 25),
-			valid: true,
+			title:       "valid",
+			description: "valid",
+			quantity:    12,
+			year:        1900,
+			price:       25,
+			valid:       true,
 		},
 	}
 
@@ -153,7 +181,7 @@ func (v *VerificationTestSuite) TestValidateAddBook() {
 	for n, tc := range testCases {
 		n++
 		log.Printf("number %d,case:%v\n", n, tc)
-		err := validator.ValidateAddBook(tc.book)
+		err := validator.ValidateAddBook(tc.title, tc.description, tc.price, tc.quantity, tc.year)
 
 		if tc.valid {
 			require.NoError(v.T(), err)
@@ -166,32 +194,61 @@ func (v *VerificationTestSuite) TestValidateAddBook() {
 
 func (v *VerificationTestSuite) TestValidateModifyBook() {
 	testCases := []struct {
-		book  *domain.Book
-		valid bool
+		title       string
+		description string
+		price       float32
+		quantity    uint
+		year        uint
+		valid       bool
 	}{
 		{
-			book:  domain.NewBook("  ", "valid", nil, 12, 1900, nil, 25),
-			valid: false,
+			title:       "  ",
+			description: "valid",
+			quantity:    12,
+			year:        1900,
+			price:       25,
+			valid:       false,
 		},
 		{
-			book:  domain.NewBook("valid", " ", nil, 12, 1900, nil, 25),
-			valid: false,
+			title:       "valid",
+			description: " ",
+			quantity:    12,
+			year:        1900,
+			price:       25,
+			valid:       false,
 		},
 		{
-			book:  domain.NewBook("valid", "valid", nil, 0, 1900, nil, 25),
-			valid: false,
+			title:       "valid",
+			description: " ",
+			quantity:    12,
+			year:        1900,
+			price:       0,
+			valid:       false,
 		},
 		{
-			book:  domain.NewBook("valid", "valid", nil, 12, 0, nil, 25),
-			valid: false,
+			title:       "valid",
+			description: "valid",
+			quantity:    0,
+			year:        1900,
+			price:       25,
+			valid:       false,
 		},
 		{
-			book:  domain.NewBook("valid", "valid", nil, 12, 1900, nil, 0),
-			valid: false,
+			title:       "valid",
+			description: "valid",
+			quantity:    12,
+			year:        0,
+			price:       25,
+			valid:       false,
 		},
+
 		{
-			book:  domain.NewBook("valid", "valid", nil, 12, 1900, nil, 25),
-			valid: true,
+			title:       "valid",
+			description: "valid",
+			quantity:    12,
+			year:        1900,
+			price:       25,
+			valid:       true,
 		},
 	}
 
@@ -200,7 +257,7 @@ func (v *VerificationTestSuite) TestValidateModifyBook() {
 	for n, tc := range testCases {
 		n++
 		log.Printf("number %d,case:%v\n", n, tc)
-		err := validator.ValidateModifyBookByID(tc.book)
+		err := validator.ValidateModifyBookByID(tc.title, tc.description, tc.price, tc.quantity, tc.year)
 
 		if tc.valid {
 			require.NoError(v.T(), err)
