@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+
 	"product/internal/adapters/grpc/interceptor"
 	"product/internal/application/core/domain"
 
@@ -116,7 +117,7 @@ func (a *Adapter) GetAllBooks(request *productv1.GetAllBooksRequest, stream prod
 				Year:        uint32(book.Year),
 				Authors:     respAuthors,
 				Genre:       respGenres,
-				//Check
+				// Check
 				CreatedAt: timestamppb.New(book.CreatedAt),
 				UpdatedAt: timestamppb.New(book.UpdatedAt),
 			},
@@ -225,14 +226,13 @@ func (a *Adapter) ModifyBookByID(ctx context.Context, request *productv1.ModifyB
 	authors := convertProtoAuthorsToDomainAuthors(request.Authors)
 	genres := convertProtoGenresToDomainGenres(request.Genre)
 	book := domain.NewBook(request.Title, request.Description, authors, uint(request.Quantity), uint(request.Year), genres, float64(request.Price))
-	
-	_,err := a.api.ModifyBookByID(ctx, uint(request.BookId),book)
+
+	_, err := a.api.ModifyBookByID(ctx, uint(request.BookId), book)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &productv1.ModifyBookByIDResponse{
-	}, nil
+	return &productv1.ModifyBookByIDResponse{}, nil
 }
 
 func (a *Adapter) AddBookToCart(ctx context.Context, request *productv1.AddBookToCartRequest) (*productv1.AddBookToCartResponse, error) {
@@ -256,7 +256,6 @@ func (a *Adapter) DeleteBookFromCartByID(ctx context.Context, request *productv1
 
 	return &productv1.DeleteBookFromCartByIDResponse{}, nil
 }
-
 
 func convertDomainBookToProtoBook(book *domain.Book) *productv1.Book {
 	var respAuthors []*productv1.Author
@@ -286,7 +285,7 @@ func convertDomainBookToProtoBook(book *domain.Book) *productv1.Book {
 		Price:       float32(book.Price),
 		Authors:     respAuthors,
 		Genre:       respGenres,
-		//Check
+		// Check
 		CreatedAt: timestamppb.New(book.CreatedAt),
 		UpdatedAt: timestamppb.New(book.UpdatedAt),
 	}
@@ -294,7 +293,7 @@ func convertDomainBookToProtoBook(book *domain.Book) *productv1.Book {
 	return resBook
 }
 
-func convertProtoAuthorsToDomainAuthors(inputAuthors []*productv1.Author)[]*domain.Author{
+func convertProtoAuthorsToDomainAuthors(inputAuthors []*productv1.Author) []*domain.Author {
 	var authors []*domain.Author
 
 	for _, author := range inputAuthors {
@@ -308,7 +307,7 @@ func convertProtoAuthorsToDomainAuthors(inputAuthors []*productv1.Author)[]*doma
 	return authors
 }
 
-func convertProtoGenresToDomainGenres(inputGenres []*productv1.Genre)[]*domain.Genre{
+func convertProtoGenresToDomainGenres(inputGenres []*productv1.Genre) []*domain.Genre {
 	var genres []*domain.Genre
 
 	for _, genre := range inputGenres {

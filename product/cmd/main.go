@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+
 	"product/config"
 	"product/internal/adapters/auth"
 	"product/internal/adapters/cart"
@@ -14,27 +15,26 @@ import (
 func main() {
 	configs := config.Read()
 
-	db,err := db.NewDB(&configs.Mysql)
+	db, err := db.NewDB(&configs.Mysql)
 	checkError(err)
 
 	dbAdapter := mysql_adapter.NewAdapter(db)
 
-	cartAdapter,err := cart.NewAdapter(&configs.CartService)
+	cartAdapter, err := cart.NewAdapter(&configs.CartService)
 	checkError(err)
 
-	authAdapter,err := auth.NewAdapter(&configs.AuthService)
+	authAdapter, err := auth.NewAdapter(&configs.AuthService)
 	checkError(err)
 
-	application := api.NewApplication(cartAdapter,dbAdapter)
+	application := api.NewApplication(cartAdapter, dbAdapter)
 
-	grpcAdapter := grpc.NewAdapter(application,authAdapter,configs.Server.Port)
-	
+	grpcAdapter := grpc.NewAdapter(application, authAdapter, configs.Server.Port)
+
 	grpcAdapter.Run()
 }
 
-
-func checkError(err error){
-	if err != nil{
+func checkError(err error) {
+	if err != nil {
 		log.Fatal(err)
 	}
 }

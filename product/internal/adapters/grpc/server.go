@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+
 	"product/config"
 	"product/internal/adapters/grpc/interceptor"
 	"product/internal/ports"
@@ -17,7 +18,7 @@ type Adapter struct {
 	api             ports.APIPort
 	authInterceptor *interceptor.AuthInterceptor
 	// validator       ports.Validation
-	port            int
+	port int
 	productv1.UnimplementedProductServiceServer
 }
 
