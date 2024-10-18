@@ -7,6 +7,19 @@ import (
 )
 
 func (a *Adapter) AddBook(ctx context.Context, book *domain.Book) (*domain.Book, error) {
+	for _,author := range book.Authors{
+		_,err :=a.GetAuthorByID(ctx,author.ID)
+		if err != nil {
+			return nil, err
+		}
+	}
+	for _,genre := range book.Genres{
+		_,err :=a.GetGenreByID(ctx,genre.ID)
+		if err != nil {
+			return nil, err
+		}
+	}
+	
 	err := a.db.Create(book).Error
 	if err != nil {
 		return nil, err

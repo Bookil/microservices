@@ -132,8 +132,16 @@ func (o *ProductDatabaseTestSuite) TestA_CreateBook() {
 			Valid: true,
 		},
 		{
-			book:  domain.NewBook("Book 7", "Bad Book For You", []*domain.Author{domain.NewAuthor("Bahram Sadeghi", "Iranian Author")}, 5, 2024, []*domain.Genre{domain.NewGenre("mystery")}, 3600),
-			Valid: true,
+			book:  domain.NewBook("Book 7", "Bad Book For You", []*domain.Author{domain.NewAuthor("Bahram Sadeghi", "Iranian Author")}, 5, 2024, []*domain.Genre{genres[0]}, 3600),
+			Valid: false,
+		},
+		{
+			book:  domain.NewBook("Book 8", "Bad Book For You", []*domain.Author{{ID: 256}}, 5, 2024, []*domain.Genre{genres[1]}, 3600),
+			Valid: false,
+		},
+		{
+			book:  domain.NewBook("Book 9", "Bad Book For You",authors[0:], 5, 2024, []*domain.Genre{domain.NewGenre("mystery")}, 3600),
+			Valid: false,
 		},
 	}
 
@@ -382,4 +390,60 @@ func (o *ProductDatabaseTestSuite) TestJ_GetAllAuthors() {
 	authors, err := o.adapter.GetAllAuthors(ctx)
 	o.NoError(err)
 	o.NotNil(authors)
+}
+
+func (o *ProductDatabaseTestSuite) TestK_DeleteGenreByID() {
+	ctx := context.TODO()
+
+	testCases := []struct {
+		genreID uint
+		Valid  bool
+	}{
+		{
+			genreID: genres[0].ID,
+			Valid:  true,
+		},
+
+		{
+			genreID: 1302,
+			Valid:  false,
+		},
+	}
+
+	for _, tc := range testCases {
+		err := o.adapter.DeleteGenreByID(ctx, tc.genreID)
+		if tc.Valid {
+			o.NoError(err)
+		} else if !tc.Valid {
+			o.Error(err)
+		}
+	}
+}
+
+func (o *ProductDatabaseTestSuite) TestL_DeleteAuthorByID() {
+	ctx := context.TODO()
+
+	testCases := []struct {
+		authorID uint
+		Valid  bool
+	}{
+		{
+			authorID: authors[1].ID,
+			Valid:  true,
+		},
+
+		{
+			authorID: 55,
+			Valid:  false,
+		},
+	}
+
+	for _, tc := range testCases {
+		err := o.adapter.DeleteAuthorByID(ctx, tc.authorID)
+		if tc.Valid {
+			o.NoError(err)
+		} else if !tc.Valid {
+			o.Error(err)
+		}
+	}
 }

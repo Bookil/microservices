@@ -85,6 +85,20 @@ func (mr *MockDBPortMockRecorder) AddGenre(ctx, genre any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddGenre", reflect.TypeOf((*MockDBPort)(nil).AddGenre), ctx, genre)
 }
 
+// DeleteAuthorByID mocks base method.
+func (m *MockDBPort) DeleteAuthorByID(ctx context.Context, ID uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteAuthorByID", ctx, ID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteAuthorByID indicates an expected call of DeleteAuthorByID.
+func (mr *MockDBPortMockRecorder) DeleteAuthorByID(ctx, ID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAuthorByID", reflect.TypeOf((*MockDBPort)(nil).DeleteAuthorByID), ctx, ID)
+}
+
 // DeleteBookByID mocks base method.
 func (m *MockDBPort) DeleteBookByID(ctx context.Context, ID domain.BookID) error {
 	m.ctrl.T.Helper()
@@ -97,6 +111,20 @@ func (m *MockDBPort) DeleteBookByID(ctx context.Context, ID domain.BookID) error
 func (mr *MockDBPortMockRecorder) DeleteBookByID(ctx, ID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteBookByID", reflect.TypeOf((*MockDBPort)(nil).DeleteBookByID), ctx, ID)
+}
+
+// DeleteGenreByID mocks base method.
+func (m *MockDBPort) DeleteGenreByID(ctx context.Context, ID uint) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteGenreByID", ctx, ID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteGenreByID indicates an expected call of DeleteGenreByID.
+func (mr *MockDBPortMockRecorder) DeleteGenreByID(ctx, ID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteGenreByID", reflect.TypeOf((*MockDBPort)(nil).DeleteGenreByID), ctx, ID)
 }
 
 // GetAllAuthors mocks base method.
@@ -142,6 +170,21 @@ func (m *MockDBPort) GetAllGenres(ctx context.Context) ([]domain.Genre, error) {
 func (mr *MockDBPortMockRecorder) GetAllGenres(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllGenres", reflect.TypeOf((*MockDBPort)(nil).GetAllGenres), ctx)
+}
+
+// GetAuthorByID mocks base method.
+func (m *MockDBPort) GetAuthorByID(ctx context.Context, ID uint) (*domain.Author, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetAuthorByID", ctx, ID)
+	ret0, _ := ret[0].(*domain.Author)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAuthorByID indicates an expected call of GetAuthorByID.
+func (mr *MockDBPortMockRecorder) GetAuthorByID(ctx, ID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAuthorByID", reflect.TypeOf((*MockDBPort)(nil).GetAuthorByID), ctx, ID)
 }
 
 // GetBookByID mocks base method.
@@ -202,6 +245,21 @@ func (m *MockDBPort) GetBooksByTitle(ctx context.Context, title string) ([]domai
 func (mr *MockDBPortMockRecorder) GetBooksByTitle(ctx, title any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBooksByTitle", reflect.TypeOf((*MockDBPort)(nil).GetBooksByTitle), ctx, title)
+}
+
+// GetGenreByID mocks base method.
+func (m *MockDBPort) GetGenreByID(ctx context.Context, ID uint) (*domain.Genre, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetGenreByID", ctx, ID)
+	ret0, _ := ret[0].(*domain.Genre)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetGenreByID indicates an expected call of GetGenreByID.
+func (mr *MockDBPortMockRecorder) GetGenreByID(ctx, ID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGenreByID", reflect.TypeOf((*MockDBPort)(nil).GetGenreByID), ctx, ID)
 }
 
 // ModifyBookByID mocks base method.
