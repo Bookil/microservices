@@ -307,6 +307,49 @@ func (a *ApplicationTestSuit) TestAddAuthor_Error() {
 	a.Nil(newAuthor)
 }
 
+func (a *ApplicationTestSuit) TestGetAuthorByID_Success() {
+	ctx := context.TODO()
+	ID := 1
+	author := &domain.Author{ID: 1, Name: "Author 1"}
+
+	a.DB.EXPECT().GetAuthorByID(ctx,uint(ID) ).Return(author,nil)
+
+	storedAuthor, err := a.api.GetAuthorByID(ctx, uint(ID))
+	a.NoError(err)
+	a.Equal(author,storedAuthor)
+}
+
+
+func (a *ApplicationTestSuit) TestGetAuthorByID_Error() {
+	ctx := context.TODO()
+	ID := 1
+
+	a.DB.EXPECT().GetAuthorByID(ctx,uint(ID)).Return(nil,ErrUnknownError)
+
+	storedAuthor, err := a.api.GetAuthorByID(ctx, uint(ID))	
+	a.Error(err)
+	a.Nil(storedAuthor)
+}
+
+func (a *ApplicationTestSuit) TestDeleteAuthorByID_Success() {
+	ctx := context.TODO()
+	ID := 1
+
+	a.DB.EXPECT().DeleteAuthorByID(ctx,uint(ID)).Return(nil)
+
+	err := a.api.DeleteAuthorByID(ctx, uint(ID))
+	a.NoError(err)
+}
+func (a *ApplicationTestSuit) TestDeleteAuthorByID_Error() {
+	ctx := context.TODO()
+	ID := 1
+
+	a.DB.EXPECT().DeleteAuthorByID(ctx,uint(ID)).Return(ErrUnknownError)
+
+	err := a.api.DeleteAuthorByID(ctx, uint(ID))
+	a.Error(err)
+}
+
 func (a *ApplicationTestSuit) TestGetAllAuthors_Success() {
 	ctx := context.TODO()
 	expectedAuthors := []domain.Author{
@@ -353,6 +396,48 @@ func (a *ApplicationTestSuit) TestAddGenre_Error() {
 	a.Nil(newGenre)
 }
 
+func (a *ApplicationTestSuit) TestGetGenreByID_Success() {
+	ctx := context.TODO()
+	ID := 1
+	genre := &domain.Genre{ID: 1, Name: "Genre 1"}
+
+	a.DB.EXPECT().GetGenreByID(ctx,uint(ID) ).Return(genre,nil)
+
+	storedGenre, err := a.api.GetGenreByID(ctx, uint(ID))
+	a.NoError(err)
+	a.Equal(genre,storedGenre)
+}
+
+
+func (a *ApplicationTestSuit) TestGetGenreByID_Error() {
+	ctx := context.TODO()
+	ID := 1
+
+	a.DB.EXPECT().GetGenreByID(ctx,uint(ID)).Return(nil,ErrUnknownError)
+
+	storedGenre, err := a.api.GetGenreByID(ctx, uint(ID))	
+	a.Error(err)
+	a.Nil(storedGenre)
+}
+
+func (a *ApplicationTestSuit) TestDeleteGenreByID_Success() {
+	ctx := context.TODO()
+	ID := 1
+
+	a.DB.EXPECT().DeleteGenreByID(ctx,uint(ID)).Return(nil)
+
+	err := a.api.DeleteGenreByID(ctx, uint(ID))
+	a.NoError(err)
+}
+func (a *ApplicationTestSuit) TestDeleteGenreByID_Error() {
+	ctx := context.TODO()
+	ID := 1
+
+	a.DB.EXPECT().DeleteGenreByID(ctx,uint(ID)).Return(ErrUnknownError)
+
+	err := a.api.DeleteGenreByID(ctx, uint(ID))
+	a.Error(err)
+}
 func (a *ApplicationTestSuit) TestGetAllGenres_Success() {
 	ctx := context.TODO()
 	expectedGenres := []domain.Genre{

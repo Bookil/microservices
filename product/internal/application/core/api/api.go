@@ -117,6 +117,21 @@ func (a *Application) AddAuthor(ctx context.Context, author *domain.Author) (*do
 	return author, nil
 }
 
+func (a *Application) GetAuthorByID(ctx context.Context, ID uint) (*domain.Author, error) {
+	author, err := a.DB.GetAuthorByID(ctx, ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return author, nil
+}
+
+func (a *Application) DeleteAuthorByID(ctx context.Context, ID uint) error {
+	err := a.DB.DeleteAuthorByID(ctx, ID)
+	
+	return err
+}
+
 func (a *Application) GetAllAuthors(ctx context.Context) ([]domain.Author, error) {
 	authors, err := a.DB.GetAllAuthors(ctx)
 	if err != nil {
@@ -133,6 +148,21 @@ func (a *Application) AddGenre(ctx context.Context, genre *domain.Genre) (*domai
 	}
 
 	return genre, nil
+}
+
+func (a *Application) GetGenreByID(ctx context.Context, ID uint) (*domain.Genre, error) {
+	genre, err := a.DB.GetGenreByID(ctx, ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return genre, nil
+}
+
+func (a *Application) DeleteGenreByID(ctx context.Context, ID uint) error {
+	err := a.DB.DeleteGenreByID(ctx, ID)
+	
+	return err
 }
 
 func (a *Application) GetAllGenres(ctx context.Context) ([]domain.Genre, error) {

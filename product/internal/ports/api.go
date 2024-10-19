@@ -18,7 +18,11 @@ type APIPort interface {
 	AddBookToCart(ctx context.Context, ID domain.BookID, userID string) error
 	DeleteBookFromCartByID(ctx context.Context, bookID domain.BookID, cartID uint) error
 	AddAuthor(ctx context.Context, author *domain.Author) (*domain.Author, error)
+	GetAuthorByID(ctx context.Context,ID uint)(*domain.Author,error)
+	DeleteAuthorByID(ctx context.Context,ID uint)error
 	GetAllAuthors(ctx context.Context) ([]domain.Author, error)
 	AddGenre(ctx context.Context, genre *domain.Genre) (*domain.Genre, error)
+	GetGenreByID(ctx context.Context,ID uint)(*domain.Genre,error)
+	DeleteGenreByID(ctx context.Context,ID uint)error
 	GetAllGenres(ctx context.Context) ([]domain.Genre, error)
 }
