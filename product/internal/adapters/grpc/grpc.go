@@ -28,6 +28,15 @@ func (a *Adapter) AddAuthor(ctx context.Context, request *productv1.AddAuthorReq
 	return &productv1.AddAuthorResponse{}, nil
 }
 
+func (a *Adapter) DeleteAuthorByID(ctx context.Context, request *productv1.DeleteAuthorByIDRequest) (*productv1.DeleteAuthorByIDResponse, error) {
+	err := a.api.DeleteAuthorByID(ctx, uint(request.Id))
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &productv1.DeleteAuthorByIDResponse{}, nil
+}
+
 func (a *Adapter) GetAllAuthors(request *productv1.GetAllAuthorsRequest, stream productv1.ProductService_GetAllAuthorsServer) error {
 	authors, err := a.api.GetAllAuthors(stream.Context())
 	if err != nil {
@@ -67,6 +76,15 @@ func (a *Adapter) AddGenre(ctx context.Context, request *productv1.AddGenreReque
 	}
 
 	return &productv1.AddGenreResponse{}, nil
+}
+
+func (a *Adapter) DeleteGenreByID(ctx context.Context, request *productv1.DeleteGenreByIDRequest) (*productv1.DeleteGenreByIDResponse, error) {
+	err := a.api.DeleteGenreByID(ctx, uint(request.Id))
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &productv1.DeleteGenreByIDResponse{}, nil
 }
 
 func (a *Adapter) GetAllGenres(request *productv1.GetAllGenresRequest, stream productv1.ProductService_GetAllGenresServer) error {

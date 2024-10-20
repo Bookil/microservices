@@ -8,6 +8,8 @@ github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 h1:UQHMgLO+TxOEl
 github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
 github.com/Bookil/Bookil-Proto v0.3.5 h1:16D5D1MDPv1rYQzyyJ44qGpvCRoVHhJz+5NwwnFml0c=
 github.com/Bookil/Bookil-Proto v0.3.5/go.mod h1:C8+ie5nWDtkB/FUyx1y7UImKYp+3M1srAcgw9JinjxU=
+github.com/Bookil/Bookil-Proto v0.4.0 h1:RMdTBbW5UxrLWyNr8RcJYFBKrLnvkKiG6nOmPK8j124=
+github.com/Bookil/Bookil-Proto v0.4.0/go.mod h1:C8+ie5nWDtkB/FUyx1y7UImKYp+3M1srAcgw9JinjxU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
 github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=

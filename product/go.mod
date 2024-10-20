@@ -3,7 +3,7 @@ module product
 go 1.23.0
 
 require (
-	github.com/Bookil/Bookil-Proto v0.3.5
+	github.com/Bookil/Bookil-Proto v0.4.0
 	github.com/docker/go-connections v0.5.0
 	github.com/go-playground/locales v0.14.1
 	github.com/go-playground/universal-translator v0.18.1
