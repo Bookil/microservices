@@ -1,0 +1,21 @@
+service_name: "product"
+
+server:
+    host: "127.0.0.1"
+    port: 8085
+
+mysql:
+    host: "127.0.0.1"
+    username: "root"
+    password: "docker@!3A"
+    port: 3306
+    db_name: "book"
+
+auth_service:
+    host: "127.0.0.1"
+    port: 8082
+
+cart_service:
+    host: "127.0.0.1"
+    port: 8086
+
