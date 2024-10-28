@@ -83,6 +83,20 @@ func (a *Adapter) Authentication(ctx context.Context, request *authv1.Authentica
 	}, nil
 }
 
+func (a *Adapter) RoleAuthorization(ctx context.Context, request *authv1.RoleAuthorizationRequest) (*authv1.RoleAuthorizationResponse, error) {
+	err := a.validator.ValidateAuthenticateInputsAndAuthorization(request.AccessToken)
+	if err != nil {
+		return nil, ErrInvalidInputs
+	}
+
+	err = a.api.RoleAuthorization(ctx, request.AccessToken)
+	if err != nil {
+		return nil, ErrFailedAuthenticate
+	}
+
+	return &authv1.RoleAuthorizationResponse{}, nil
+}
+
 func (a *Adapter) RefreshToken(ctx context.Context, request *authv1.RefreshTokenRequest) (*authv1.RefreshTokenResponse, error) {
 	err := a.validator.ValidateRefreshTokenInputs(request.UserId, request.RefreshToken)
 	if err != nil {
