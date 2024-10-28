@@ -68,7 +68,7 @@ func (a *Adapter) Login(ctx context.Context, request *authv1.LoginRequest) (*aut
 }
 
 func (a *Adapter) Authentication(ctx context.Context, request *authv1.AuthenticationRequest) (*authv1.AuthenticationResponse, error) {
-	err := a.validator.ValidateAuthenticateInputs(request.AccessToken)
+	err := a.validator.ValidateAuthenticateInputsAndAuthorization(request.AccessToken)
 	if err != nil {
 		return nil, ErrInvalidInputs
 	}

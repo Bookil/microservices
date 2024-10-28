@@ -96,8 +96,8 @@ func (v *Validator) ValidateChangePasswordInputs(UserID domain.UserID, oldPasswo
 	return err
 }
 
-func (v *Validator) ValidateAuthenticateInputs(accessToken string) error {
-	authenticateInputs := &authenticateInputs{
+func (v *Validator) ValidateAuthenticateInputsAndAuthorization(accessToken string) error {
+	authenticateInputs := &authenticateAndAuthorizationInputs{
 		AccessToken: strings.TrimSpace(accessToken),
 	}
 

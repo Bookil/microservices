@@ -219,7 +219,7 @@ func (v *VerificationTestSuite) TestValidateAuthenticate() {
 	}
 
 	for _, tc := range testCases {
-		err := v.validator.ValidateAuthenticateInputs(tc.accessToken)
+		err := v.validator.ValidateAuthenticateInputsAndAuthorization(tc.accessToken)
 
 		if tc.valid {
 			require.NoError(v.T(), err)

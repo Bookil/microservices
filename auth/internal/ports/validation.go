@@ -8,7 +8,7 @@ type Validation interface {
 	ValidateSendVerificationCode(email string) error
 	ValidateVerifyEmailInputs(string, string) error
 	ValidateChangePasswordInputs(domain.UserID, string, string) error
-	ValidateAuthenticateInputs(string) error
+	ValidateAuthenticateInputsAndAuthorization(string) error
 	ValidateRefreshTokenInputs(domain.UserID, string) error
 	ValidateResetPasswordInputs(email string) error
 	ValidateSubmitResetPasswordInputs(string, string) error

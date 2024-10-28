@@ -18,7 +18,7 @@ type loginInputs struct {
 	Password string `validate:"required"`
 }
 
-type authenticateInputs struct {
+type authenticateAndAuthorizationInputs struct {
 	AccessToken string `validate:"required,jwt"`
 }
 
