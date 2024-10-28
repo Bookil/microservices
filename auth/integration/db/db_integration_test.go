@@ -89,7 +89,7 @@ func (o *AuthDatabaseTestSuite) TestA_ShouldCreateAuth() {
 		Valid bool
 	}{
 		{
-			auth:  domain.NewAuth("123456", "$^&fullyHashedPassword12$"),
+			auth:  domain.NewAuth("123456", domain.UserRole,"$^&fullyHashedPassword12$"),
 			Valid: true,
 		},
 	}

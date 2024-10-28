@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/suite"
 	"go.uber.org/mock/gomock"
 )
-
+//remember we don't mock SendVerificationCodeAgain
 type ApplicationTestSuit struct {
 	suite.Suite
 
@@ -206,6 +206,7 @@ func (a *ApplicationTestSuit) TestLogin_Success() {
 
 	auth := &domain.Auth{
 		UserID:              userID,
+		Role: domain.UserRole,
 		HashedPassword:      hashedPassword,
 		IsEmailVerified:     true,
 		AccountLockedUntil:  0,
@@ -215,7 +216,7 @@ func (a *ApplicationTestSuit) TestLogin_Success() {
 	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(true)
-	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return(accessToken, nil)
+	a.authManger.EXPECT().GenerateAccessToken(ctx, userID,domain.UserRole).Return(accessToken, nil)
 	a.authManger.EXPECT().GenerateRefreshToken(ctx, userID).Return(refreshToken, nil)
 	a.DB.EXPECT().ClearFailedLoginAttempts(ctx, userID).Return(nil, nil)
 	a.email.EXPECT().SendWelcome(ctx, email, "name").Return(nil)
@@ -422,6 +423,7 @@ func (a *ApplicationTestSuit) TestLogin_GenerateAccessTokenError() {
 
 	auth := &domain.Auth{
 		UserID:              userID,
+		Role: domain.UserRole,
 		HashedPassword:      hashedPassword,
 		IsEmailVerified:     true,
 		AccountLockedUntil:  0,
@@ -431,7 +433,7 @@ func (a *ApplicationTestSuit) TestLogin_GenerateAccessTokenError() {
 	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(true)
-	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return("", ErrUnknownError)
+	a.authManger.EXPECT().GenerateAccessToken(ctx, userID,domain.UserRole).Return("", ErrUnknownError)
 
 	at, rt, err := a.api.Login(ctx, email, password)
 	a.Empty(at)
@@ -451,6 +453,7 @@ func (a *ApplicationTestSuit) TestLogin_GenerateRefreshTokenError() {
 	auth := &domain.Auth{
 		UserID:              userID,
 		HashedPassword:      hashedPassword,
+		Role: domain.UserRole,
 		IsEmailVerified:     true,
 		AccountLockedUntil:  0,
 		FailedLoginAttempts: 0,
@@ -459,7 +462,7 @@ func (a *ApplicationTestSuit) TestLogin_GenerateRefreshTokenError() {
 	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(true)
-	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return(accessToken, nil)
+	a.authManger.EXPECT().GenerateAccessToken(ctx, userID,domain.UserRole).Return(accessToken, nil)
 	a.authManger.EXPECT().GenerateRefreshToken(ctx, userID).Return("", ErrUnknownError)
 
 	at, rt, err := a.api.Login(ctx, email, password)
@@ -480,6 +483,7 @@ func (a *ApplicationTestSuit) TestLogin_ClearFailedLoginAttemptsError() {
 
 	auth := &domain.Auth{
 		UserID:              userID,
+		Role: domain.UserRole,
 		HashedPassword:      hashedPassword,
 		IsEmailVerified:     true,
 		AccountLockedUntil:  0,
@@ -489,7 +493,7 @@ func (a *ApplicationTestSuit) TestLogin_ClearFailedLoginAttemptsError() {
 	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(true)
-	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return(accessToken, nil)
+	a.authManger.EXPECT().GenerateAccessToken(ctx, userID,domain.UserRole).Return(accessToken, nil)
 	a.authManger.EXPECT().GenerateRefreshToken(ctx, userID).Return(refreshToken, nil)
 	a.DB.EXPECT().ClearFailedLoginAttempts(ctx, userID).Return(nil, ErrUnknownError)
 
@@ -511,6 +515,7 @@ func (a *ApplicationTestSuit) TestLogin_SendWelcomeEmailError() {
 
 	auth := &domain.Auth{
 		UserID:              userID,
+		Role: domain.UserRole,
 		HashedPassword:      hashedPassword,
 		IsEmailVerified:     true,
 		AccountLockedUntil:  0,
@@ -520,7 +525,7 @@ func (a *ApplicationTestSuit) TestLogin_SendWelcomeEmailError() {
 	a.user.EXPECT().GetUserIDAndNameByEmail(ctx, email).Return(userID, name, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
 	a.hashManager.EXPECT().CheckPasswordHash(password, hashedPassword).Return(true)
-	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return(accessToken, nil)
+	a.authManger.EXPECT().GenerateAccessToken(ctx, userID,domain.UserRole).Return(accessToken, nil)
 	a.authManger.EXPECT().GenerateRefreshToken(ctx, userID).Return(refreshToken, nil)
 	a.DB.EXPECT().ClearFailedLoginAttempts(ctx, userID).Return(nil, nil)
 	a.email.EXPECT().SendWelcome(ctx, email, "name").Return(ErrUnknownError)
@@ -538,6 +543,7 @@ func (a *ApplicationTestSuit) TestAuthenticate_Success() {
 
 	accessTokenClaims := &domain.AccessTokenClaims{
 		UserID: expectedUserID,
+		Role: domain.UserRole,
 	}
 
 	a.authManger.EXPECT().DecodeAccessToken(ctx, accessToken).Return(accessTokenClaims, nil)
@@ -572,6 +578,75 @@ func (a *ApplicationTestSuit) TestAuthenticate_EmptyUserID() {
 	a.Empty(userID)
 	a.Error(err)
 }
+
+func (a *ApplicationTestSuit) TestAuthenticate_InvalidRole() {
+	ctx := context.TODO()
+	accessToken := "validAccessTokenWithInvalidRole"
+
+	accessTokenClaims := &domain.AccessTokenClaims{
+		UserID: "1234567",
+		Role: "invalid",
+	}
+
+	a.authManger.EXPECT().DecodeAccessToken(ctx, accessToken).Return(accessTokenClaims, nil)
+
+	userID, err := a.api.Authenticate(ctx, accessToken)
+	a.Empty(userID)
+	a.Error(err)
+}
+
+func (a *ApplicationTestSuit) TestRoleAuthorization_Success() {
+	ctx := context.TODO()
+	accessToken := "validAccessToken"
+
+	accessTokenClaims := &domain.AccessTokenClaims{
+		Role: domain.AdminRole,
+	}
+
+	a.authManger.EXPECT().DecodeAccessToken(ctx, accessToken).Return(accessTokenClaims, nil)
+
+	err := a.api.RoleAuthorization(ctx, accessToken)
+	a.NoError(err)
+}
+
+func (a *ApplicationTestSuit) TestRoleAuthorization_WrongRoleError() {
+	ctx := context.TODO()
+	accessToken := "validAccessToken"
+
+	accessTokenClaims := &domain.AccessTokenClaims{
+		Role: domain.UserRole,
+	}
+
+	a.authManger.EXPECT().DecodeAccessToken(ctx, accessToken).Return(accessTokenClaims, nil)
+
+	err := a.api.RoleAuthorization(ctx, accessToken)
+	a.Error(err)
+}
+
+func (a *ApplicationTestSuit) TestRoleAuthorization_InvalidRoleError() {
+	ctx := context.TODO()
+	accessToken := "validAccessToken"
+
+	accessTokenClaims := &domain.AccessTokenClaims{
+		Role: "role",
+	}
+
+	a.authManger.EXPECT().DecodeAccessToken(ctx, accessToken).Return(accessTokenClaims, nil)
+
+	err := a.api.RoleAuthorization(ctx, accessToken)
+	a.Error(err)
+}
+
+func (a *ApplicationTestSuit) TestRoleAuthorization_DecodeAccessTokenError() {
+	ctx := context.TODO()
+	accessToken := "invalidAccessToken"
+
+	a.authManger.EXPECT().DecodeAccessToken(ctx, accessToken).Return(nil, ErrUnknownError)
+
+	err := a.api.RoleAuthorization(ctx, accessToken)
+	a.Error(err)
+}
+
 
 func (a *ApplicationTestSuit) TestChangePassword_Success() {
 	ctx := context.TODO()
@@ -676,11 +751,12 @@ func (a *ApplicationTestSuit) TestRefreshToken_Success() {
 
 	auth := &domain.Auth{
 		UserID: userID,
+		Role: domain.UserRole,
 	}
 
 	a.authManger.EXPECT().DecodeRefreshToken(ctx, userID, refreshToken).Return(nil, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
-	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return(newAccessToken, nil)
+	a.authManger.EXPECT().GenerateAccessToken(ctx, userID,domain.UserRole).Return(newAccessToken, nil)
 
 	accessToken, err := a.api.RefreshToken(ctx, userID, refreshToken)
 	a.NotEmpty(accessToken)
@@ -719,11 +795,12 @@ func (a *ApplicationTestSuit) TestRefreshToken_GenerateAccessTokenError() {
 
 	auth := &domain.Auth{
 		UserID: userID,
+		Role: domain.UserRole,
 	}
 
 	a.authManger.EXPECT().DecodeRefreshToken(ctx, userID, refreshToken).Return(nil, nil)
 	a.DB.EXPECT().GetByID(ctx, userID).Return(auth, nil)
-	a.authManger.EXPECT().GenerateAccessToken(ctx, userID).Return("", ErrUnknownError)
+	a.authManger.EXPECT().GenerateAccessToken(ctx, userID,domain.UserRole).Return("", ErrUnknownError)
 
 	accessToken, err := a.api.RefreshToken(ctx, userID, refreshToken)
 	a.Empty(accessToken)

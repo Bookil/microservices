@@ -101,18 +101,18 @@ func (mr *MockAuthManagerMockRecorder) DecodeResetPasswordToken(ctx, resetPasswo
 }
 
 // GenerateAccessToken mocks base method.
-func (m *MockAuthManager) GenerateAccessToken(ctx context.Context, userID domain.UserID) (string, error) {
+func (m *MockAuthManager) GenerateAccessToken(ctx context.Context, userID domain.UserID, role domain.Role) (string, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GenerateAccessToken", ctx, userID)
+	ret := m.ctrl.Call(m, "GenerateAccessToken", ctx, userID, role)
 	ret0, _ := ret[0].(string)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GenerateAccessToken indicates an expected call of GenerateAccessToken.
-func (mr *MockAuthManagerMockRecorder) GenerateAccessToken(ctx, userID any) *gomock.Call {
+func (mr *MockAuthManagerMockRecorder) GenerateAccessToken(ctx, userID, role any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateAccessToken", reflect.TypeOf((*MockAuthManager)(nil).GenerateAccessToken), ctx, userID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GenerateAccessToken", reflect.TypeOf((*MockAuthManager)(nil).GenerateAccessToken), ctx, userID, role)
 }
 
 // GenerateRefreshToken mocks base method.

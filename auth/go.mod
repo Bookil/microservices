@@ -13,7 +13,7 @@ require (
 	github.com/knadh/koanf v1.5.0
 	github.com/sony/gobreaker v1.0.0
 	github.com/stretchr/testify v1.9.0
-	github.com/tahadostifam/go-auth-manager v1.0.4
+	github.com/tahadostifam/go-auth-manager v1.0.2
 	github.com/testcontainers/testcontainers-go v0.32.0
 	go.uber.org/mock v0.4.0
 	golang.org/x/crypto v0.26.0
@@ -89,4 +89,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/tahadostifam/go-auth-manager => github.com/AssassinRobot/go-auth-manager v1.0.1
+replace github.com/tahadostifam/go-auth-manager => github.com/AssassinRobot/go-auth-manager v1.0.2

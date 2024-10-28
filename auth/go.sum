@@ -6,10 +6,10 @@ github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24 h1:bvDV9
 github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24/go.mod h1:8o94RPi1/7XTJvwPpRSzSUedZrtlirdB3r9Z20bi2f8=
 github.com/AssassinRobot/go-auth-manager v1.0.1 h1:Nn09XAmf9HMgEcDfF204b/IxxkTVnRvUFLQFNj5w5so=
 github.com/AssassinRobot/go-auth-manager v1.0.1/go.mod h1:QajM39ZUjIDKFX6Ab2xjrwbrtz7Sd3yrqilmvvQNJrI=
+github.com/AssassinRobot/go-auth-manager v1.0.2 h1:cBCR/bM+m6z5r9ZVpX6JlBCoHA5mhdZyK6G1UHd/5LQ=
+github.com/AssassinRobot/go-auth-manager v1.0.2/go.mod h1:CYwvMguLfWfqzlWkax27Z+9jOPWJ/pyOq3FHrjocf5w=
 github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1 h1:UQHMgLO+TxOElx5B5HZ4hJQsoJ/PvUvKRhJHDQXO8P8=
 github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
-github.com/Bookil/Bookil-Proto v0.2.3 h1:jzp2pZiZxxZr6CNCF6tTY7WKzUpKbHyHWftfRxbiTkw=
-github.com/Bookil/Bookil-Proto v0.2.3/go.mod h1:C8+ie5nWDtkB/FUyx1y7UImKYp+3M1srAcgw9JinjxU=
 github.com/Bookil/Bookil-Proto v0.3.0 h1:BesofsMksdXXvnylLSJ1135kbPBBHfBx4X3UTcuI/sA=
 github.com/Bookil/Bookil-Proto v0.3.0/go.mod h1:C8+ie5nWDtkB/FUyx1y7UImKYp+3M1srAcgw9JinjxU=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
@@ -303,8 +303,8 @@ github.com/nxadm/tail v1.4.8/go.mod h1:+ncqLTQzXmGhMZNUePPaPqPvBxHAIsmXswZKocGu+
 github.com/oklog/run v1.0.0/go.mod h1:dlhp/R75TPv97u0XWUtDeV/lRKWPKSdTuV0TZvrmrQA=
 github.com/onsi/ginkgo v1.16.5 h1:8xi0RTUf59SOSfEtZMvwTvXYMzG4gV23XVHOZiXNtnE=
 github.com/onsi/ginkgo v1.16.5/go.mod h1:+E8gABHa3K6zRBolWtd+ROzc/U5bkGt0FwiG042wbpU=
-github.com/onsi/gomega v1.18.1 h1:M1GfJqGRrBrrGGsbxzV5dqM2U2ApXefZCQpkukxYRLE=
-github.com/onsi/gomega v1.18.1/go.mod h1:0q+aL8jAiMXy9hbwj2mr5GziHiwhAIQpFmmtT5hitRs=
+github.com/onsi/gomega v1.25.0 h1:Vw7br2PCDYijJHSfBOWhov+8cAnUf8MfMaIOV323l6Y=
+github.com/onsi/gomega v1.25.0/go.mod h1:r+zV744Re+DiYCIPRlYOTxn0YkOLcAnW8k1xXdMPGhM=
 github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
 github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
 github.com/opencontainers/image-spec v1.1.0 h1:8SG7/vwALn54lVB/0yZ/MMwhFrPYtpEHQb2IpWsCzug=
@@ -382,6 +382,8 @@ github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO
 github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
 github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
 github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
+github.com/tahadostifam/go-auth-manager v1.0.2 h1:/9NwWSZBIu6JFDJDLvQ4FGgplbV1ebau/PO9I6yvoY0=
+github.com/tahadostifam/go-auth-manager v1.0.2/go.mod h1:QajM39ZUjIDKFX6Ab2xjrwbrtz7Sd3yrqilmvvQNJrI=
 github.com/testcontainers/testcontainers-go v0.32.0 h1:ug1aK08L3gCHdhknlTTwWjPHPS+/alvLJU/DRxTD/ME=
 github.com/testcontainers/testcontainers-go v0.32.0/go.mod h1:CRHrzHLQhlXUsa5gXjTOfqIEJcrK5+xMDmBr/WMI88E=
 github.com/tklauser/go-sysconf v0.3.12 h1:0QaGUFOdQaIVdPgfITYzaTegZvdCjmYO52cSFAEVmqU=
