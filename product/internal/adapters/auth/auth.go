@@ -79,3 +79,14 @@ func (a *Adapter) Authenticate(ctx context.Context, accessToken string) (string,
 
 	return response.UserId, nil
 }
+
+func (a *Adapter) RoleAuthorize(ctx context.Context, accessToken string) error {
+	_, err := a.auth.RoleAuthorization(ctx, &authv1.RoleAuthorizationRequest{
+		AccessToken: accessToken,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

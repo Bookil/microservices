@@ -1,6 +1,7 @@
 package grpc
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -18,15 +19,15 @@ type Adapter struct {
 	api             ports.APIPort
 	authInterceptor *interceptor.AuthInterceptor
 	validator       ports.Validation
-	port int
+	port            int
 	productv1.UnimplementedProductServiceServer
 }
 
-func NewAdapter(api ports.APIPort, auth ports.AuthPort,validator ports.Validation, port int) *Adapter {
+func NewAdapter(api ports.APIPort, auth ports.AuthPort, validator ports.Validation, port int) *Adapter {
 	return &Adapter{
 		api:             api,
 		port:            port,
-		validator: validator,
+		validator:       validator,
 		authInterceptor: interceptor.NewAuthInterceptor(auth),
 	}
 }
@@ -37,8 +38,13 @@ func (a *Adapter) Run() {
 		log.Fatalf("failed to listen on port %d, error: %v", a.port, err)
 	}
 
+	combinedUnaryInterceptor := grpc.UnaryInterceptor(chainUnaryInterceptors(
+		a.authInterceptor.AuthInterceptor,
+		a.authInterceptor.RoleAuthInterceptor,
+	))
+
 	grpcServer := grpc.NewServer(
-		// grpc.UnaryInterceptor(a.authInterceptor.AuthInterceptor),
+		combinedUnaryInterceptor,
 	)
 
 	productv1.RegisterProductServiceServer(grpcServer, a)
@@ -51,5 +57,23 @@ func (a *Adapter) Run() {
 
 	if err := grpcServer.Serve(listen); err != nil {
 		log.Fatalf("failed to serve: %v", err)
+	}
+}
+
+func chainUnaryInterceptors(interceptors ...grpc.UnaryServerInterceptor) grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		chain := handler
+		for i := len(interceptors) - 1; i >= 0; i-- {
+			interceptor := interceptors[i]
+			chain = buildChain(interceptor, chain, info)
+		}
+		return chain(ctx, req)
+	}
+}
+
+// buildChain builds a unary interceptor chain.
+func buildChain(interceptor grpc.UnaryServerInterceptor, next grpc.UnaryHandler, info *grpc.UnaryServerInfo) grpc.UnaryHandler {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		return interceptor(ctx, req, info, next)
 	}
 }
