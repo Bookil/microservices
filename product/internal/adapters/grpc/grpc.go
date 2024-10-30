@@ -13,8 +13,8 @@ import (
 )
 
 func (a *Adapter) AddAuthor(ctx context.Context, request *productv1.AddAuthorRequest) (*productv1.AddAuthorResponse, error) {
-	err := a.validator.ValidateAddAuthor(request.Name,request.About)
-	if err != nil{
+	err := a.validator.ValidateAddAuthor(request.Name, request.About)
+	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
@@ -64,7 +64,7 @@ func (a *Adapter) GetAllAuthors(request *productv1.GetAllAuthorsRequest, stream 
 
 func (a *Adapter) AddGenre(ctx context.Context, request *productv1.AddGenreRequest) (*productv1.AddGenreResponse, error) {
 	err := a.validator.ValidateAddGenre(request.Name)
-	if err != nil{
+	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
@@ -161,8 +161,8 @@ func (a *Adapter) GetAllBooks(request *productv1.GetAllBooksRequest, stream prod
 }
 
 func (a *Adapter) AddBook(ctx context.Context, request *productv1.AddBookRequest) (*productv1.AddBookResponse, error) {
-	err := a.validator.ValidateAddBook(request.Title,request.Description,request.Price,uint(request.Quantity),uint(request.Year))
-	if err != nil{
+	err := a.validator.ValidateAddBook(request.Title, request.Description, request.Price, uint(request.Quantity), uint(request.Year))
+	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
@@ -194,7 +194,7 @@ func (a *Adapter) GetBookByID(ctx context.Context, request *productv1.GetBookByI
 
 func (a *Adapter) GetBooksByTitle(request *productv1.GetBooksByTitleRequest, stream productv1.ProductService_GetBooksByTitleServer) error {
 	err := a.validator.ValidateGetBooksByTitle(request.Title)
-	if err != nil{
+	if err != nil {
 		return status.Error(codes.Internal, err.Error())
 	}
 
@@ -217,7 +217,7 @@ func (a *Adapter) GetBooksByTitle(request *productv1.GetBooksByTitleRequest, str
 
 func (a *Adapter) GetBooksByGenre(request *productv1.GetBooksByGenreRequest, stream productv1.ProductService_GetBooksByGenreServer) error {
 	err := a.validator.ValidateGetBooksByGenre(request.GenreName)
-	if err != nil{
+	if err != nil {
 		return status.Error(codes.Internal, err.Error())
 	}
 
@@ -240,7 +240,7 @@ func (a *Adapter) GetBooksByGenre(request *productv1.GetBooksByGenreRequest, str
 
 func (a *Adapter) GetBooksByAuthor(request *productv1.GetBooksByAuthorRequest, stream productv1.ProductService_GetBooksByAuthorServer) error {
 	err := a.validator.ValidateGetBooksByAuthor(request.AuthorName)
-	if err != nil{
+	if err != nil {
 		return status.Error(codes.Internal, err.Error())
 	}
 
@@ -271,8 +271,8 @@ func (a *Adapter) DeleteBookByID(ctx context.Context, request *productv1.DeleteB
 }
 
 func (a *Adapter) ModifyBookByID(ctx context.Context, request *productv1.ModifyBookByIDRequest) (*productv1.ModifyBookByIDResponse, error) {
-	err := a.validator.ValidateModifyBookByID(request.Title,request.Description,request.Price,uint(request.Quantity),uint(request.Year))
-	if err != nil{
+	err := a.validator.ValidateModifyBookByID(request.Title, request.Description, request.Price, uint(request.Quantity), uint(request.Year))
+	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 

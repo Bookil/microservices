@@ -15,7 +15,7 @@ type APIPort interface {
 	ResetPassword(ctx context.Context, email string) error
 	SubmitResetPassword(ctx context.Context, SubmitResetPasswordToken string, newPassword string) error
 	Authenticate(ctx context.Context, accessToken string) (domain.UserID, error)
-	RoleAuthorization(ctx context.Context, accessToken string) (error)
+	RoleAuthorization(ctx context.Context, accessToken string) error
 	ChangePassword(ctx context.Context, userID domain.UserID, newPassword string, oldPassword string) error
 	RefreshToken(ctx context.Context, userID domain.UserID, refreshToken string) (accessToken string, err error)
 	DeleteAccount(ctx context.Context, userID, password string) error

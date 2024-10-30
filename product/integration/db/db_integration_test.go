@@ -140,7 +140,7 @@ func (o *ProductDatabaseTestSuite) TestA_CreateBook() {
 			Valid: false,
 		},
 		{
-			book:  domain.NewBook("Book 9", "Bad Book For You",authors[0:], 5, 2024, []*domain.Genre{domain.NewGenre("mystery")}, 3600),
+			book:  domain.NewBook("Book 9", "Bad Book For You", authors[0:], 5, 2024, []*domain.Genre{domain.NewGenre("mystery")}, 3600),
 			Valid: false,
 		},
 	}
@@ -397,16 +397,16 @@ func (o *ProductDatabaseTestSuite) TestK_DeleteGenreByID() {
 
 	testCases := []struct {
 		genreID uint
-		Valid  bool
+		Valid   bool
 	}{
 		{
 			genreID: genres[0].ID,
-			Valid:  true,
+			Valid:   true,
 		},
 
 		{
 			genreID: 1302,
-			Valid:  false,
+			Valid:   false,
 		},
 	}
 
@@ -425,16 +425,16 @@ func (o *ProductDatabaseTestSuite) TestL_DeleteAuthorByID() {
 
 	testCases := []struct {
 		authorID uint
-		Valid  bool
+		Valid    bool
 	}{
 		{
 			authorID: authors[1].ID,
-			Valid:  true,
+			Valid:    true,
 		},
 
 		{
 			authorID: 55,
-			Valid:  false,
+			Valid:    false,
 		},
 	}
 

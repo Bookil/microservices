@@ -45,7 +45,7 @@ func (a *Application) Register(ctx context.Context, firstName, lastName, email, 
 		return "", ErrHashingPassword
 	}
 
-	auth := domain.NewAuth(userID,domain.UserRole,hashedPassword)
+	auth := domain.NewAuth(userID, domain.UserRole, hashedPassword)
 
 	_, err = a.db.Create(ctx, auth)
 	if err != nil {
@@ -140,7 +140,7 @@ func (a *Application) Login(ctx context.Context, email, password string) (access
 		return "", "", ErrInvalidEmailPassword
 	}
 
-	accessToken, err = a.authManager.GenerateAccessToken(ctx, auth.UserID,auth.Role)
+	accessToken, err = a.authManager.GenerateAccessToken(ctx, auth.UserID, auth.Role)
 	if err != nil {
 		return "", "", ErrGenerateToken
 	}
@@ -169,22 +169,21 @@ func (a *Application) Authenticate(ctx context.Context, accessToken string) (dom
 		return "", ErrAccessDenied
 	}
 
-	if
-	!(tokenClaims.Role == domain.UserRole || tokenClaims.Role == domain.AdminRole) ||
-	len(strings.TrimSpace(tokenClaims.UserID)) == 0{
+	if !(tokenClaims.Role == domain.UserRole || tokenClaims.Role == domain.AdminRole) ||
+		len(strings.TrimSpace(tokenClaims.UserID)) == 0 {
 		return "", ErrAccessDenied
 	}
 
 	return tokenClaims.UserID, nil
 }
 
-func (a *Application) RoleAuthorization(ctx context.Context, accessToken string) (error) {
+func (a *Application) RoleAuthorization(ctx context.Context, accessToken string) error {
 	tokenClaims, err := a.authManager.DecodeAccessToken(ctx, accessToken)
 	if err != nil {
 		return ErrAccessDenied
 	}
 
-	if  tokenClaims.Role != domain.AdminRole{
+	if tokenClaims.Role != domain.AdminRole {
 		return ErrAccessDenied
 	}
 
@@ -226,7 +225,7 @@ func (a *Application) RefreshToken(ctx context.Context, userID domain.UserID, re
 		return "", ErrAccessDenied
 	}
 
-	newAccessToken, err := a.authManager.GenerateAccessToken(ctx, userID,auth.Role)
+	newAccessToken, err := a.authManager.GenerateAccessToken(ctx, userID, auth.Role)
 	if err != nil {
 		return "", ErrGenerateToken
 	}

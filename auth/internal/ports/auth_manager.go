@@ -7,7 +7,7 @@ import (
 )
 
 type AuthManager interface {
-	GenerateAccessToken(ctx context.Context, userID domain.UserID,role domain.Role) (accessToken string, _ error)
+	GenerateAccessToken(ctx context.Context, userID domain.UserID, role domain.Role) (accessToken string, _ error)
 	DecodeAccessToken(ctx context.Context, accessToken string) (*domain.AccessTokenClaims, error)
 	GenerateRefreshToken(ctx context.Context, userID domain.UserID) (refreshToken string, _ error)
 	DecodeRefreshToken(ctx context.Context, userID domain.UserID, RefreshToken string) (*domain.RefreshTokenClaims, error)

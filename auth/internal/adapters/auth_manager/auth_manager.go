@@ -32,8 +32,8 @@ func NewAdapter(redisClient *redis.Client, jwtConfigs config.JWT) *Adapter {
 	}
 }
 
-func (a *Adapter) GenerateAccessToken(ctx context.Context, userID domain.UserID,role domain.Role) (accessToken string, _ error) {
-	accessToken, err := a.authManger.GenerateAccessToken(ctx, userID,role, AccessTokenExpr)
+func (a *Adapter) GenerateAccessToken(ctx context.Context, userID domain.UserID, role domain.Role) (accessToken string, _ error) {
+	accessToken, err := a.authManger.GenerateAccessToken(ctx, userID, role, AccessTokenExpr)
 	if err != nil {
 		return "", err
 	}
@@ -49,7 +49,7 @@ func (a *Adapter) DecodeAccessToken(ctx context.Context, accessToken string) (*d
 
 	accessTokenClaims := &domain.AccessTokenClaims{
 		UserID: accessTokenPayload.Payload.UUID,
-		Role: accessTokenPayload.Payload.Role,
+		Role:   accessTokenPayload.Payload.Role,
 	}
 
 	return accessTokenClaims, nil

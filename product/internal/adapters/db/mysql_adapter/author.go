@@ -15,10 +15,10 @@ func (a *Adapter) AddAuthor(ctx context.Context, author *domain.Author) (*domain
 	return author, nil
 }
 
-func (a *Adapter) GetAuthorByID(ctx context.Context,ID uint)(*domain.Author,error) {
-	var author = &domain.Author{}
+func (a *Adapter) GetAuthorByID(ctx context.Context, ID uint) (*domain.Author, error) {
+	author := &domain.Author{}
 
-	err := a.db.First(author,ID).Error
+	err := a.db.First(author, ID).Error
 	if err != nil {
 		return nil, err
 	}
@@ -26,22 +26,22 @@ func (a *Adapter) GetAuthorByID(ctx context.Context,ID uint)(*domain.Author,erro
 	return author, nil
 }
 
-func (a *Adapter) DeleteAuthorByID(ctx context.Context,ID uint)error {
-	author,err:=a.GetGenreByID(ctx,ID)
+func (a *Adapter) DeleteAuthorByID(ctx context.Context, ID uint) error {
+	author, err := a.GetGenreByID(ctx, ID)
 	if err != nil {
 		return err
 	}
 
 	err = a.db.WithContext(ctx).Model(author).Association("Books").Clear()
 	if err != nil {
-        return err
-    }
+		return err
+	}
 
 	err = a.db.WithContext(ctx).Delete(author).Error
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 

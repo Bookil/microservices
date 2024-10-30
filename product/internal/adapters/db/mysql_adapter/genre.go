@@ -26,10 +26,10 @@ func (a *Adapter) GetAllGenres(ctx context.Context) ([]domain.Genre, error) {
 	return genres, nil
 }
 
-func (a *Adapter) GetGenreByID(ctx context.Context,ID uint)(*domain.Genre,error) {
-	var genre = &domain.Genre{}
+func (a *Adapter) GetGenreByID(ctx context.Context, ID uint) (*domain.Genre, error) {
+	genre := &domain.Genre{}
 
-	err := a.db.WithContext(ctx).First(genre,ID).Error
+	err := a.db.WithContext(ctx).First(genre, ID).Error
 	if err != nil {
 		return nil, err
 	}
@@ -37,21 +37,21 @@ func (a *Adapter) GetGenreByID(ctx context.Context,ID uint)(*domain.Genre,error)
 	return genre, nil
 }
 
-func (a *Adapter) DeleteGenreByID(ctx context.Context,ID uint)error {
-	genre,err:=a.GetGenreByID(ctx,ID)
+func (a *Adapter) DeleteGenreByID(ctx context.Context, ID uint) error {
+	genre, err := a.GetGenreByID(ctx, ID)
 	if err != nil {
 		return err
 	}
 
 	err = a.db.WithContext(ctx).Model(genre).Association("Books").Clear()
 	if err != nil {
-        return err
-    }
+		return err
+	}
 
 	err = a.db.WithContext(ctx).Delete(genre).Error
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }

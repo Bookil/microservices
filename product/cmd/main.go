@@ -30,8 +30,8 @@ func main() {
 	application := api.NewApplication(cartAdapter, dbAdapter)
 
 	validator := validation.NewValidator()
-	
-	grpcAdapter := grpc.NewAdapter(application, authAdapter, validator,configs.Server.Port)
+
+	grpcAdapter := grpc.NewAdapter(application, authAdapter, validator, configs.Server.Port)
 
 	grpcAdapter.Run()
 }

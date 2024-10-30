@@ -128,7 +128,7 @@ func (a *Application) GetAuthorByID(ctx context.Context, ID uint) (*domain.Autho
 
 func (a *Application) DeleteAuthorByID(ctx context.Context, ID uint) error {
 	err := a.DB.DeleteAuthorByID(ctx, ID)
-	
+
 	return err
 }
 
@@ -161,7 +161,7 @@ func (a *Application) GetGenreByID(ctx context.Context, ID uint) (*domain.Genre,
 
 func (a *Application) DeleteGenreByID(ctx context.Context, ID uint) error {
 	err := a.DB.DeleteGenreByID(ctx, ID)
-	
+
 	return err
 }
 
